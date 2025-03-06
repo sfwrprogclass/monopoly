@@ -5,7 +5,7 @@ import androidx.compose.ui.window.*
 import kotlin.random.Random
 
 // Basic Automated Monopoly Game version 0.1
-// hello mai friends
+// hello my friends
 
 // Data class for a Property
 data class Property(val name: String, val cost: Int, var owner: Player? = null, val rent: Int)
