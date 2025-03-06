@@ -24,7 +24,7 @@ fun TokenSelectionScreen(players: List<Player>, onTokenSelected: (Player, String
         "token_boot.png",
         "token_iron.png",
         "token_tap_hat.png",
-        "wheelbarrow.png"
+        "Wheelbarrow.png"
     )
 
     var currentPlayerIndex by remember { mutableStateOf(0) }
