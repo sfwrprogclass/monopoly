@@ -1,20 +1,16 @@
 package com.dallascollege.monopoly
-import com.dallascollege.monopoly.ui.GameScreen
-import androidx.compose.ui.window.application
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.*
 
 
-//fun main()  {
-//    val game = GameEngine()
-//    repeat(5) {  // Simulate 5 turns
-//        game.nextTurn()
-//    }
-//}
 
-
-fun main() {
-    androidx.compose.ui.window.application {
-        GameScreen(players = listOf(), tiles = listOf()) {
-            println("Dice Rolled!")
-        }
+fun main() = application {
+    val state = rememberWindowState(
+        size = DpSize(800.dp, 650.dp),
+        position = WindowPosition(300.dp, 300.dp)
+    )
+    Window(title = "Monopoly", onCloseRequest = ::exitApplication, state = state) {
+        App()
     }
 }

@@ -8,10 +8,10 @@ plugins {
 
 kotlin {
     jvm("desktop")
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -24,11 +24,13 @@ kotlin {
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation("androidx.compose.material3:material3:1.2.0")
-            implementation("androidx.compose.ui:ui-tooling-preview:1.5.1")
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.1")
+            implementation(libs.kotlinx.coroutines.swing)
+            implementation(compose.desktop.currentOs)
+            implementation(compose.material) // For Material UI components
+            implementation(compose.ui) // For basic UI components
+            implementation(compose.foundation) // For foundational components like layouts
+            implementation(compose.runtime) // For Compose runtime features
         }
-
     }
 }
 
@@ -44,4 +46,3 @@ compose.desktop {
         }
     }
 }
-
