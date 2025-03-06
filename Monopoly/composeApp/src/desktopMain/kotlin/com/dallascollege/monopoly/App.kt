@@ -1,37 +1,39 @@
 package com.dallascollege.monopoly
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.ui.unit.dp
+import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import com.dallascollege.monopoly.model.Player
+import com.dallascollege.monopoly.model.Tile
+import com.dallascollege.monopoly.ui.TokenSelectionScreen
 import com.dallascollege.monopoly.ui.dice.DiceRoller
 
-import monopoly.composeapp.generated.resources.Res
-import monopoly.composeapp.generated.resources.compose_multiplatform
-
 @Composable
-@Preview
 fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Button(onClick = { showContent = !showContent }) {
-                DiceRoller()
+    val players = remember { mutableStateListOf(Player("Battleship"), Player("Top hat")) }
+    val tiles = remember { mutableStateListOf<Tile>() }
+    var allTokensSelected by remember { mutableStateOf(false) }
+    val selectedTokens = remember { mutableStateMapOf<Player, String>() }
+
+    if (!allTokensSelected) {
+        TokenSelectionScreen(players) { player, token ->
+            selectedTokens[player] = token
+            if (selectedTokens.size == players.size) {
+                allTokensSelected = true
             }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
+        }
+    } else {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("All players have selected their tokens!", style = MaterialTheme.typography.h6)
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = { /* dice roll */ }) {
+                DiceRoller()
             }
         }
     }
