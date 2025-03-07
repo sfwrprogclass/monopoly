@@ -14,17 +14,21 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.dallascollege.monopoly.model.Player
 
 @Composable
 fun TokenSelectionScreen(players: List<Player>, onTokenSelected: (Player, String) -> Unit) {
+
     val allTokenImages = listOf(
-        "battleship.png",
-        "thimble.png",
-        "token_boot.png",
-        "token_iron.png",
-        "token_tap_hat.png",
-        "Wheelbarrow.png"
+        "Battleship",
+        "Thimble",
+        "Boot",
+        "Iron",
+        "Top Hat",
+        "Wheelbarrow",
+        "Car",
+        "Dog"
     )
 
     var currentPlayerIndex by remember { mutableStateOf(0) }
@@ -33,32 +37,33 @@ fun TokenSelectionScreen(players: List<Player>, onTokenSelected: (Player, String
     val availableTokens = remember { mutableStateListOf(*allTokenImages.toTypedArray()) }
     val currentPlayer = players[currentPlayerIndex]
 
-    // animation for transition
     val fadeAlpha = animateFloatAsState(
         targetValue = 1f,
         animationSpec = tween(durationMillis = 500)
     )
 
     Column(
-        modifier = Modifier.fillMaxSize().background(Color(0xFF2C0474)),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF2C0474)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Card(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(24.dp),
             shape = RoundedCornerShape(16.dp),
             backgroundColor = Color.White
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    "Player ${currentPlayerIndex + 1}, choose your token",
-                    style = MaterialTheme.typography.h6,
+                    "Player ${currentPlayerIndex + 1}, Choose Your Token",
+                    fontSize = 28.sp,
                     color = Color.Black
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -68,32 +73,34 @@ fun TokenSelectionScreen(players: List<Player>, onTokenSelected: (Player, String
                         onClick = {
                             currentTokenIndex = (currentTokenIndex - 1 + availableTokens.size) % availableTokens.size
                         },
+                        modifier = Modifier.size(80.dp, 80.dp),
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                         elevation = ButtonDefaults.elevation(defaultElevation = 0.dp, pressedElevation = 0.dp)
                     ) {
-                        Text("<", color = Color.Black)
+                        Text("<", color = Color.Black, fontSize = 28.sp)
                     }
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.width(24.dp))
 
                     Image(
-                        painter = painterResource("images/${availableTokens[currentTokenIndex]}"),
+                        painter = painterResource("images/${availableTokens[currentTokenIndex]}.png"),
                         contentDescription = "Token Image",
-                        modifier = Modifier.size(100.dp).alpha(fadeAlpha.value)
+                        modifier = Modifier.size(150.dp).alpha(fadeAlpha.value)
                     )
 
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.width(24.dp))
                     Button(
                         onClick = {
                             currentTokenIndex = (currentTokenIndex + 1) % availableTokens.size
                         },
+                        modifier = Modifier.size(80.dp, 80.dp),
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                         elevation = ButtonDefaults.elevation(defaultElevation = 0.dp, pressedElevation = 0.dp)
                     ) {
-                        Text(">", color = Color.Black)
+                        Text(">", color = Color.Black, fontSize = 28.sp)
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(24.dp))
                 Button(
                     onClick = {
                         val selectedToken = availableTokens[currentTokenIndex]
@@ -107,10 +114,11 @@ fun TokenSelectionScreen(players: List<Player>, onTokenSelected: (Player, String
                             currentTokenIndex = 0
                         }
                     },
+                    modifier = Modifier.size(200.dp, 80.dp),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                     elevation = ButtonDefaults.elevation(defaultElevation = 0.dp, pressedElevation = 0.dp)
                 ) {
-                    Text("Select Token", color = Color.Black)
+                    Text("Select Token", color = Color.Black, fontSize = 24.sp)
                 }
             }
         }
