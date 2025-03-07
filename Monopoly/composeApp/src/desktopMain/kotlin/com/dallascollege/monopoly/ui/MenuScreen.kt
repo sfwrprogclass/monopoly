@@ -94,3 +94,4 @@ fun MonopolyRulesDialog(onDismiss: () -> Unit) {
         backgroundColor = MaterialTheme.colors.surface
     )
 }
+
