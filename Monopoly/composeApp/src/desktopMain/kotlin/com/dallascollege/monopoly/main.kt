@@ -4,13 +4,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 
 
-
 fun main() = application {
+
     val state = rememberWindowState(
-        size = DpSize(800.dp, 650.dp),
-        position = WindowPosition(300.dp, 300.dp)
+        size = DpSize(1150.dp, 750.dp),
+        position = WindowPosition(100.dp, 100.dp)
     )
-    Window(title = "Monopoly", onCloseRequest = ::exitApplication, state = state) {
+    Window(title = "Monopoly", onCloseRequest = ::exitApplication, state = state, resizable = true) {
         App()
     }
 }

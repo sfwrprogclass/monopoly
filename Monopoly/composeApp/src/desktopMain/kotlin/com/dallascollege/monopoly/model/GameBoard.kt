@@ -3,15 +3,15 @@ package com.dallascollege.monopoly.model
 import androidx.compose.ui.graphics.ImageBitmap
 
 class GameBoard(
-    turnOrder: Array<Int>,
-    currentTurn: Int,
-    centralMoney: Int,
-    centralImage: ImageBitmap,
-    speedDieMode: Boolean,
-    freeParkingRule: Boolean,
-    cells: Array<Cell>,
-    dice: Dice,
-    properties: Array<Property>
+    turnOrder: Array<Int> = emptyArray(),
+    currentTurn: Int = 0,
+    centralMoney: Int = 0,
+    speedDieMode: Boolean = false,
+    freeParkingRule: Boolean = false,
+    cells: Array<Cell> = emptyArray(),
+    dice1: Dice,
+    dice2: Dice,
+    properties: Array<Property> = emptyArray()
 ) {
     var turnOrder: Array<Int> = turnOrder
         get() = field
@@ -26,12 +26,6 @@ class GameBoard(
         }
 
     var centralMoney: Int = centralMoney
-        get() = field
-        set(value) {
-            field = value
-        }
-
-    var centralImage: ImageBitmap = centralImage
         get() = field
         set(value) {
             field = value
@@ -55,7 +49,13 @@ class GameBoard(
             field = value
         }
 
-    var dice: Dice = dice
+    var dice1: Dice = dice1
+        get() = field
+        set(value) {
+            field = value
+        }
+
+    var dice2: Dice = dice2
         get() = field
         set(value) {
             field = value

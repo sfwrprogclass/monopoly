@@ -33,6 +33,8 @@ kotlin {
         }
     }
 }
+dependencies {
+}
 
 
 compose.desktop {
