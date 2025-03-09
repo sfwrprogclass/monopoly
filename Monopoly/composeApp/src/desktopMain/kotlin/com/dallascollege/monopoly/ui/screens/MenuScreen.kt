@@ -1,4 +1,4 @@
-package com.dallascollege.monopoly.ui
+package com.dallascollege.monopoly.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*

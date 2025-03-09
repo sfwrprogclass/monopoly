@@ -8,10 +8,10 @@ import androidx.compose.ui.Modifier
 import com.dallascollege.monopoly.enums.Token
 import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Player
-import com.dallascollege.monopoly.ui.TokenSelectionScreen
-import com.dallascollege.monopoly.ui.PlayerSelectionScreen
-import com.dallascollege.monopoly.ui.TurnOrderScreen
-import com.dallascollege.monopoly.ui.MenuScreen
+import com.dallascollege.monopoly.ui.screens.TokenSelectionScreen
+import com.dallascollege.monopoly.ui.screens.PlayerSelectionScreen
+import com.dallascollege.monopoly.ui.screens.TurnOrderScreen
+import com.dallascollege.monopoly.ui.screens.MenuScreen
 import com.dallascollege.monopoly.ui.layout.Layout
 
 @Composable
@@ -32,7 +32,7 @@ fun App() {
             PlayerSelectionScreen { count ->
                 playerCount = count
                 players.clear()
-                players.addAll(List(count) { Player(name = "Player ${it + 1}", token = Token.TOP_HAT) })
+                players.addAll(List(count) { Player(id = it + 1, name = "Player ${it + 1}", token = Token.TOP_HAT) })
             }
         }
         !allTokensSelected -> {

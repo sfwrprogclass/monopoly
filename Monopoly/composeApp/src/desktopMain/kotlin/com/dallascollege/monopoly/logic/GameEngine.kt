@@ -2,7 +2,8 @@ package com.dallascollege.monopoly.logic
 
 import com.dallascollege.monopoly.model.*
 
-class GameEngine {
+class GameEngine(gameBoard: GameBoard, action: Action, playerId: Int) {
+
 //    private val board = Board()
 //    private val players = listOf(
 //        Player("Battleship"),

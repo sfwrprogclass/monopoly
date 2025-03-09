@@ -53,7 +53,7 @@ fun Layout(gameBoard: GameBoard) {
             Column(modifier = Modifier.fillMaxSize()) {
                 Box(
                     modifier = Modifier
-                        .weight(0.15f)
+                        .weight(0.25f)
                         .fillMaxWidth()
                         .background(Color(0xFFFFF9C4)) // Light gray background for menu area
                 ) {
@@ -61,7 +61,7 @@ fun Layout(gameBoard: GameBoard) {
                 }
                 Box(
                     modifier = Modifier
-                        .weight(0.42f)
+                        .weight(0.37f)
                         .fillMaxWidth()
                         .background(Color(0xFFFFF9C4)) // Light gray background for menu area
                 ) {
@@ -69,7 +69,7 @@ fun Layout(gameBoard: GameBoard) {
                 }
                 Box(
                     modifier = Modifier
-                        .weight(0.32f)
+                        .weight(0.27f)
                         .fillMaxWidth()
                         .background(Color(0xFFFFF9C4)) // Light gray background for menu area
                 ) {

@@ -6,6 +6,7 @@ class GameBoard(
     players: Array<Player>,
     turnOrder: Array<Int> = emptyArray(),
     currentTurn: Int = 0,
+    selectedPlayerId: Int = 1,
     centralMoney: Int = 0,
     speedDieMode: Boolean = false,
     freeParkingRule: Boolean = false,
@@ -580,6 +581,12 @@ class GameBoard(
         }
 
     var currentTurn: Int = currentTurn
+        get() = field
+        set(value) {
+            field = value
+        }
+
+    var selectedPlayerId: Int = selectedPlayerId
         get() = field
         set(value) {
             field = value

@@ -1,4 +1,4 @@
-package com.dallascollege.monopoly.ui
+package com.dallascollege.monopoly.ui.screens
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -25,7 +25,7 @@ fun TokenSelectionScreen(players: List<Player>, onTokenSelected: (Player, String
         "Thimble",
         "Boot",
         "Iron",
-        "Top Hat",
+        "TopHat",
         "Wheelbarrow",
         "Car",
         "Dog"

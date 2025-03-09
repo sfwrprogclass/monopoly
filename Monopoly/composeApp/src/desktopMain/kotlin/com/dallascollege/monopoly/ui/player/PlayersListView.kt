@@ -2,8 +2,7 @@ package com.dallascollege.monopoly.ui.player
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -15,25 +14,72 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Player
+import com.dallascollege.monopoly.ui.dashboard.CellView
+import com.dallascollege.monopoly.ui.dashboard.CentralAreaView
 
 @Composable
 fun PlayersListView(gameBoard: GameBoard) {
 
-    Text("PLAYERS")
+    Column(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(2.dp)
+                .weight(0.2f)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Box(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+                    Text("PLAYERS", modifier = Modifier.padding(5.dp))
+                }
+            }
+        }
 
-//    var i = 0
-//    repeat(8) {
-//        Box(
-//            modifier = Modifier
-//                .size(80.dp)
-//                .border(1.dp, Color.Green)
-//                .background(Color.White, shape =
-//                    RoundedCornerShape(12.dp)
-//                ),
-//            contentAlignment = Alignment.Center
-//        ) {
-//            i
-//        }
-//        i++
-//    }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(2.dp)
+                .weight(0.8f)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                Box(modifier = Modifier.weight(0.5f).fillMaxHeight()) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        if (gameBoard.players.isNotEmpty()) {
+                            PlayerView(gameBoard, 1, Modifier.weight(0.25f))
+                        }
+                        if (1 < gameBoard.players.size) {
+                            PlayerView(gameBoard, 2, Modifier.weight(0.25f))
+                        }
+                        if (2 < gameBoard.players.size) {
+                            PlayerView(gameBoard, 3, Modifier.weight(0.25f))
+                        }
+                        if (3 < gameBoard.players.size) {
+                            PlayerView(gameBoard, 4, Modifier.weight(0.25f))
+                        }
+                    }
+                }
+
+                Box(modifier = Modifier.weight(0.5f)) {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        if (4 < gameBoard.players.size) {
+                            PlayerView(gameBoard, 5, Modifier.weight(0.25f))
+                        }
+                        if (5 < gameBoard.players.size) {
+                            PlayerView(gameBoard, 6, Modifier.weight(0.25f))
+                        }
+                        if (6 < gameBoard.players.size) {
+                            PlayerView(gameBoard, 7, Modifier.weight(0.25f))
+                        }
+                        if (7 < gameBoard.players.size) {
+                            PlayerView(gameBoard, 8, Modifier.weight(0.25f))
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
