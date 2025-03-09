@@ -11,9 +11,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.dallascollege.monopoly.model.GameBoard
 
 @Composable
-fun CellView(isCorner: Boolean, imageIndex: Int = 1, isTopOrBottom: Boolean = false, modifier: Modifier = Modifier) {
+fun CellView(gameBoard: GameBoard, isCorner: Boolean, index: Int = 1, isTopOrBottom: Boolean = false, modifier: Modifier = Modifier) {
+
+    //val cell = gameBoard.cells[index]
+    // we can use the list of players in gameboard and see if a player is in this cell
+    // that way we can display the tokens in each cell
+
     Card(
         modifier = modifier // Use external modifier
             .padding(0.dp),
@@ -26,7 +32,7 @@ fun CellView(isCorner: Boolean, imageIndex: Int = 1, isTopOrBottom: Boolean = fa
                 .background(Color.Gray)
         ) {
             Image(
-                painter = painterResource("images/dashboard/cell_${imageIndex}.png"),
+                painter = painterResource("images/dashboard/cell_${index}.png"),
                 contentDescription = "Cell",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop // Ensures the image scales to fill the Box

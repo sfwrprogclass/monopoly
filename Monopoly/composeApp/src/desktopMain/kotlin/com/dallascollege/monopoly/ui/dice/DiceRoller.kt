@@ -13,28 +13,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import com.dallascollege.monopoly.model.Dice
+import com.dallascollege.monopoly.model.GameBoard
 
 
 @Composable
 @Preview
-fun DiceRoller() {
+fun DiceRoller(gameBoard: GameBoard) {
     val dice = remember { Dice() }
     var dice1 by remember { mutableStateOf(1) }
     var dice2 by remember { mutableStateOf(1) }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = "Roll the dice",
-            color = Color.Black,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
 
         Row(
             modifier = Modifier.padding(16.dp),
@@ -42,16 +35,15 @@ fun DiceRoller() {
         ) {
             DiceView(dice1)
             DiceView(dice2)
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Button(
-            onClick = {
-                dice1 = dice.roll()
-                dice2 = dice.roll()
-        }) {
-            Text("Roll the dice")
+            Button(
+                onClick = {
+                    dice1 = dice.roll()
+                    dice2 = dice.roll()
+                    gameBoard.dice1 = dice1
+                    gameBoard.dice2 = dice2
+                }) {
+                Text("Roll the dice")
+            }
         }
     }
 }

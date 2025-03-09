@@ -5,11 +5,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.dallascollege.monopoly.model.Dice
 import com.dallascollege.monopoly.model.GameBoard
+import com.dallascollege.monopoly.model.Player
 
 @Composable
-fun GameBoardView() {
+fun GameBoardView(gameBoard: GameBoard) {
 
-    val gameBoard = GameBoard(dice1 = Dice(), dice2 = Dice())
     var i = 21
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -24,19 +24,19 @@ fun GameBoardView() {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Box(modifier = Modifier.weight(0.14f)) {
-                    CellView(isCorner = true, imageIndex = i)
+                    CellView(gameBoard, isCorner = true, index = i)
                 }
 
                 repeat(9) {
                     i++
                     Box(modifier = Modifier.weight(0.08f)) {
-                        CellView(isCorner = false, isTopOrBottom = true, imageIndex = i)
+                        CellView(gameBoard, isCorner = false, isTopOrBottom = true, index = i)
                     }
                 }
                 i++
 
                 Box(modifier = Modifier.weight(0.14f)) {  // Top-right corner
-                    CellView(isCorner = true, imageIndex = i)
+                    CellView(gameBoard, isCorner = true, index = i)
                 }
             }
         }
@@ -64,9 +64,10 @@ fun GameBoardView() {
                         repeat(9) {
                             i--
                             CellView(
+                                gameBoard,
                                 isCorner = false,
                                 modifier = Modifier.weight(0.11f), // Makes all cells have equal height
-                                imageIndex = i
+                                index = i
                             )
                         }
                     }
@@ -92,9 +93,10 @@ fun GameBoardView() {
                         repeat(9) {
                             i++
                             CellView(
+                                gameBoard,
                                 isCorner = false,
                                 modifier = Modifier.weight(0.11f), // Makes all cells have equal height
-                                imageIndex = i
+                                index = i
                             )
                         }
                     }
@@ -115,19 +117,19 @@ fun GameBoardView() {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Box(modifier = Modifier.weight(0.14f)) {
-                    CellView(isCorner = true, imageIndex = i)
+                    CellView(gameBoard, isCorner = true, index = i)
                 }
 
                 repeat(9) {
                     i--
                     Box(modifier = Modifier.weight(0.08f)) {
-                        CellView(isCorner = false, isTopOrBottom = true, imageIndex = i)
+                        CellView(gameBoard, isCorner = false, isTopOrBottom = true, index = i)
                     }
                 }
                 i--
 
                 Box(modifier = Modifier.weight(0.14f)) {  // Top-right corner
-                    CellView(isCorner = true, imageIndex = i)
+                    CellView(gameBoard, isCorner = true, index = i)
                 }
             }
         }

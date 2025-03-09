@@ -1,19 +1,19 @@
 package com.dallascollege.monopoly.model
 
-import com.dallascollege.monopoly.enums.Color
+import com.dallascollege.monopoly.enums.PropertyColor
 
 class Property(
     id: Int,
     name: String,
     price: Int,
-    color: Color,
-    isPurchased: Boolean,
-    baseRent: Int,
-    isUtility: Boolean,
-    isRailRoad: Boolean,
-    numHouses: Int,
-    numHotels: Int,
-    isMortgaged: Boolean
+    color: PropertyColor = PropertyColor.WHITE,
+    isPurchased: Boolean= false,
+    baseRent: Int = 0,
+    isUtility: Boolean = false,
+    isRailRoad: Boolean = false,
+    numHouses: Int = 0,
+    numHotels: Int = 0,
+    isMortgaged: Boolean = false
 ) {
     var id: Int = id
         get() = field
@@ -33,7 +33,7 @@ class Property(
             field = value
         }
 
-    var color: Color = color
+    var color: PropertyColor = color
         get() = field
         set(value) {
             field = value

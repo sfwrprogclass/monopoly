@@ -2,14 +2,16 @@ package com.dallascollege.monopoly.model
 import androidx.compose.ui.graphics.ImageBitmap
 
 class Cell(
-    numCell: Int,
-    propertyId: Int,
-    isGoToJail: Boolean,
-    isLuxuryTax: Boolean,
-    isIncomeTax: Boolean,
-    isChance: Boolean,
-    isCommunityChest: Boolean,
-    isParking: Boolean
+    numCell: Int = 1,
+    propertyId: Int = 1,
+    isGoToJail: Boolean = false,
+    isLuxuryTax: Boolean = false,
+    isIncomeTax: Boolean = false,
+    isChance: Boolean = false,
+    isCommunityChest: Boolean = false,
+    isParking: Boolean = false,
+    isCollectSalary: Boolean = false,
+    isVisitingJail: Boolean = false
 ) {
 
     var numCell: Int = numCell
@@ -55,6 +57,18 @@ class Cell(
         }
 
     var isParking: Boolean = isParking
+        get() = field
+        set(value) {
+            field = value
+        }
+
+    var isCollectSalary: Boolean = isCollectSalary
+        get() = field
+        set(value) {
+            field = value
+        }
+
+    var isVisitingJail: Boolean = isVisitingJail
         get() = field
         set(value) {
             field = value
