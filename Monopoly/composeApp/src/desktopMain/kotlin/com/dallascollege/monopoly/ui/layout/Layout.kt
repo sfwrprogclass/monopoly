@@ -13,9 +13,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Player
+import com.dallascollege.monopoly.ui.action.ActionArea
 import com.dallascollege.monopoly.ui.dashboard.GameBoardView
 import com.dallascollege.monopoly.ui.dice.DiceRoller
 import com.dallascollege.monopoly.ui.player.PlayersListView
+import com.dallascollege.monopoly.ui.property.PropertyListView
 
 @Composable
 fun Layout(gameBoard: GameBoard) {
@@ -65,7 +67,7 @@ fun Layout(gameBoard: GameBoard) {
                         .fillMaxWidth()
                         .background(Color(0xFFFFF9C4)) // Light gray background for menu area
                 ) {
-                    Text("ACTIONS")
+                    ActionArea(gameBoard, gameBoard.selectedPlayerId)
                 }
                 Box(
                     modifier = Modifier
@@ -73,7 +75,7 @@ fun Layout(gameBoard: GameBoard) {
                         .fillMaxWidth()
                         .background(Color(0xFFFFF9C4)) // Light gray background for menu area
                 ) {
-                    Text("PROPERTY LIST")
+                    PropertyListView(gameBoard)
                 }
                 Box(
                     modifier = Modifier
