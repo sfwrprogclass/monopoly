@@ -23,6 +23,17 @@ fun DiceRoller(gameBoard: GameBoard) {
     var dice1 by remember { mutableStateOf(1) }
     var dice2 by remember { mutableStateOf(1) }
 
+    fun rollDice() {
+        dice1 = dice.roll()
+        dice2 = dice.roll()
+        //update turn player position
+
+        val turnPLayer = gameBoard.players.find{ it.id == gameBoard.currentTurn}
+        if (turnPLayer != null) {
+            turnPLayer.numCell += dice1 + dice2
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -36,12 +47,8 @@ fun DiceRoller(gameBoard: GameBoard) {
             DiceView(dice1)
             DiceView(dice2)
             Button(
-                onClick = {
-                    dice1 = dice.roll()
-                    dice2 = dice.roll()
-                    gameBoard.dice1 = dice1
-                    gameBoard.dice2 = dice2
-                }) {
+                onClick = { rollDice() }
+            ) {
                 Text("Roll the dice")
             }
         }

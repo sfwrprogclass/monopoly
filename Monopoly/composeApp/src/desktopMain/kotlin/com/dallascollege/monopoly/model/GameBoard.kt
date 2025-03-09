@@ -11,8 +11,6 @@ class GameBoard(
     speedDieMode: Boolean = false,
     freeParkingRule: Boolean = false,
     cells: Array<Cell> = emptyArray(),
-    dice1: Int = 1,
-    dice2: Int = 1,
     properties: Array<Property> = emptyArray()
 ) {
 
@@ -611,18 +609,6 @@ class GameBoard(
         }
 
     var cells: Array<Cell> = cells
-        get() = field
-        set(value) {
-            field = value
-        }
-
-    var dice1: Int = dice1
-        get() = field
-        set(value) {
-            field = value
-        }
-
-    var dice2: Int = dice2
         get() = field
         set(value) {
             field = value
