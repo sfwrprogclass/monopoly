@@ -41,14 +41,14 @@ fun PropertyListView(gameBoard: GameBoard) {
                 Box(modifier = Modifier.weight(0.5f).fillMaxHeight().padding(2.dp)) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         //TO FILL WITH PropertyViews
-                        Text("TO fill with PropertyViews of player's properties")
+                        Text("TO fill with PropertyViews of selected player's properties")
                     }
                 }
 
                 Box(modifier = Modifier.weight(0.5f).fillMaxHeight().padding(2.dp)) {
                     Column(modifier = Modifier.fillMaxSize()) {
                         //TO FILL WITH PropertyViews
-                        Text("TO fill with PropertyViews of player's properties")
+                        Text("TO fill with PropertyViews of selected player's properties")
                     }
                 }
             }

@@ -29,9 +29,6 @@ fun ActionView(gameBoard: GameBoard, playerId: Int, modifier: Modifier = Modifie
     ) {
         Box(modifier = Modifier.weight(0.5f).fillMaxHeight()) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                if (player != null) {
-                    Text("Player ${player.name}", modifier = Modifier.padding(2.dp))
-                }
                 Text("Action type")
                 Text("Drop-down action types")
                 Text("Quantity")
