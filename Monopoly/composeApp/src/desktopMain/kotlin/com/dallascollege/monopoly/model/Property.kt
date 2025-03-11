@@ -1,13 +1,14 @@
 package com.dallascollege.monopoly.model
 
 import com.dallascollege.monopoly.enums.PropertyColor
+import kotlin.math.min
 
 class Property(
     id: Int,
     name: String,
     price: Int,
     color: PropertyColor = PropertyColor.WHITE,
-    isPurchased: Boolean= false,
+    isPurchased: Boolean = false,
     baseRent: Int = 0,
     isUtility: Boolean = false,
     isRailRoad: Boolean = false,
@@ -16,68 +17,102 @@ class Property(
     isMortgaged: Boolean = false
 ) {
     var id: Int = id
-        get() = field
-        set(value) {
-            field = value
-        }
-
     var name: String = name
-        get() = field
-        set(value) {
-            field = value
-        }
-
     var price: Int = price
-        get() = field
-        set(value) {
-            field = value
-        }
-
     var color: PropertyColor = color
-        get() = field
-        set(value) {
-            field = value
-        }
-
     var isPurchased: Boolean = isPurchased
-        get() = field
-        set(value) {
-            field = value
-        }
-
     var baseRent: Int = baseRent
-        get() = field
-        set(value) {
-            field = value
-        }
-
     var isUtility: Boolean = isUtility
-        get() = field
-        set(value) {
-            field = value
-        }
-
     var isRailRoad: Boolean = isRailRoad
-        get() = field
-        set(value) {
-            field = value
-        }
-
     var numHouses: Int = numHouses
-        get() = field
-        set(value) {
-            field = value
-        }
-
     var numHotels: Int = numHotels
-        get() = field
-        set(value) {
-            field = value
-        }
-
     var isMortgaged: Boolean = isMortgaged
-        get() = field
-        set(value) {
-            field = value
+
+    // New property for owner reference
+    var owner: Player? = null
+        private set
+
+    /**
+     * Attempts to purchase this property for the given player
+     */
+    fun purchase(player: Player): Boolean {
+        if (isPurchased) return false
+        if (player.money < price) return false
+
+        player.money -= price
+        isPurchased = true
+        owner = player
+        player.addProperty(this)
+        return true
+    }
+
+    /**
+     * Calculates and charges rent to a player landing on this property
+     */
+    fun chargeRent(player: Player): Int {
+        if (!isPurchased || isMortgaged || owner == player) return 0
+
+        val rentAmount = calculateRent()
+        val amountPaid = min(rentAmount, player.money)
+        player.money -= amountPaid
+        owner?.money = (owner?.money ?: 0) + amountPaid
+        return amountPaid
+    }
+
+    /**
+     * Calculates the rent amount based on property type and development
+     */
+    private fun calculateRent(): Int {
+        return when {
+            isUtility -> calculateUtilityRent()
+            isRailRoad -> calculateRailroadRent()
+            numHotels > 0 -> calculateHotelRent()
+            numHouses > 0 -> calculateHouseRent()
+            else -> baseRent
         }
+    }
+
+    private fun calculateUtilityRent(): Int {
+        val diceValue = 7 // Replace with actual dice value
+        val multiplier = if (owner?.getUtilityCount() == 2) 10 else 4
+        return diceValue * multiplier
+    }
+
+    private fun calculateRailroadRent(): Int {
+        val railroadCount = owner?.getRailroadCount() ?: 0
+        return baseRent * (1 shl (railroadCount - 1))
+    }
+
+    private fun calculateHouseRent(): Int {
+        return baseRent * (numHouses + 1) * 2
+    }
+
+    private fun calculateHotelRent(): Int {
+        return baseRent * 10
+    }
+}
+
+// Functions defined here are at the "top level" (not inside a class)
+fun handlePlayerLandedOnProperty(player: Player, property: Property) {
+    if (!property.isPurchased) {
+        val wantsToBuy: Boolean = askPlayerIfTheyWantToBuy(player, property)
+        if (wantsToBuy) {
+            val success = property.purchase(player)
+            if (success) {
+                notifyPropertyPurchased(player, property)
+            } else {
+                notifyInsufficientFunds(player)
+            }
+        }
+    } else {
+        val rentPaid = property.chargeRent(player)
+        if (rentPaid > 0) {
+            notifyRentPaid(player, property.owner!!, rentPaid)
+        }
+    }
+}
+
+fun askPlayerIfTheyWantToBuy(player: Player, property: Property): Boolean {
+    // Function implementation...
+    return TODO("Provide the return value")
 }

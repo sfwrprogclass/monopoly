@@ -2,82 +2,54 @@ package com.dallascollege.monopoly.model
 
 import com.dallascollege.monopoly.enums.Token
 
-class Player(
-    id: Number = 1,
-    totalMoney: Int = 1200,
-    turnNum: Int = 1,
-    name: String,
-    token: Token,
-    propertyIds: Array<Int> = emptyArray(),
-    inJail: Boolean = false,
-    hasOutJailCard: Boolean = false,
-    games: Array<Game> = emptyArray(),
-    isCPU: Boolean = false,
-    numCell: Int = 1
+data class Player(
+    var id: Number = 1,
+    var money: Int = 1200,
+    var turnNum: Int = 1,
+    var name: String,
+    var token: Token,
+    var propertyIds: Array<Int> = emptyArray(),
+    var inJail: Boolean = false,
+    var hasOutJailCard: Boolean = false,
+    var games: Array<Game> = emptyArray(),
+    var isCPU: Boolean = false,
+    var numCell: Int = 1
 ) {
-    var id: Number = id
-        get() = field
-        set(value) {
-            field = value
-        }
+    private val properties: MutableList<Property> = mutableListOf()
 
-    var totalMoney: Int = totalMoney
-        get() = field
-        set(value) {
-            field = value
-        }
+    fun addProperty(property: Property) {
+        properties.add(property)
+    }
 
-    var turnNum: Int = turnNum
-        get() = field
-        set(value) {
-            field = value
-        }
+    fun getUtilityCount(): Int {
+        return properties.count { it.isUtility }
+    }
 
-    var name: String = name
-        get() = field
-        set(value) {
-            field = value
-        }
+    fun getRailroadCount(): Int {
+        return properties.count { it.isRailRoad }
+    }
 
-    var token: Token = token
-        get() = field
-        set(value) {
-            field = value
-        }
+    fun getProperties(): List<Property> {
+        return properties.toList()
+    }
 
-    var propertyIds: Array<Int> = propertyIds
-        get() = field
-        set(value) {
-            field = value
-        }
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
 
-    var inJail: Boolean = inJail
-        get() = field
-        set(value) {
-            field = value
-        }
+        other as Player
 
-    var hasOutJailCard: Boolean = hasOutJailCard
-        get() = field
-        set(value) {
-            field = value
-        }
+        if (id != other.id) return false
+        if (name != other.name) return false
+        if (token != other.token) return false
 
-    var games: Array<Game> = games
-        get() = field
-        set(value) {
-            field = value
-        }
+        return true
+    }
 
-    var isCPU: Boolean = isCPU
-        get() = field
-        set(value) {
-            field = value
-        }
-
-    var numCell: Int = numCell
-        get() = field
-        set(value) {
-            field = value
-        }
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + token.hashCode()
+        return result
+    }
 }
