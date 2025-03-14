@@ -90,29 +90,49 @@ class Property(
     private fun calculateHotelRent(): Int {
         return baseRent * 10
     }
-}
 
-// Functions defined here are at the "top level" (not inside a class)
-fun handlePlayerLandedOnProperty(player: Player, property: Property) {
-    if (!property.isPurchased) {
-        val wantsToBuy: Boolean = askPlayerIfTheyWantToBuy(player, property)
-        if (wantsToBuy) {
-            val success = property.purchase(player)
-            if (success) {
-                notifyPropertyPurchased(player, property)
-            } else {
-                notifyInsufficientFunds(player)
-            }
-        }
-    } else {
-        val rentPaid = property.chargeRent(player)
-        if (rentPaid > 0) {
-            notifyRentPaid(player, property.owner!!, rentPaid)
+    /**
+     * Builds a house on this property if possible
+     */
+    fun buildHouse(): Boolean {
+        if (numHotels > 0 || numHouses >= 4) return false
+        if (owner?.money ?: 0 < getHousePrice()) return false
+
+        owner?.money = (owner?.money ?: 0) - getHousePrice()
+        numHouses++
+        return true
+    }
+
+    /**
+     * Builds a hotel on this property if possible
+     */
+    fun buildHotel(): Boolean {
+        if (numHouses < 4) return false
+        if (owner?.money ?: 0 < getHotelPrice()) return false
+
+        owner?.money = (owner?.money ?: 0) - getHotelPrice()
+        numHouses = 0
+        numHotels++
+        return true
+    }
+
+    /**
+     * Gets the price to build a house on this property
+     */
+    fun getHousePrice(): Int {
+        return when (color) {
+            PropertyColor.BROWN, PropertyColor.LIGHT_BLUE -> 50
+            PropertyColor.PINK, PropertyColor.ORANGE -> 100
+            PropertyColor.RED, PropertyColor.YELLOW -> 150
+            PropertyColor.GREEN, PropertyColor.BLUE -> 200
+            else -> 0
         }
     }
-}
 
-fun askPlayerIfTheyWantToBuy(player: Player, property: Property): Boolean {
-    // Function implementation...
-    return TODO("Provide the return value")
+    /**
+     * Gets the price to build a hotel on this property
+     */
+    fun getHotelPrice(): Int {
+        return getHousePrice() * 5
+    }
 }

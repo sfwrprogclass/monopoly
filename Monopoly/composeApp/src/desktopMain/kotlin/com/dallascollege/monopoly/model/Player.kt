@@ -1,10 +1,11 @@
 package com.dallascollege.monopoly.model
 
 import com.dallascollege.monopoly.enums.Token
+import com.dallascollege.monopoly.enums.PropertyColor
 
 data class Player(
     var id: Number = 1,
-    var money: Int = 1200,
+    var money: Int = 1500, // Starting money
     var turnNum: Int = 1,
     var name: String,
     var token: Token,
@@ -33,23 +34,15 @@ data class Player(
         return properties.toList()
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || this::class != other::class) return false
-
-        other as Player
-
-        if (id != other.id) return false
-        if (name != other.name) return false
-        if (token != other.token) return false
-
-        return true
+    fun canBuildHouse(property: Property): Boolean {
+        return properties.count { it.color == property.color } == getColorGroupSize(property.color)
     }
 
-    override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + name.hashCode()
-        result = 31 * result + token.hashCode()
-        return result
+    private fun getColorGroupSize(color: PropertyColor): Int {
+        return when (color) {
+            PropertyColor.BROWN, PropertyColor.LIGHT_BLUE, PropertyColor.PINK, PropertyColor.ORANGE,
+            PropertyColor.RED, PropertyColor.YELLOW, PropertyColor.GREEN, PropertyColor.BLUE -> 3
+            else -> 0
+        }
     }
 }
