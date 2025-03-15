@@ -4,8 +4,8 @@ import com.dallascollege.monopoly.enums.Token
 import com.dallascollege.monopoly.enums.PropertyColor
 
 data class Player(
-    var id: Number = 1,
-    var money: Int = 1500, // Starting money
+    var id: Int = 1, // Ensure id is Int
+    var money: Int = 1500,
     var turnNum: Int = 1,
     var name: String,
     var token: Token,
@@ -16,7 +16,7 @@ data class Player(
     var isCPU: Boolean = false,
     var numCell: Int = 1
 ) {
-    private val properties: MutableList<Property> = mutableListOf()
+    val properties: MutableList<Property> = mutableListOf()
 
     fun addProperty(property: Property) {
         properties.add(property)

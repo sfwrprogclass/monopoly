@@ -32,7 +32,13 @@ fun App() {
             PlayerSelectionScreen { count ->
                 playerCount = count
                 players.clear()
-                players.addAll(List(count) { Player(id = it + 1, name = "Player ${it + 1}", token = Token.TOP_HAT) })
+                players.addAll(List(count) { index ->
+                    Player(
+                        id = index + 1, // Use Int for id
+                        name = "Player ${index + 1}",
+                        token = Token.TOP_HAT
+                    )
+                })
             }
         }
         !allTokensSelected -> {
@@ -67,4 +73,3 @@ fun App() {
         }
     }
 }
-

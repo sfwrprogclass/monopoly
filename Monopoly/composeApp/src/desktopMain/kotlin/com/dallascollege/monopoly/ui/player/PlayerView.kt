@@ -12,20 +12,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.dallascollege.monopoly.enums.convertTokenToImageStr
 import com.dallascollege.monopoly.model.GameBoard
+import com.dallascollege.monopoly.model.Player
 
 @Composable
 fun PlayerView(gameBoard: GameBoard, playerId: Int, modifier: Modifier = Modifier) {
-
-    val player = gameBoard.players.find { it.id == playerId }
+    val player = gameBoard.players.find { it.id == playerId } // Correct the assignment
 
     fun selectPlayer(): Unit {
         gameBoard.selectedPlayerId = playerId
     }
 
     Box(
-        modifier = modifier // Use external modifier
+        modifier = modifier
             .padding(2.dp)
-        ) {
+    ) {
         Button(
             modifier = Modifier
                 .padding(5.dp, 0.dp, 5.dp, 0.dp),
@@ -36,7 +36,7 @@ fun PlayerView(gameBoard: GameBoard, playerId: Int, modifier: Modifier = Modifie
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
-                    ) {
+                ) {
                     Box(
                         modifier = Modifier.weight(0.3f).fillMaxHeight()
                     ) {
@@ -44,20 +44,12 @@ fun PlayerView(gameBoard: GameBoard, playerId: Int, modifier: Modifier = Modifie
                             painter = painterResource("images/${convertTokenToImageStr(player.token)}.png"),
                             contentDescription = "Cell",
                             modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Fit // Ensures the image scales to fill the Box
+                            contentScale = ContentScale.Fit
                         )
                     }
                     Box(
                         modifier = Modifier.weight(0.7f).fillMaxHeight()
                     ) {
-                        //UNCOMMENT ONCE THE turnOrder and currentTurn are set so we display * in the player turn
-//                        if (gameBoard.turnOrder[gameBoard.currentTurn] == playerId) {
-//                            Text(
-//                                text = "*",
-//                                modifier = Modifier.padding(0.dp,0.dp,2.dp, 0.dp)
-//                            )
-//                        }
-
                         Text(player.name)
                     }
                 }

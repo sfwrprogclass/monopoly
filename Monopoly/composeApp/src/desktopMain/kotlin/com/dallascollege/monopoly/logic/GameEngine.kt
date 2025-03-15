@@ -4,16 +4,16 @@ import com.dallascollege.monopoly.model.*
 
 class GameEngine(gameBoard: GameBoard, action: Action, playerId: Int) {
 
-   private val board = GameBoard()
+    private val board = gameBoard // Use the passed gameBoard
     private val players = listOf(
-        Player("Battleship"),
+        Player(id = "Battleship"),
         Player("Top hat")
     )
     private var currentPlayerIndex = 0
 
-    fun rollDice(): Int.Companion =
-        //        return (1..6).random() + (1..6).random()
-        Int
+    fun rollDice(): Int {
+        return (1..6).random() + (1..6).random() // Return the sum of two dice rolls
+    }
 
     fun nextTurn() {
         val player = players[currentPlayerIndex]

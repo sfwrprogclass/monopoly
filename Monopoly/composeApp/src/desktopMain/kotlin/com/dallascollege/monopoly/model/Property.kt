@@ -30,7 +30,7 @@ class Property(
 
     // New property for owner reference
     var owner: Player? = null
-        private set
+        internal set
 
     /**
      * Attempts to purchase this property for the given player
@@ -72,22 +72,22 @@ class Property(
         }
     }
 
-    private fun calculateUtilityRent(): Int {
+    internal fun calculateUtilityRent(): Int {
         val diceValue = 7 // Replace with actual dice value
         val multiplier = if (owner?.getUtilityCount() == 2) 10 else 4
         return diceValue * multiplier
     }
 
-    private fun calculateRailroadRent(): Int {
+    internal fun calculateRailroadRent(): Int {
         val railroadCount = owner?.getRailroadCount() ?: 0
         return baseRent * (1 shl (railroadCount - 1))
     }
 
-    private fun calculateHouseRent(): Int {
+    internal fun calculateHouseRent(): Int {
         return baseRent * (numHouses + 1) * 2
     }
 
-    private fun calculateHotelRent(): Int {
+    internal fun calculateHotelRent(): Int {
         return baseRent * 10
     }
 
