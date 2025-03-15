@@ -38,6 +38,12 @@ data class Player(
         return properties.count { it.color == property.color } == getColorGroupSize(property.color)
     }
 
+    fun move(steps: Int, gameBoard: GameBoard) {
+        numCell = (numCell + steps) % gameBoard.cells.size
+        println("$name moved to cell $numCell")
+    }
+
+
     private fun getColorGroupSize(color: PropertyColor): Int {
         return when (color) {
             PropertyColor.BROWN, PropertyColor.LIGHT_BLUE, PropertyColor.PINK, PropertyColor.ORANGE,

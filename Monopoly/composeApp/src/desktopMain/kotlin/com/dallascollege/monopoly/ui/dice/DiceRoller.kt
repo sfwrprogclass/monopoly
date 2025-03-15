@@ -17,7 +17,6 @@ import com.dallascollege.monopoly.model.GameBoard
 
 
 @Composable
-@Preview
 fun DiceRoller(gameBoard: GameBoard) {
     val dice = remember { Dice() }
     var dice1 by remember { mutableStateOf(1) }
@@ -26,11 +25,11 @@ fun DiceRoller(gameBoard: GameBoard) {
     fun rollDice() {
         dice1 = dice.roll()
         dice2 = dice.roll()
-        //update turn player position
+        val total = dice1 + dice2
 
-        val turnPLayer = gameBoard.players.find{ it.id == gameBoard.currentTurn}
-        if (turnPLayer != null) {
-            turnPLayer.numCell += dice1 + dice2
+        val turnPlayer = gameBoard.players.find { it.id == gameBoard.currentTurn }
+        if (turnPlayer != null) {
+            turnPlayer.numCell = (turnPlayer.numCell + total) % gameBoard.cells.size
         }
     }
 
@@ -39,7 +38,6 @@ fun DiceRoller(gameBoard: GameBoard) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
         Row(
             modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
