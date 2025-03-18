@@ -5,34 +5,24 @@ import com.dallascollege.monopoly.enums.PropertyColor.NONE
 import kotlin.math.min
 
 class Property(
-    id: Int,
-    name: String,
-    price: Int,
-    color: PropertyColor = NONE, // Corrected default value
-    isPurchased: Boolean = false,
-    baseRent: Int = 0,
-    isUtility: Boolean = false,
-    isRailRoad: Boolean = false,
-    numHouses: Int = 0,
-    numHotels: Int = 0,
-    isMortgaged: Boolean = false
+    val id: Int,
+    val name: String,
+    val price: Int,
+    val color: PropertyColor = NONE,
+    var isPurchased: Boolean = false,
+    val baseRent: Int = 0,
+    val isUtility: Boolean = false,
+    val isRailRoad: Boolean = false,
+    var numHouses: Int = 0,
+    var numHotels: Int = 0,
+    var isMortgaged: Boolean = false
 ) {
-    var id: Int = id
-    var name: String = name
-    var price: Int = price
-    var color: PropertyColor = color
-    var isPurchased: Boolean = isPurchased
-    var baseRent: Int = baseRent
-    var isUtility: Boolean = isUtility
-    var isRailRoad: Boolean = isRailRoad
-    var numHouses: Int = numHouses
-    var numHotels: Int = numHotels
-    var isMortgaged: Boolean = isMortgaged
-
     // New property for owner reference
     var owner: Player? = null
         internal set
 
+    // ...
+}
     /**
      * Attempts to purchase this property for the given player
      */
