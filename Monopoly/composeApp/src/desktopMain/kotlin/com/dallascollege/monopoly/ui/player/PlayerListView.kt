@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.dallascollege.monopoly.model.GameBoard
+import com.dallascollege.monopoly.model.Player
 
 @Composable
 fun PlayersListView(gameBoard: GameBoard) {

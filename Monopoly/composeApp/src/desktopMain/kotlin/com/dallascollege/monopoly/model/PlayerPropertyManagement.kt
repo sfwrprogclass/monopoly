@@ -1,8 +1,6 @@
 package com.dallascollege.monopoly.model
 
 import com.dallascollege.monopoly.enums.PropertyColor
-import com.dallascollege.monopoly.model.Property.*
-
 
 /**
  * Contains property management utility functions for player interactions

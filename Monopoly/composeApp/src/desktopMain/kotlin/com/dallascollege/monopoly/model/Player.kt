@@ -1,9 +1,9 @@
 package com.dallascollege.monopoly.model
 
-import com.dallascollege.monopoly.enums.Token
 import com.dallascollege.monopoly.enums.PropertyColor
+import com.dallascollege.monopoly.enums.Token
 
-data class Player(
+class Player(
     var id: Int = 1, // Ensure id is Int
     var money: Int = 1500,
     var turnNum: Int = 1,
@@ -14,23 +14,20 @@ data class Player(
     var hasOutJailCard: Boolean = false,
     var games: Array<Game> = emptyArray(),
     var isCPU: Boolean = false,
-    var numCell: Int = 1
-) {
+    var numCell: Int = 1,
     val properties: MutableList<Property> = mutableListOf()
+)
+{
 
     fun addProperty(property: Property) {
         properties.add(property)
-    }
-
-    fun getUtilityCount(): Int {
-        return properties.count { it.isUtility }
     }
 
     fun getRailroadCount(): Int {
         return properties.count { it.isRailRoad }
     }
 
-    fun getProperties(): List<Property> {
+    fun getAllProperties(): List<Property> {
         return properties.toList()
     }
 
@@ -43,7 +40,6 @@ data class Player(
         println("$name moved to cell $numCell")
     }
 
-
     private fun getColorGroupSize(color: PropertyColor): Int {
         return when (color) {
             PropertyColor.BROWN, PropertyColor.LIGHT_BLUE, PropertyColor.PINK, PropertyColor.ORANGE,
@@ -51,4 +47,23 @@ data class Player(
             else -> 0
         }
     }
+
+    fun addMoney(amount: Int) {
+        money += amount
+    }
+
+    fun deductMoney(amount: Int) {
+        money -= amount
+    }
+
+    fun getUtilityCount(): Int {
+        return properties.count { it.isUtility }
+    }
+
+    companion object {
+        fun getUtilityCount(player: Player): Int {
+            return player.properties.count { it.isUtility }
+        }
+    }
 }
+

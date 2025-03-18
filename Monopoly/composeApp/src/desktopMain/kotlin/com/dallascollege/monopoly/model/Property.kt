@@ -1,13 +1,14 @@
 package com.dallascollege.monopoly.model
 
 import com.dallascollege.monopoly.enums.PropertyColor
+import com.dallascollege.monopoly.enums.PropertyColor.NONE
 import kotlin.math.min
 
 class Property(
     id: Int,
     name: String,
     price: Int,
-    color: PropertyColor = PropertyColor.WHITE,
+    color: PropertyColor = NONE, // Corrected default value
     isPurchased: Boolean = false,
     baseRent: Int = 0,
     isUtility: Boolean = false,
@@ -62,7 +63,7 @@ class Property(
     /**
      * Calculates the rent amount based on property type and development
      */
-    private fun calculateRent(): Int {
+    fun calculateRent(): Int {
         return when {
             isUtility -> calculateUtilityRent()
             isRailRoad -> calculateRailroadRent()
@@ -72,22 +73,21 @@ class Property(
         }
     }
 
-    internal fun calculateUtilityRent(): Int {
-        val diceValue = 7 // Replace with actual dice value
+    fun calculateUtilityRent(diceValue: Int = 7): Int { // Added parameter for dice value
         val multiplier = if (owner?.getUtilityCount() == 2) 10 else 4
         return diceValue * multiplier
     }
 
-    internal fun calculateRailroadRent(): Int {
+     fun calculateRailroadRent(): Int {
         val railroadCount = owner?.getRailroadCount() ?: 0
         return baseRent * (1 shl (railroadCount - 1))
     }
 
-    internal fun calculateHouseRent(): Int {
+     fun calculateHouseRent(): Int {
         return baseRent * (numHouses + 1) * 2
     }
 
-    internal fun calculateHotelRent(): Int {
+     fun calculateHotelRent(): Int {
         return baseRent * 10
     }
 
@@ -134,5 +134,27 @@ class Property(
      */
     fun getHotelPrice(): Int {
         return getHousePrice() * 5
+    }
+
+    /**
+     * Mortgages the property if it is not already mortgaged
+     */
+    fun mortgage(): Boolean {
+        if (isMortgaged) return false
+        isMortgaged = true
+        owner?.money = (owner?.money ?: 0) + (price / 2)
+        return true
+    }
+
+    /**
+     * Unmortgages the property if it is mortgaged
+     */
+    fun unmortgage(): Boolean {
+        if (!isMortgaged) return false
+        val unmortgageCost = (price / 2) + (price / 10) // 10% interest
+        if (owner?.money ?: 0 < unmortgageCost) return false
+        owner?.money = (owner?.money ?: 0) - unmortgageCost
+        isMortgaged = false
+        return true
     }
 }
