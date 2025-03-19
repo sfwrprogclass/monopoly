@@ -1,23 +1,22 @@
 package com.dallascollege.monopoly.model
 
+
 import com.dallascollege.monopoly.enums.PropertyColor
 import com.dallascollege.monopoly.enums.Token
 
 class Player(
-    var id: Int = 1, // Ensure id is Int
+    var id: Int = 1,
     var money: Int = 1500,
     var turnNum: Int = 1,
     var name: String,
-    var token: Token,
-    var propertyIds: Array<Int> = emptyArray(),
+    var token: Token, var propertyIds: Array<Int> = emptyArray(),
     var inJail: Boolean = false,
     var hasOutJailCard: Boolean = false,
     var games: Array<Game> = emptyArray(),
     var isCPU: Boolean = false,
     var numCell: Int = 1,
     val properties: MutableList<Property> = mutableListOf()
-)
-{
+) {
 
     fun addProperty(property: Property) {
         properties.add(property)
@@ -40,7 +39,7 @@ class Player(
         println("$name moved to cell $numCell")
     }
 
-    private fun getColorGroupSize(color: PropertyColor): Int {
+    fun getColorGroupSize(color: PropertyColor): Int {
         return when (color) {
             PropertyColor.BROWN, PropertyColor.LIGHT_BLUE, PropertyColor.PINK, PropertyColor.ORANGE,
             PropertyColor.RED, PropertyColor.YELLOW, PropertyColor.GREEN, PropertyColor.BLUE -> 3
@@ -66,4 +65,3 @@ class Player(
         }
     }
 }
-

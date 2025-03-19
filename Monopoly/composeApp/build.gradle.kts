@@ -25,7 +25,6 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
-            implementation(compose.desktop.currentOs)
             implementation(compose.material) // For Material UI components
             implementation(compose.ui) // For basic UI components
             implementation(compose.foundation) // For foundational components like layouts

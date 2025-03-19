@@ -17,12 +17,9 @@ class Property(
     var numHotels: Int = 0,
     var isMortgaged: Boolean = false
 ) {
-    // New property for owner reference
     var owner: Player? = null
         internal set
 
-    // ...
-}
     /**
      * Attempts to purchase this property for the given player
      */
@@ -63,21 +60,21 @@ class Property(
         }
     }
 
-    fun calculateUtilityRent(diceValue: Int = 7): Int { // Added parameter for dice value
+    fun calculateUtilityRent(diceValue: Int = 7): Int {
         val multiplier = if (owner?.getUtilityCount() == 2) 10 else 4
         return diceValue * multiplier
     }
 
-     fun calculateRailroadRent(): Int {
+    fun calculateRailroadRent(): Int {
         val railroadCount = owner?.getRailroadCount() ?: 0
         return baseRent * (1 shl (railroadCount - 1))
     }
 
-     fun calculateHouseRent(): Int {
+    fun calculateHouseRent(): Int {
         return baseRent * (numHouses + 1) * 2
     }
 
-     fun calculateHotelRent(): Int {
+    fun calculateHotelRent(): Int {
         return baseRent * 10
     }
 
