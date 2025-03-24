@@ -22,6 +22,12 @@ class Player(
             .toTypedArray()
     }
 
+    fun getRailroads(board: GameBoard): Array<Property> {
+        return board.properties
+            .filter { it.isRailRoad && propertyIds.contains(it.id) }
+            .toTypedArray()
+    }
+
     var id: Number = id
         get() = field
         set(value) {

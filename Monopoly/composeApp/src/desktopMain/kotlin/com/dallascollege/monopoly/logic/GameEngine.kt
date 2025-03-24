@@ -44,4 +44,21 @@ object GameEngine {
         player.totalMoney -= property.baseRent * numberOfUtilities
         owner.totalMoney += property.baseRent * numberOfUtilities
     }
+
+    fun collectRailroads(board: GameBoard, playerId: Int) {
+        val player = board.getPlayerById(playerId) ?: return
+        val cell = board.getCellById(player.numCell) ?: return
+        if (!cell.isProperty()) return
+
+        val property = board.getPropertyById(cell.propertyId) ?: return
+        if (!property.isRailRoad) return
+        val owner = board.getPropertyOwner(property) ?: return
+
+        if (owner == player) return
+
+        val numberOfRailroads: Int = player.getRailroads(board).size
+
+        player.totalMoney -= property.baseRent * numberOfRailroads
+        owner.totalMoney += property.baseRent * numberOfRailroads
+    }
 }
