@@ -1,7 +1,6 @@
 package com.dallascollege.monopoly.logic
 
 import com.dallascollege.monopoly.model.*
-import kotlinx.coroutines.processNextEventInCurrentThread
 
 //make it static class with static methods for the different actions to be executed
 object GameEngine {
@@ -60,5 +59,60 @@ object GameEngine {
 
         player.totalMoney -= property.baseRent * numberOfRailroads
         owner.totalMoney += property.baseRent * numberOfRailroads
+    }
+
+    private fun earnCentralMoney(board: GameBoard, player: Player) {
+        player.totalMoney += board.centralMoney
+        board.centralMoney = 0
+    }
+
+    private fun goToJail(player: Player) {
+        player.inJail = true
+        player.numCell = 23
+    }
+
+    //TODO
+    private fun getChance(player: Player) {
+
+    }
+
+    private fun collectSalary(player: Player) {
+        player.totalMoney += 200
+    }
+
+    //TODO
+    private fun getCommunityChest(player: Player) {
+
+    }
+
+    private fun payIncomeTax(player: Player) {
+        player.totalMoney -= 100
+    }
+
+    private fun payLuxuryTax(player: Player) {
+        player.totalMoney -= 100
+    }
+
+    fun landingAction(board: GameBoard, playerId: Int) {
+        val player = board.getPlayerById(playerId) ?: return
+        val cell = board.getCellById(player.numCell) ?: return
+        if (cell.isProperty()) {
+            collectBaseRent(board, playerId)
+        } else if (cell.isParking) {
+            earnCentralMoney(board, player)
+        } else if (cell.isGoToJail) {
+            goToJail(player)
+        } else if (cell.isChance) {
+            getChance(player)
+        } else if (cell.isCollectSalary) {
+            collectSalary(player)
+        } else if (cell.isCommunityChest) {
+            getCommunityChest(player)
+        } else if (cell.isIncomeTax) {
+            payIncomeTax(player)
+        } else if (cell.isLuxuryTax) {
+            payLuxuryTax(player)
+        }
+        //do nothing if isVisitingJail
     }
 }
