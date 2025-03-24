@@ -15,6 +15,13 @@ class Player(
     isCPU: Boolean = false,
     numCell: Int = 1
 ) {
+
+    fun getUtilities(board: GameBoard): Array<Property> {
+        return board.properties
+            .filter { it.isUtility && propertyIds.contains(it.id) }
+            .toTypedArray()
+    }
+
     var id: Number = id
         get() = field
         set(value) {

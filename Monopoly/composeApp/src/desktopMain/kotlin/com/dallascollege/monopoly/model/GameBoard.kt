@@ -11,7 +11,7 @@ class GameBoard(
     speedDieMode: Boolean = false,
     freeParkingRule: Boolean = false,
     cells: Array<Cell> = emptyArray(),
-    properties: Array<Property> = emptyArray()
+    properties: Array<Property> = emptyArray(),
 ) {
 
     private fun createCells() {
@@ -564,6 +564,23 @@ class GameBoard(
     fun createModels() {
         createProperties()
         createCells()
+    }
+
+    //NEW Methods to access objects by id
+    fun getPlayerById(id: Int): Player? {
+        return players.find { it.id == id }
+    }
+
+    fun getPropertyById(id: Int): Property? {
+        return properties.find { it.id == id }
+    }
+
+    fun getCellById(numCell: Int): Cell? {
+        return cells.find { it.numCell == numCell }
+    }
+
+    fun getPropertyOwner(property: Property): Player? {
+        return players.find( { it.propertyIds.contains(property.id)})
     }
 
     var players: Array<Player> = players
