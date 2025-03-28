@@ -65,7 +65,7 @@ fun Layout(gameBoard: GameBoard) {
                     modifier = Modifier
                         .weight(0.15f)
                         .fillMaxWidth()
-                        .background(Color(0xFFD4AF37)), // Gold background
+                        .background(Color(0xFF98FF98)),
                     contentAlignment = Alignment.Center
                 ) {
                     playerMoney(gameBoard)
