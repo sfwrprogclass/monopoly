@@ -4,7 +4,7 @@ import com.dallascollege.monopoly.enums.Token
 
 class Player(
     id: Number = 1,
-    totalMoney: Int = 1200,
+    totalMoney: Int = 1500,
     turnNum: Int = 1,
     name: String,
     token: Token,
