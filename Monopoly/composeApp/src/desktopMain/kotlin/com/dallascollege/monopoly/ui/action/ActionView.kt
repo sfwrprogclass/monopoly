@@ -2,21 +2,22 @@ package com.dallascollege.monopoly.ui.action
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.ui.Modifier
 import androidx.compose.material.*
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.dallascollege.monopoly.enums.ActionType
 import com.dallascollege.monopoly.model.GameBoard
 
 @Composable
 fun ActionView(gameBoard: GameBoard, playerId: Int, modifier: Modifier = Modifier) {
 
-    var status = remember { mutableStateOf<DropdownMenuState>(DropdownMenuState())}
-    var selectedActionType = remember { mutableStateOf(ActionType.SKIP)}
+    var selectedActionType by remember { mutableStateOf(ActionType.SKIP)}
+    var quantity by remember { mutableStateOf("0") }
+    var amount by remember { mutableStateOf("0") }
 
     val player = gameBoard.players.find { it.id == playerId }
 
@@ -24,29 +25,67 @@ fun ActionView(gameBoard: GameBoard, playerId: Int, modifier: Modifier = Modifie
 
     }
 
-    Row(
-        modifier = Modifier.fillMaxSize(),
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(3.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp) // Adds spacing between rows
     ) {
-        Box(modifier = Modifier.weight(0.5f).fillMaxHeight()) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Text("Action type")
-                Text("Drop-down action types")
-                Text("Quantity")
-                Text("Textbox for quantity")
-                Text("Money")
-                Text("TextBox for money")
-            }
+        Row(
+            modifier = Modifier.fillMaxWidth().height(40.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Select action")
+            ActionTypeDropDownMenu()
         }
 
-        Box(modifier = Modifier.weight(0.5f).fillMaxHeight()) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                Text("Select property")
-                Text("Drop-down with available properties")
-                Button(
-                    onClick = {executeAction()}
-                ) {
-                    Text("Execute action")
-                }
+        Row(
+            modifier = Modifier.fillMaxWidth().height(48.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Quantity", modifier =  Modifier.padding(horizontal = 5.dp))
+            OutlinedTextField(
+                value = quantity,
+                enabled = false,
+                onValueChange = { quantity = it },
+                textStyle = LocalTextStyle.current.copy(fontSize = 14.sp),
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp),
+                singleLine = true,
+            )
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth().height(48.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Money", modifier =  Modifier.padding(horizontal = 5.dp))
+            OutlinedTextField(
+                value = amount,
+                onValueChange = { amount = it },
+                textStyle = LocalTextStyle.current.copy(fontSize = 14.sp),
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp),
+                singleLine = true,
+            )
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth().height(40.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Select property")
+            ActionTypeDropDownMenu()
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth().height(40.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Button(onClick = { executeAction() }) {
+                Text("Execute action")
             }
         }
     }
