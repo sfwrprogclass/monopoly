@@ -1,18 +1,23 @@
 package com.dallascollege.monopoly.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dallascollege.monopoly.model.Player
@@ -36,6 +41,7 @@ fun TokenSelectionScreen(players: List<Player>, onTokenSelected: (Player, String
     val selectedTokens = remember { mutableStateMapOf<Player, String>() }
     val availableTokens = remember { mutableStateListOf(*allTokenImages.toTypedArray()) }
     val currentPlayer = players[currentPlayerIndex]
+    var allPlayersSelected by remember { mutableStateOf(false) }
 
     val fadeAlpha = animateFloatAsState(
         targetValue = 1f,
@@ -58,11 +64,13 @@ fun TokenSelectionScreen(players: List<Player>, onTokenSelected: (Player, String
                 modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    "Player ${currentPlayerIndex + 1}, Choose Your Token",
-                    fontSize = 28.sp,
-                    color = Color.Black
-                )
+                AnimatedVisibility(visible = currentPlayerIndex < players.size) {
+                    Text(
+                        "Player ${currentPlayerIndex + 1}, Choose Your Token",
+                        fontSize = 28.sp,
+                        color = Color.Black,
+                    )
+                }
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Row(
@@ -71,7 +79,8 @@ fun TokenSelectionScreen(players: List<Player>, onTokenSelected: (Player, String
                 ) {
                     Button(
                         onClick = {
-                            currentTokenIndex = (currentTokenIndex - 1 + availableTokens.size) % availableTokens.size
+                            currentTokenIndex =
+                                (currentTokenIndex - 1 + availableTokens.size) % availableTokens.size
                         },
                         modifier = Modifier.size(80.dp, 80.dp),
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
@@ -103,22 +112,27 @@ fun TokenSelectionScreen(players: List<Player>, onTokenSelected: (Player, String
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
                     onClick = {
-                        val selectedToken = availableTokens[currentTokenIndex]
-                        selectedTokens[currentPlayer] = selectedToken
-                        onTokenSelected(currentPlayer, selectedToken)
+                        if (availableTokens.isNotEmpty()) {
+                            val selectedToken = availableTokens[currentTokenIndex]
+                            selectedTokens[currentPlayer] = selectedToken
+                            onTokenSelected(currentPlayer, selectedToken)
 
-                        availableTokens.remove(selectedToken)
+                            availableTokens.remove(selectedToken)
 
-                        if (currentPlayerIndex < players.size - 1) {
-                            currentPlayerIndex++
-                            currentTokenIndex = 0
+                            if (currentPlayerIndex < players.size - 1) {
+                                currentPlayerIndex++
+                                currentTokenIndex = 0
+                            } else {
+                                allPlayersSelected = true
+                            }
                         }
                     },
+                    enabled = availableTokens.isNotEmpty() && !allPlayersSelected,
                     modifier = Modifier.size(200.dp, 80.dp),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                     elevation = ButtonDefaults.elevation(defaultElevation = 0.dp, pressedElevation = 0.dp)
                 ) {
-                    Text("Select Token", color = Color.Black, fontSize = 24.sp)
+                    Text("Select Token", color = Color.Black, fontSize = 24.sp, textAlign = TextAlign.Center)
                 }
             }
         }

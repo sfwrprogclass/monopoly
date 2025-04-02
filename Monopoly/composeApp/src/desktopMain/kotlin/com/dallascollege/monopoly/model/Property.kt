@@ -44,6 +44,7 @@ class Property(
         val amountPaid = min(rentAmount, player.money)
         player.money -= amountPaid
         owner?.money = (owner?.money ?: 0) + amountPaid
+
         return amountPaid
     }
 
@@ -52,30 +53,14 @@ class Property(
      */
     fun calculateRent(): Int {
         return when {
-            isUtility -> calculateUtilityRent()
-            isRailRoad -> calculateRailroadRent()
-            numHotels > 0 -> calculateHotelRent()
-            numHouses > 0 -> calculateHouseRent()
+            numHotels > 0 -> baseRent * (numHotels + 5)
+            numHouses > 0 -> baseRent * (numHouses + 1)
             else -> baseRent
         }
     }
 
-    fun calculateUtilityRent(diceValue: Int = 7): Int {
-        val multiplier = if (owner?.getUtilityCount() == 2) 10 else 4
-        return diceValue * multiplier
-    }
-
-    fun calculateRailroadRent(): Int {
-        val railroadCount = owner?.getRailroadCount() ?: 0
-        return baseRent * (1 shl (railroadCount - 1))
-    }
-
-    fun calculateHouseRent(): Int {
-        return baseRent * (numHouses + 1) * 2
-    }
-
-    fun calculateHotelRent(): Int {
-        return baseRent * 10
+    fun unmortgage(): Boolean {
+        return true
     }
 
     /**
