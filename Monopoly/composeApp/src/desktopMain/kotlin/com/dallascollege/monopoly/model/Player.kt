@@ -9,9 +9,15 @@ class Player(
     var money: Int = 1500,
     var turnNum: Int = 1,
     var name: String,
-    var token: Token, var propertyIds: Array<Int> = emptyArray(),
     var inJail: Boolean = false,
     var hasOutJailCard: Boolean = false,
+   
+
+    var token: Token = token
+        get() = field
+        set(value) {
+            field = value
+        }, 
     var games: Array<Game> = emptyArray(),
     var isCPU: Boolean = false,
     var numCell: Int = 1,
