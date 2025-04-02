@@ -21,7 +21,7 @@ fun App() {
     var playerCount by remember { mutableStateOf<Int?>(null) }
     val players = remember { mutableStateListOf<Player>() }
     var allTokensSelected by remember { mutableStateOf(false) }
-    val selectedTokens = remember { mutableStateMapOf<Player, String>() }
+    val selectedTokens = remember { mutableStateMapOf<Player, Token>() }
     var turnOrderConfirmed by remember { mutableStateOf(false) }
     var turnOrder by remember { mutableStateOf<List<String>>(emptyList()) }
 
@@ -44,7 +44,7 @@ fun App() {
         }
         !allTokensSelected -> {
             TokenSelectionScreen(players) { player, token ->
-                selectedTokens[player] = token
+                selectedTokens[player] = Token.values().find { it.name.equals(token, ignoreCase = true) } ?: Token.TOP_HAT
                 if (selectedTokens.size == players.size) {
                     allTokensSelected = true
                 }
@@ -52,7 +52,7 @@ fun App() {
         }
         !turnOrderConfirmed -> {
             TurnOrderScreen(
-                playerTokens = selectedTokens.values.toList(),
+                playerTokens = selectedTokens.values.map { it.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() } },
                 onNextClicked = { finalOrder ->
                     turnOrder = finalOrder
                     turnOrderConfirmed = true
@@ -60,7 +60,9 @@ fun App() {
             )
         }
         else -> {
-            val currentPlayer = turnOrder.firstOrNull() ?: "Player"
+            players.forEach { player ->
+                selectedTokens[player]?.let { player.token = it }
+            }
 
             val gameBoard = GameBoard(players.toTypedArray())
             gameBoard.createModels()
