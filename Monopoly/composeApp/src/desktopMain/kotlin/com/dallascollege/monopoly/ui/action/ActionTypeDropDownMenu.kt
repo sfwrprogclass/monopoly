@@ -1,5 +1,6 @@
 package com.dallascollege.monopoly.ui.action
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,16 +16,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.dallascollege.monopoly.enums.ActionType
 
 @Composable
-fun ActionTypeDropDownMenu() {
+fun ActionTypeDropDownMenu(handleActionTypeChange: (ActionType) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     var selectedActionType by remember { mutableStateOf(ActionType.SKIP)}
 
-    Box {
+    fun handleClick(actionType: ActionType) {
+        selectedActionType = actionType
+        expanded = false
+        handleActionTypeChange(selectedActionType)
+    }
 
+    Box {
         Button(
             modifier = Modifier
                 .padding(5.dp, 0.dp, 5.dp, 0.dp),
@@ -39,7 +46,10 @@ fun ActionTypeDropDownMenu() {
             onDismissRequest = { expanded = false }
         ) {
             ActionType.entries.forEach({
-                DropdownMenuItem(content = { Text(it.text) }, onClick = { /* Handle click */ })
+                DropdownMenuItem(
+                    content = { Text(it.text) },
+                    modifier = Modifier.background(if (it == selectedActionType) Color.Blue else Color.Yellow),
+                    onClick = { handleClick(it) })
             })
         }
     }
