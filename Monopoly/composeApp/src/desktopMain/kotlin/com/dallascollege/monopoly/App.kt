@@ -32,12 +32,16 @@ fun App() {
             PlayerSelectionScreen { count ->
                 playerCount = count
                 players.clear()
-                players.addAll(List(count) { Player(id = it + 1, name = "Player ${it + 1}", token = Token.TOP_HAT) })
+                players.addAll(List(count) {
+                    val token = Token.values().getOrNull(it) ?: Token.BOOT
+                    Player(id = it + 1, name = "Player ${it + 1}", token = token)
+                })
             }
         }
         !allTokensSelected -> {
             TokenSelectionScreen(players) { player, token ->
-                selectedTokens[player] = Token.values().find { it.name.equals(token, ignoreCase = true) } ?: Token.TOP_HAT
+                val fixedToken = token.uppercase().replace(" ", "")
+                selectedTokens[player] = Token.valueOf(fixedToken)
                 if (selectedTokens.size == players.size) {
                     allTokensSelected = true
                 }
@@ -45,7 +49,7 @@ fun App() {
         }
         !turnOrderConfirmed -> {
             TurnOrderScreen(
-                playerTokens = selectedTokens.values.map { it.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() } },
+                playerTokens = selectedTokens.values.map { it.toString() },
                 onNextClicked = { finalOrder ->
                     turnOrder = finalOrder
                     turnOrderConfirmed = true
@@ -55,6 +59,18 @@ fun App() {
         else -> {
             players.forEach { player ->
                 selectedTokens[player]?.let { player.token = it }
+            }
+
+            val sortedPlayers = players.sortedBy { player ->
+                turnOrder.indexOf(player.token.toString())
+            }
+
+            players.clear()
+            players.addAll(sortedPlayers)
+
+            players.forEachIndexed { index, player ->
+                player.id = index + 1
+                player.name = "Player ${index + 1}"
             }
 
             val gameBoard = GameBoard(players.toTypedArray())
