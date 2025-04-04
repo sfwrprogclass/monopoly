@@ -1,31 +1,29 @@
 package com.dallascollege.monopoly.ui.action
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.ui.Modifier
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dallascollege.monopoly.enums.ActionType
-import com.dallascollege.monopoly.model.Action
 import com.dallascollege.monopoly.model.GameBoard
-import javax.swing.plaf.ActionMapUIResource
+import com.dallascollege.monopoly.model.Property
+import com.dallascollege.monopoly.ui.property.PropertyDropDownMenu
 
 @Composable
-fun ActionView(gameBoard: GameBoard, playerId: Int, modifier: Modifier = Modifier) {
+fun ActionView(board: GameBoard, playerId: Int, modifier: Modifier = Modifier) {
 
     var selectedActionType by remember { mutableStateOf(ActionType.SKIP)}
+    var selectedProperty: Property? by remember { mutableStateOf(null) }
     var quantity by remember { mutableStateOf("0") }
     var amount by remember { mutableStateOf("0") }
     var isQuantityEnable by remember { mutableStateOf(false)}
     var isAmountEnable by remember { mutableStateOf(false)}
     var isSelectedPropertyEnabled by remember { mutableStateOf(false)}
 
-    val player = gameBoard.players.find { it.id == playerId }
+    val player = board.players.find { it.id == playerId }
 
     fun handleActionTypeChange(actionType: ActionType){
         selectedActionType = actionType
@@ -41,12 +39,21 @@ fun ActionView(gameBoard: GameBoard, playerId: Int, modifier: Modifier = Modifie
                 isAmountEnable = false
                 isSelectedPropertyEnabled = true
             }
+            ActionType.MORTGAGE_PROPERTY -> {
+                isQuantityEnable = false
+                isAmountEnable = false
+                isSelectedPropertyEnabled = true
+            }
             else -> {
                 isQuantityEnable = false
                 isAmountEnable = false
                 isSelectedPropertyEnabled = false
             }
         }
+    }
+
+    fun handlePropertyChange(property: Property) {
+        selectedProperty = property
     }
 
     fun executeAction(): Unit {
@@ -135,7 +142,6 @@ fun ActionView(gameBoard: GameBoard, playerId: Int, modifier: Modifier = Modifie
             modifier = Modifier.fillMaxWidth().height(48.dp),
             horizontalArrangement = Arrangement.Start
         ) {
-//            Text("Money", modifier =  Modifier.padding(horizontal = 5.dp))
             Text(
                 "Money",
                 modifier = Modifier
@@ -163,7 +169,11 @@ fun ActionView(gameBoard: GameBoard, playerId: Int, modifier: Modifier = Modifie
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Select property")
-            //TODO
+            if (player != null) {
+                PropertyDropDownMenu(player, board, isSelectedPropertyEnabled) {
+                    property -> handlePropertyChange(property)
+                }
+            }
         }
 
         Row(
