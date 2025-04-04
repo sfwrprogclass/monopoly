@@ -41,6 +41,8 @@ fun ActionTypeDropDownMenu(handleActionTypeChange: (ActionType) -> Unit) {
             Text(selectedActionType.text)
             Icon(Icons.Default.KeyboardArrowDown, contentDescription = "More")
         }
+        val selectedColor = Color(0xFF90CAF9)
+        val unselectedColor = Color(0xFFFFC1E3)
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
@@ -48,7 +50,7 @@ fun ActionTypeDropDownMenu(handleActionTypeChange: (ActionType) -> Unit) {
             ActionType.entries.forEach({
                 DropdownMenuItem(
                     content = { Text(it.text) },
-                    modifier = Modifier.background(if (it == selectedActionType) Color.Blue else Color.Yellow),
+                    modifier = Modifier.background(if (it == selectedActionType) selectedColor else unselectedColor),
                     onClick = { handleClick(it) })
             })
         }
