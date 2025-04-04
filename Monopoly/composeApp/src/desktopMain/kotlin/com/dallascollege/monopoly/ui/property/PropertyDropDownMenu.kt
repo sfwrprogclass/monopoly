@@ -1,37 +1,32 @@
-package com.dallascollege.monopoly.ui.action
+package com.dallascollege.monopoly.ui.property
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.dallascollege.monopoly.enums.ActionType
+import com.dallascollege.monopoly.model.GameBoard
+import com.dallascollege.monopoly.model.Player
+import com.dallascollege.monopoly.model.Property
 
 @Composable
-fun ActionTypeDropDownMenu(handleActionTypeChange: (ActionType) -> Unit) {
+fun PropertyDropDownMenu(player: Player, board: GameBoard, isSelectedPropertyEnable: Boolean, handlePropertyChange: (Property) -> Unit) {
+    val properties = player.getProperties(board)
     var expanded by remember { mutableStateOf(false) }
-    var selectedActionType by remember { mutableStateOf(ActionType.SKIP)}
-    val excludedActionTypes = listOf( ActionType.PAY_RENT, ActionType.PAY_BANK, ActionType.GO_TO_JAIL)
+    var selectedProperty by remember { mutableStateOf(properties?.getOrNull(0)) }
 
-    fun handleClick(actionType: ActionType) {
-        selectedActionType = actionType
+    fun handleClick(property: Property) {
+        selectedProperty = property
         expanded = false
-        handleActionTypeChange(selectedActionType)
+        handlePropertyChange.invoke(selectedProperty!!)
     }
 
     Box {
@@ -39,10 +34,11 @@ fun ActionTypeDropDownMenu(handleActionTypeChange: (ActionType) -> Unit) {
             modifier = Modifier
                 .padding(5.dp, 5.dp, 5.dp, 5.dp),
             shape = RoundedCornerShape(2.dp),
-            onClick = { expanded = true }
+            onClick = { expanded = true },
+            enabled = isSelectedPropertyEnable
         ) {
             Text(
-                text = selectedActionType.text,
+                text = selectedProperty?.name ?: "",
                 style = LocalTextStyle.current.copy(
                     fontSize = 12.sp,
                     textAlign = TextAlign.Center,
@@ -56,12 +52,11 @@ fun ActionTypeDropDownMenu(handleActionTypeChange: (ActionType) -> Unit) {
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            ActionType.entries
-                .filter {it !in excludedActionTypes}
+            properties
                 .forEach({
                     DropdownMenuItem(
-                        content = { Text(it.text) },
-                        modifier = Modifier.background(if (it == selectedActionType) selectedColor else unselectedColor),
+                        content = { Text(it.name) },
+                        modifier = Modifier.background(if (it == selectedProperty) selectedColor else unselectedColor),
                         onClick = { handleClick(it) }
                     )
                 })

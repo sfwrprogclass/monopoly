@@ -2,6 +2,7 @@
 
 package com.dallascollege.monopoly.model
 
+import androidx.lifecycle.viewmodel.CreationExtras
 import com.dallascollege.monopoly.enums.Token
 import com.dallascollege.monopoly.logic.GameBoard
 import com.dallascollege.monopoly.model.Game
@@ -24,6 +25,19 @@ data class Player(
 
 ) {
     fun getGames(): List<Game> = games
+
+    fun getProperties(board: GameBoard): Array<Property> {
+        val playerProperties = mutableListOf<Property>()
+
+        propertyIds.forEach { id ->
+            val property = board.properties.find { it.id == id }
+            if (property != null) {
+                playerProperties.add(property)
+            }
+        }
+
+        return playerProperties.toTypedArray()
+    }
 
     fun addGame(game: Game) {
         games.add(game)
