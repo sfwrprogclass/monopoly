@@ -43,7 +43,7 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.dallascollege.monopoly"
+            packageName = "MonopolyGame"
             packageVersion = "1.0.0"
         }
     }
