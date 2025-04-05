@@ -1,7 +1,5 @@
 package com.dallascollege.monopoly.enums
 
-import com.dallascollege.monopoly.enums.Token.*
-
 enum class Token {
     BOOT,
     DOG,
@@ -9,7 +7,7 @@ enum class Token {
     IRON,
     TOPHAT,
     THIMBLE,
-    WHEELBARROW,
+    WHEELBARREL,
     BATTLESHIP;
 
     override fun toString(): String {
@@ -19,12 +17,12 @@ enum class Token {
 
 fun convertTokenToImageStr(token: Token): String {
     return when (token) {
-        Token.TOP_HAT -> "TopHat"
+        Token.TOPHAT -> "TopHat"
         Token.BATTLESHIP -> "Battleship"
         Token.BOOT -> "Boot"
         Token.IRON -> "Iron"
         Token.THIMBLE -> "Thimble"
-        Token.WHEEL_BARREL -> "WheelBarrow"
+        Token.WHEELBARREL -> "WheelBarrow"
         Token.CAR -> "Car"
         Token.DOG -> "Dog"
     }
