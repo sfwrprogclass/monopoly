@@ -3,7 +3,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 
 class Cell(
     numCell: Int = 1,
-    propertyId: Int = 1,
+    propertyId: Int = -1,
     isGoToJail: Boolean = false,
     isLuxuryTax: Boolean = false,
     isIncomeTax: Boolean = false,
@@ -33,4 +33,12 @@ class Cell(
     var isCollectSalary: Boolean = isCollectSalary
 
     var isVisitingJail: Boolean = isVisitingJail
+        get() = field
+        set(value) {
+            field = value
+        }
+
+    fun isProperty(): Boolean {
+        return propertyId != -1
+    }
 }

@@ -17,9 +17,20 @@ class Player(
     var numCell: Int = 1,
     val properties: MutableList<Property> = mutableListOf()
 ) {
-
     fun addProperty(property: Property) {
         properties.add(property)
+    }
+
+    fun getUtilities(board: GameBoard): Array<Property> {
+        return board.properties
+            .filter { it.isUtility && propertyIds.contains(it.id) }
+            .toTypedArray()
+    }
+
+    fun getRailroads(board: GameBoard): Array<Property> {
+        return board.properties
+            .filter { it.isRailRoad && propertyIds.contains(it.id) }
+            .toTypedArray()
     }
 
     fun getRailroadCount(): Int {
