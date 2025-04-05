@@ -1,11 +1,9 @@
 package com.dallascollege.monopoly.ui.layout
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,9 +13,9 @@ import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.ui.action.ActionArea
 import com.dallascollege.monopoly.ui.dashboard.GameBoardView
 import com.dallascollege.monopoly.ui.dice.DiceRoller
+import com.dallascollege.monopoly.ui.player.PlayerMoneyView
 import com.dallascollege.monopoly.ui.player.PlayersListView
 import com.dallascollege.monopoly.ui.property.PropertyListView
-import com.dallascollege.monopoly.ui.player.playerMoney
 
 @Composable
 fun Layout(gameBoard: GameBoard) {
@@ -68,7 +66,7 @@ fun Layout(gameBoard: GameBoard) {
                         .background(Color(0xFF98FF98)),
                     contentAlignment = Alignment.Center
                 ) {
-                    playerMoney(gameBoard)
+                    PlayerMoneyView(gameBoard)
                 }
 
                 Box(
