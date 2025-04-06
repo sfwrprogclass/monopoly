@@ -1,19 +1,15 @@
 package com.dallascollege.monopoly.ui.dice
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.font.FontWeight
 import com.dallascollege.monopoly.model.Dice
-import com.dallascollege.monopoly.model.GameBoard
+import com.dallascollege.monopoly.logic.GameBoard
 
 
 @Composable

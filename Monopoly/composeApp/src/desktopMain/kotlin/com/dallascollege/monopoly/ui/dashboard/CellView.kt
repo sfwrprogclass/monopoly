@@ -2,7 +2,6 @@ package com.dallascollege.monopoly.ui.dashboard
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,7 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.dallascollege.monopoly.model.GameBoard
+import com.dallascollege.monopoly.logic.GameBoard
 import com.dallascollege.monopoly.enums.convertTokenToImageStr
 
 @Composable
