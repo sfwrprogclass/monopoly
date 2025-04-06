@@ -1,6 +1,9 @@
-package com.dallascollege.monopoly.model
+package com.dallascollege.monopoly.logic
 
 import com.dallascollege.monopoly.enums.PropertyColor
+import com.dallascollege.monopoly.model.Cell
+import com.dallascollege.monopoly.model.Player
+import com.dallascollege.monopoly.model.Property
 
 class GameBoard(
     players: Array<Player>,

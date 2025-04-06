@@ -11,8 +11,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.dallascollege.monopoly.enums.convertTokenToImageStr
-import com.dallascollege.monopoly.model.GameBoard
-import com.dallascollege.monopoly.model.Player
+import com.dallascollege.monopoly.logic.GameBoard
 
 @Composable
 fun PlayerView(gameBoard: GameBoard, playerId: Int, modifier: Modifier = Modifier) {

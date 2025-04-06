@@ -3,9 +3,7 @@ package com.dallascollege.monopoly.ui.dashboard
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.dallascollege.monopoly.model.Dice
-import com.dallascollege.monopoly.model.GameBoard
-import com.dallascollege.monopoly.model.Player
+import com.dallascollege.monopoly.logic.GameBoard
 
 @Composable
 fun GameBoardView(gameBoard: GameBoard) {

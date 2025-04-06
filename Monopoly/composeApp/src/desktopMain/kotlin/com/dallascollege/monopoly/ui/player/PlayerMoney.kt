@@ -12,7 +12,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.dallascollege.monopoly.model.GameBoard
+import com.dallascollege.monopoly.logic.GameBoard
 
 // Extract text style for reuse
 private val playerInfoTextStyle = TextStyle(

@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.dallascollege.monopoly.enums.Token
-import com.dallascollege.monopoly.model.GameBoard
+import com.dallascollege.monopoly.logic.GameBoard
 import com.dallascollege.monopoly.model.Player
 import com.dallascollege.monopoly.ui.screens.TokenSelectionScreen
 import com.dallascollege.monopoly.ui.screens.PlayerSelectionScreen

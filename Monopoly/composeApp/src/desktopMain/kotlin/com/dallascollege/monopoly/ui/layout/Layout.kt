@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.dallascollege.monopoly.model.GameBoard
+import com.dallascollege.monopoly.logic.GameBoard
 import com.dallascollege.monopoly.ui.action.ActionArea
 import com.dallascollege.monopoly.ui.dashboard.GameBoardView
 import com.dallascollege.monopoly.ui.dice.DiceRoller
