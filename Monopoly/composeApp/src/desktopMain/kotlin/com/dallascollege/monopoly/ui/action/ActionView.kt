@@ -94,6 +94,9 @@ fun ActionView(board: GameBoard, playerId: Int, modifier: Modifier = Modifier) {
             ActionType.SKIP -> {
                 //TODO
             }
+            ActionType.FINISH_TURN -> {
+                //TODO
+            }
         }
     }
 

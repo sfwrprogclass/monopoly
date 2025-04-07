@@ -1,10 +1,9 @@
 package com.dallascollege.monopoly.model
 
-import androidx.lifecycle.viewmodel.CreationExtras
 import com.dallascollege.monopoly.enums.Token
 
 class Player(
-    id: Number = 1,
+    id: Int = 1,
     totalMoney: Int = 1500,
     turnNum: Int = 1,
     name: String,
@@ -42,7 +41,7 @@ class Player(
             .toTypedArray()
     }
 
-    var id: Number = id
+    var id: Int = id
         get() = field
         set(value) {
             field = value

@@ -375,6 +375,7 @@ class GameBoard(
                 id = id,
                 name = "Car Company",
                 price = 150,
+                isUtility = true
             )
         )
         id++
@@ -401,7 +402,7 @@ class GameBoard(
                 id = id,
                 name = "Manhattan Railroad",
                 price = 200,
-                isUtility = true
+                isRailRoad = true
             )
         )
         id++

@@ -10,32 +10,32 @@ kotlin {
     jvm("desktop")
 
     sourceSets {
-        val desktopMain by getting
-
-        commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtime.compose)
+        val commonMain by getting
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
         }
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutines.swing)
-            implementation(compose.desktop.currentOs)
-            implementation(compose.material) // For Material UI components
-            implementation(compose.ui) // For basic UI components
-            implementation(compose.foundation) // For foundational components like layouts
-            implementation(compose.runtime) // For Compose runtime features
+
+        val desktopMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(libs.kotlinx.coroutines.swing)
+                implementation(compose.material)
+                implementation(compose.ui)
+                implementation(compose.foundation)
+                implementation(compose.runtime)
+            }
+        }
+
+        val desktopTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation("org.junit.jupiter:junit-jupiter:5.10.0")
+            }
         }
     }
 }
-dependencies {
-}
-
 
 compose.desktop {
     application {
@@ -46,5 +46,17 @@ compose.desktop {
             packageName = "MonopolyGame"
             packageVersion = "1.0.0"
         }
+    }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
+tasks.withType<Test>().configureEach {
+    testLogging {
+        events("passed", "skipped", "failed")
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        showStandardStreams = true
     }
 }

@@ -4,11 +4,11 @@ import com.dallascollege.monopoly.enums.ActionType
 
 class Action(
     name: String,
-    description: String,
+    description: String = "",
     actionType: ActionType,
-    propertyId: Int,
-    money: Int,
-    quantity: Int
+    propertyId: Int = -1,
+    money: Int = 0,
+    quantity: Int = 0
 ) {
     var name: String = name
         get() = field
