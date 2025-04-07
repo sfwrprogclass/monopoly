@@ -2,7 +2,6 @@
 
 package com.dallascollege.monopoly.model
 
-import androidx.lifecycle.viewmodel.CreationExtras
 import com.dallascollege.monopoly.enums.Token
 import com.dallascollege.monopoly.logic.GameBoard
 import com.dallascollege.monopoly.model.Game
@@ -22,7 +21,20 @@ data class Player(
     var xOffset: Int = 0, // Add an xOffset property (default 0)
     var yOffset: Int = 0  // Add a yOffset property (default 0)
 
-
+data class Player(
+    val id: Int,
+    var name: String = "Unnamed Player",
+    var totalMoney: Int = 1500,
+    val token: Token,
+    var inJail: Boolean = false,
+    var hasOutJailCard: Boolean = false,
+    var isCPU: Boolean = false,
+    var numCell: Int = 1,
+    private var games: MutableList<Game> = mutableListOf(),
+    internal var propertyIds: MutableList<Int> = mutableListOf(),
+    var xOffset: Int = 0, // Add an xOffset property (default 0)
+    var yOffset: Int = 0  // Add a yOffset property (default 0)
+)
 ) {
     fun getGames(): List<Game> = games
 
@@ -47,9 +59,9 @@ data class Player(
         return board.properties.filter { it.isUtility && it.id in propertyIds }
     }
 
-    fun getRailroads(board: GameBoard): List<Property> {
-        return board.properties.filter { it.isRailRoad && it.id in propertyIds }
-    }
+fun getRailroads(board: GameBoard): List<Property> {
+    return board.properties.filter { it.isRailRoad && it.id in propertyIds }
+}
 
     fun getPropertyIds(): List<Int> = propertyIds
 
