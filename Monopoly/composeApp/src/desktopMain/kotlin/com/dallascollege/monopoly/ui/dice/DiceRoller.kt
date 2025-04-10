@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
+import com.dallascollege.monopoly.logic.GameEngine
 import com.dallascollege.monopoly.model.Dice
 import com.dallascollege.monopoly.model.GameBoard
 
@@ -47,10 +48,19 @@ fun DiceRoller(gameBoard: GameBoard) {
             DiceView(dice1)
             DiceView(dice2)
             Button(
-                onClick = { rollDice() }
+                onClick = {
+                    rollDice()
+                    val total = dice1 + dice2
+                    GameEngine.movePlayer(gameBoard, gameBoard.currentTurn, total)
+                }
             ) {
                 Text("Roll the dice")
             }
-        }
+//            Button(
+//                onClick = { rollDice() }
+//            ) {
+//                Text("Roll the dice")
+//            }
+       }
     }
 }
