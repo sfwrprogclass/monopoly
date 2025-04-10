@@ -6,9 +6,18 @@ import com.dallascollege.monopoly.model.Player
 object GameEngine {
 
     fun movePlayer(board: GameBoard, playerId: Int, steps: Int) {
-        board.getPlayerById(playerId).let { player ->
-            if (player != null) {
-                player.numCell += steps
+        val player = board.getPlayerById(playerId) ?: return
+        val totalCells = board.cells.size
+
+        val oldCell = player.numCell
+        player.numCell = ((player.numCell - 1 + steps) % totalCells) + 1
+
+        if (player.numCell < oldCell) {
+            val cellOne = board.getCellById(1)
+            if (cellOne?.isCollectSalary == true) {
+                collectSalary(player)
+            }
+        }
             }
         }
     }
@@ -38,10 +47,15 @@ object GameEngine {
 
         if (owner == player) return
 
-        val numberOfUtilities: Int = player.getUtilities(board).size
+//        val numberOfUtilities: Int = player.getUtilities(board).size
+        val numberOfUtilities = owner.getUtilities(board).size
 
-        player.totalMoney -= property.baseRent * numberOfUtilities
-        owner.totalMoney += property.baseRent * numberOfUtilities
+        val rentToPay = property.baseRent * numberOfUtilities
+        player.totalMoney -= rentToPay
+        owner.totalMoney += rentToPay
+
+//        player.totalMoney -= property.baseRent * numberOfUtilities
+//        owner.totalMoney += property.baseRent * numberOfUtilities
     }
 
     fun collectRailroads(board: GameBoard, playerId: Int) {
@@ -55,10 +69,11 @@ object GameEngine {
 
         if (owner == player) return
 
-        val numberOfRailroads: Int = player.getRailroads(board).size
 
-        player.totalMoney -= property.baseRent * numberOfRailroads
-        owner.totalMoney += property.baseRent * numberOfRailroads
+       val numberOfRailroads: Int = owner.getRailroads(board).size
+       val rentToPay = property.baseRent * numberOfRailroads
+       player.totalMoney -= rentToPay
+       owner.totalMoney += rentToPay
     }
 
     private fun earnCentralMoney(board: GameBoard, player: Player) {
