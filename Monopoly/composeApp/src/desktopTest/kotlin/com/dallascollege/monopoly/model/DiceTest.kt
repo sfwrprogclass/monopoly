@@ -72,6 +72,10 @@ class DiceTest {
         val totalMove = dice1 + dice2
         player.numCell += totalMove
 
+        println("Player initial position: $initialPosition")
+        println("Player rolled the dice and got : $dice1 and $dice2 (Total: $totalMove)")
+        println("Player updated position: ${player.numCell}")
+
         assertEquals(initialPosition + totalMove, player.numCell, "Player position should increase after rolling dice" )
     }
 
@@ -86,10 +90,11 @@ class DiceTest {
         val totalMove = value1 + value2
         player.numCell += totalMove
         val cell = gameBoard.getCellById(player.numCell)
+
         if (cell != null) {
-            println("Player1 got: $dice1 and $dice2. Player1 CurrentPosition: ${player.numCell} ${cell.getName(gameBoard)}")
+            println("Player1 got: $value1 and $value2. Player1 CurrentPosition: ${player.numCell} ${cell.getName(gameBoard)}")
         } else {
-            println("Player1 got: $dice1 and $dice2. Unfortunately cell wasn't found")
+            println("Player1 got: $value1 and $value2. Unfortunately cell wasn't found")
         }
 
         assertEquals( initialPosition + totalMove, player.numCell, "Player should move correctly after rolling dice")

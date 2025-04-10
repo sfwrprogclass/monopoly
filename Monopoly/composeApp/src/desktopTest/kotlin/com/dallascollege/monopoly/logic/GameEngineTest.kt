@@ -83,10 +83,15 @@ class GameEngineTest {
 
         player.numCell = 5
         owner.propertyIds = arrayOf(1, 2)
+        println("Before: ${owner.name} has \$${owner.totalMoney}, ${player.name} has \$${player.totalMoney}")
 
         GameEngine.collectUtilities(gameBoard, player.id)
 
-        assertEquals(1300, player.totalMoney) //
+        println("After: ${owner.name} has \$${owner.totalMoney}, ${player.name} has \$${player.totalMoney}")
+        println("${owner.name} owns utilities with IDs: ${owner.propertyIds.joinToString(", ")}")
+        println("${player.name} landed on cell ${player.numCell}, which is property ID: ${cell.propertyId}")
+
+        assertEquals(1300, player.totalMoney)
         assertEquals(1700, owner.totalMoney)
     }
 
@@ -128,12 +133,15 @@ class GameEngineTest {
         val engine = GameEngine
 
         engine.landingAction(gameBoard, playerIncomeTax.id)
+        println("${playerIncomeTax.name} landed on Income Tax. Money after tax: ${playerIncomeTax.totalMoney}")
         assertEquals(1400, playerIncomeTax.totalMoney)
 
         engine.landingAction(gameBoard, playerLuxuryTax.id)
+        println("${playerLuxuryTax.name} landed on Luxury Tax. Money after tax: ${playerLuxuryTax.totalMoney}")
         assertEquals(1400, playerLuxuryTax.totalMoney)
 
         engine.landingAction(gameBoard, playerGoToJail.id)
+        println("${playerGoToJail.name} was sent to jail. In jail: ${playerGoToJail.inJail}, Position: ${playerGoToJail.numCell}")
         assertTrue(playerGoToJail.inJail)
         assertEquals(23, playerGoToJail.numCell)
     }
