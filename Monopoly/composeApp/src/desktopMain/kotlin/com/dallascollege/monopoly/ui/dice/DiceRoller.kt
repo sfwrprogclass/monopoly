@@ -7,7 +7,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.dallascollege.monopoly.logic.GameBoard
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
+import com.dallascollege.monopoly.logic.GameEngine
 import com.dallascollege.monopoly.model.Dice
 
 @Composable
@@ -49,23 +51,28 @@ fun DiceRoller(gameBoard: GameBoard) {
         ) {
             DiceView(dice1)
             DiceView(dice2)
-            Button(onClick = { rollDice() }) {
-                Text("Roll Dice")
+            Button(
+                onClick = {
+                    rollDice()
+                    val total = dice1 + dice2
+                    GameEngine.movePlayer(gameBoard, gameBoard.currentTurn, total)
+                }
+            ) {
+                Text("Roll the dice")
             }
-        }
 
-        // "Next Player" button
-        Button(
-            onClick = { nextTurn() },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text("Next Player")
-        }
+            // "Next Player" button
+            Button(
+                onClick = { nextTurn() },
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Text("Next Player")
+            }
 
-        // Display message for the current game state
-        Text(
-            text = message,
-            modifier = Modifier.padding(top = 16.dp)
-        )
+            // Display message for the current game state
+            Text(
+                text = message,
+                modifier = Modifier.padding(top = 16.dp)
+            )
     }
 }
