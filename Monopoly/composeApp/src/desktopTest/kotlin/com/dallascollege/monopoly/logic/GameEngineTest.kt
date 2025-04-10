@@ -6,6 +6,7 @@ import com.dallascollege.monopoly.model.Player
 import com.dallascollege.monopoly.model.Cell
 import com.dallascollege.monopoly.model.Property
 import com.dallascollege.monopoly.enums.PropertyColor
+import org.junit.jupiter.api.Assertions.assertTrue
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -52,6 +53,7 @@ class GameEngineTest {
         assertEquals(initialPosition + 5, player.numCell)
     }
 
+    // As a player, I can collect the base rent when someone lands on my property.
     @Test
     fun `collectBaseRent should deduct and add rent correctly`() {
         val owner = Player(id = 2, name = "Player2", token = Token.DOG)
@@ -69,8 +71,9 @@ class GameEngineTest {
         assertEquals(1550, owner.totalMoney)
     }
 
+
     @Test
-    fun `collectUtilities should deduct and add rent based on number of utilities owned`() {
+    fun `As a player, I can collect the appropriate rent for utilities based on how many in the set I own`() {
         val owner = Player(id = 2, name = "Player2", token = Token.DOG)
         val utility = Property(id = 1, name = "Car Company", baseRent = 100, price = 150, isUtility = true)
         val utility2 = Property(id = 2, name = "Water Works", baseRent = 100, price = 150, isUtility = true)
@@ -85,12 +88,13 @@ class GameEngineTest {
 
         GameEngine.collectUtilities(gameBoard, player.id)
 
-        assertEquals(1300, player.totalMoney)
+        assertEquals(1300, player.totalMoney) //
         assertEquals(1700, owner.totalMoney)
     }
 
+
     @Test
-    fun `collectRailroads should deduct and add rent based on number of railroads owned`() {
+    fun `As a player, I can collect the appropriate rent for railroads based on how many in the set I own`() {
         val owner = Player(id = 2, name = "Player2", token = Token.DOG)
         val railroad = Property(id = 1, name = "Railroad", baseRent = 100, price = 200, isRailRoad = true)
         val railroad2 = Property(id = 2, name = "Manhattan Railroad", baseRent = 100, price = 200, isRailRoad = true)
@@ -106,19 +110,33 @@ class GameEngineTest {
         GameEngine.collectRailroads(gameBoard, player.id)
 
         assertEquals(1300, player.totalMoney)
-        assertEquals(1700, owner.totalMoney)    }
+        assertEquals(1700, owner.totalMoney)
+    }
+
 
     @Test
-    fun `landingAction should perform correct action based on cell type`() {
-//        val property = Property(id = 1, name = "Park Place", baseRent = 50, price = 350, color = PropertyColor.BLUE)
-//        val cell = Cell(numCell = 5, propertyId = 1)
-//        gameBoard.cells = arrayOf(cell)
-//        gameBoard.properties = arrayOf(property)
-//
-//        player.numCell = 5
-//        player.totalMoney = 1500
-//        GameEngine.landingAction(gameBoard, player.id)
-//
-//        assertEquals(1450, player.totalMoney)
+    fun `As a player, I can take appropriate action when landing on a non-property space`() {
+        val incomeTaxCell = Cell(numCell = 4, isIncomeTax = true)
+        val luxuryTaxCell = Cell(numCell = 6, isLuxuryTax = true)
+        val goToJailCell = Cell(numCell = 10, isGoToJail = true)
+
+        val playerIncomeTax = Player(id = 1, name = "IncomeTaxPlayer", token = Token.CAR, totalMoney = 1500, numCell = 4)
+        val playerLuxuryTax = Player(id = 2, name = "LuxuryTaxPlayer", token = Token.DOG, totalMoney = 1500, numCell = 6)
+        val playerGoToJail = Player(id = 3, name = "JailPlayer", token = Token.BATTLESHIP, totalMoney = 1500, numCell = 10)
+
+        gameBoard.players = arrayOf(playerIncomeTax, playerLuxuryTax, playerGoToJail)
+        gameBoard.cells = arrayOf(incomeTaxCell, luxuryTaxCell, goToJailCell)
+
+        val engine = GameEngine
+
+        engine.landingAction(gameBoard, playerIncomeTax.id)
+        assertEquals(1400, playerIncomeTax.totalMoney)
+
+        engine.landingAction(gameBoard, playerLuxuryTax.id)
+        assertEquals(1400, playerLuxuryTax.totalMoney)
+
+        engine.landingAction(gameBoard, playerGoToJail.id)
+        assertTrue(playerGoToJail.inJail)
+        assertEquals(23, playerGoToJail.numCell)
     }
 }
