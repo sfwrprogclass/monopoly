@@ -55,10 +55,11 @@ class DiceTest {
         val roll2 = dice2.roll()
         val totalMove = roll1 + roll2
 
+        val previousNumCell = player.numCell
         player.numCell += totalMove
 
         assertTrue(totalMove in 2..12, "Sum of two dice should be between 2 and 12")
-        assertEquals(totalMove, player.numCell, "Player should have advanced by the total of two dice rolls")
+        assertEquals(totalMove + previousNumCell, player.numCell, "Player should have advanced by the total of two dice rolls")
     }
 
     @Test

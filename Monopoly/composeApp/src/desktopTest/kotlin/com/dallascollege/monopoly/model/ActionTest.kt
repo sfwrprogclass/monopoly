@@ -17,7 +17,7 @@ class ActionTest {
         )
 
         assertEquals("Purchase property", action.name)
-        assertEquals("Player buys a property.", action.description)
+        assertEquals("Player purchases a property.", action.description)
         assertEquals(ActionType.PURCHASE_PROPERTY, action.actionType)
         assertEquals(12, action.propertyId)
         assertEquals(200, action.money)

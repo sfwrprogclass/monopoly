@@ -60,7 +60,6 @@ fun DiceRoller(gameBoard: GameBoard) {
             ) {
                 Text("Roll the dice")
             }
-
             // "Next Player" button
             Button(
                 onClick = { nextTurn() },
@@ -74,5 +73,6 @@ fun DiceRoller(gameBoard: GameBoard) {
                 text = message,
                 modifier = Modifier.padding(top = 16.dp)
             )
+        }
     }
 }
