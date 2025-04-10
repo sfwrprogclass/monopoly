@@ -56,11 +56,7 @@ fun DiceRoller(gameBoard: GameBoard) {
             ) {
                 Text("Roll the dice")
             }
-//            Button(
-//                onClick = { rollDice() }
-//            ) {
-//                Text("Roll the dice")
-//            }
+
        }
     }
 }

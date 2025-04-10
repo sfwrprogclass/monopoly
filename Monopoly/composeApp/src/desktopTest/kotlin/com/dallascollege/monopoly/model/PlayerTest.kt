@@ -29,6 +29,8 @@ class PlayerTest {
                 )
             )
         )
+
+        board.createModels()
     }
 
     @Test
@@ -52,9 +54,9 @@ class PlayerTest {
     fun `getRailroads returns only railroads the player owns`() {
         val player = board.players[0]
         val railroads = player.getRailroads(board)
-        assertEquals(1, railroads.size)
         val ids = railroads.map { it.id }
-        assertTrue(ids.containsAll(listOf(11)))
+        assertEquals(1, railroads.size)
+        assertTrue(ids.containsAll(listOf(11)), "Checked that we got all the railroads owned by player")
     }
 
     @Test

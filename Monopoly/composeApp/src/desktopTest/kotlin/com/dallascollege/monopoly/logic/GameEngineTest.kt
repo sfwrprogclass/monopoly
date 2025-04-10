@@ -27,8 +27,6 @@ class GameEngineTest {
             )
         )
         val turnOrder = arrayOf(1)
-        val cells = arrayOf<Cell>()
-        val properties = arrayOf<Property>()
 
         gameBoard = GameBoard(
             players = players,
@@ -38,9 +36,9 @@ class GameEngineTest {
             centralMoney = 0,
             speedDieMode = false,
             freeParkingRule = false,
-            cells = cells,
-            properties = properties
         )
+
+        gameBoard.createModels()
 
         player = gameBoard.getPlayerById(1)!!
     }

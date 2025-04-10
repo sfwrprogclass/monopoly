@@ -25,8 +25,6 @@ class GameBoardTest {
             )
         )
         val turnOrder = arrayOf(1, 2)
-        val cells = arrayOf<Cell>() // add cells if needed
-        val properties = arrayOf<Property>() // add properties if needed
 
         gameBoard = GameBoard(
             players = players,
@@ -36,9 +34,9 @@ class GameBoardTest {
             centralMoney = 0,
             speedDieMode = false,
             freeParkingRule = false,
-            cells = cells,
-            properties = properties
         )
+
+        gameBoard.createModels()
     }
 
     @Test
@@ -76,10 +74,12 @@ class GameBoardTest {
 
     @Test
     fun `createModels should initialize both cells and properties`() {
+        gameBoard.cells = emptyArray()
+        gameBoard.properties = emptyArray()
         gameBoard.createModels()
 
         assertEquals(40, gameBoard.cells.size)
-        assertEquals(30, gameBoard.properties.size)
+        assertEquals(28, gameBoard.properties.size)
     }
 
     @Test
