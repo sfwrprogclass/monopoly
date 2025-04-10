@@ -6,9 +6,16 @@ import com.dallascollege.monopoly.model.*
 object GameEngine {
 
     fun movePlayer(board: GameBoard, playerId: Int, steps: Int) {
-        board.getPlayerById(playerId).let { player ->
-            if (player != null) {
-                player.numCell += steps;
+        val player = board.getPlayerById(playerId) ?: return
+        val totalCells = board.cells.size
+
+        val oldCell = player.numCell
+        player.numCell = ((player.numCell - 1 + steps) % totalCells) + 1
+
+        if (player.numCell < oldCell) {
+            val cellOne = board.getCellById(1)
+            if (cellOne?.isCollectSalary == true) {
+                collectSalary(player)
             }
         }
     }
@@ -39,10 +46,15 @@ object GameEngine {
 
         if (owner == player) return
 
-        val numberOfUtilities: Int = player.getUtilities(board).size
+//        val numberOfUtilities: Int = player.getUtilities(board).size
+        val numberOfUtilities = owner.getUtilities(board).size
 
-        player.totalMoney -= property.baseRent * numberOfUtilities
-        owner.totalMoney += property.baseRent * numberOfUtilities
+        val rentToPay = property.baseRent * numberOfUtilities
+        player.totalMoney -= rentToPay
+        owner.totalMoney += rentToPay
+
+//        player.totalMoney -= property.baseRent * numberOfUtilities
+//        owner.totalMoney += property.baseRent * numberOfUtilities
     }
 
    // As a player, I can collect the appropriate rent for railroads based on how many in the set I own.
@@ -57,10 +69,11 @@ object GameEngine {
 
         if (owner == player) return
 
-        val numberOfRailroads: Int = player.getRailroads(board).size
 
-        player.totalMoney -= property.baseRent * numberOfRailroads
-        owner.totalMoney += property.baseRent * numberOfRailroads
+       val numberOfRailroads: Int = owner.getRailroads(board).size
+       val rentToPay = property.baseRent * numberOfRailroads
+       player.totalMoney -= rentToPay
+       owner.totalMoney += rentToPay
     }
 
     //As a player, I can take appropriate action when landing on a non-property space
