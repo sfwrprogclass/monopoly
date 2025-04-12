@@ -6,74 +6,65 @@ import com.dallascollege.monopoly.model.Player
 import com.dallascollege.monopoly.model.Property
 
 class GameBoard(
-    players: Array<Player>,
-    turnOrder: Array<Int> = emptyArray(),
-    currentTurn: Int = 0,
-    selectedPlayerId: Int = 1,
-    centralMoney: Int = 0,
-    speedDieMode: Boolean = false,
-    freeParkingRule: Boolean = false,
-    cells: Array<Cell> = emptyArray(),
-    properties: Array<Property> = emptyArray(),
+    initialPlayers: Array<Player>
 ) {
-    private fun createCells() {
+
+    companion object {
+        const val MAX_HOUSES = 4
+        const val MAX_HOTELS = 1
+        private const val START_CELL_ID = 1
+        private const val FIRST_PROPERTY_ID = 1
+    }
+
+    // Mutable state
+    var players: Array<Player> = initialPlayers
+    var turnOrder: Array<Int> = emptyArray()
+    var currentTurn: Int = 0
+    var selectedPlayerId: Int = 1
+    var centralMoney: Int = 0
+    var speedDieMode: Boolean = false
+    var freeParkingRule: Boolean = false
+    var cells: Array<Cell> = emptyArray()
+    var properties: Array<Property> = emptyArray()
+
+    fun createModels() {
+        initializeProperties()
+        initializeCells()
+    }
+
+    private fun initializeCells() {
         val cellList = mutableListOf<Cell>()
-        var numCell = 1
-
-        // Add cells to the list
-        cellList.add(Cell(numCell = numCell, isCollectSalary = true))
-        numCell++
-        cellList.add(Cell(numCell = numCell, propertyId = 1))
-        numCell++
-        // Add remaining cells...
-
+        cellList.addDefaultCells(START_CELL_ID)
         this.cells = cellList.toTypedArray()
     }
 
-    private fun createProperties() {
+    private fun initializeProperties() {
         val propertyList = mutableListOf<Property>()
-        var id = 1
-
-        // Add properties to the list
-        propertyList.add(Property(id = id, name = "San Diego Drive", price = 60, color = PropertyColor.BROWN))
-        id++
-        propertyList.add(Property(id = id, name = "Kansas Drive", price = 90, color = PropertyColor.BROWN))
-        id++
-        // Add remaining properties...
-
+        propertyList.addDefaultProperties(FIRST_PROPERTY_ID)
         this.properties = propertyList.toTypedArray()
     }
 
-    fun createModels() {
-        createProperties()
-        createCells()
+    // New helper function to add default cells
+    private fun MutableList<Cell>.addDefaultCells(startCellId: Int) {
+        add(Cell(numCell = startCellId, isCollectSalary = true))
+        add(Cell(numCell = startCellId + 1, propertyId = FIRST_PROPERTY_ID))
+        // Add additional cells as needed...
     }
 
-    //NEW Methods to access objects by id
-    fun getPlayerById(id: Int): Player? {
-        return players.find { it.id == id }
+    // New helper function to add default properties
+    private fun MutableList<Property>.addDefaultProperties(startPropertyId: Int) {
+        add(Property(id = startPropertyId, name = "San Diego Drive", price = 60, color = PropertyColor.BROWN))
+        add(Property(id = startPropertyId + 1, name = "Kansas Drive", price = 90, color = PropertyColor.BROWN))
+        // Add additional properties as needed...
     }
 
-    fun getPropertyById(id: Int): Property? {
-        return properties.find { it.id == id }
-    }
+    fun getPlayerById(id: Int): Player? = players.find { it.id == id }
 
-    fun getCellById(numCell: Int): Cell? {
-        return cells.find { it.numCell == numCell }
-    }
+    fun getPropertyById(id: Int): Property? = properties.find { it.id == id }
+
+    fun getCellById(numCell: Int): Cell? = cells.find { it.numCell == numCell }
 
     fun getPropertyOwner(property: Property): Player? {
-        return players.find( { it.propertyIds.contains(property.id)})
+        return players.find { property.id in it.propertyIds }
     }
-
-    var players: Array<Player> = players
-    var turnOrder: Array<Int> = turnOrder
-    var currentTurn: Int = currentTurn
-    var selectedPlayerId: Int = selectedPlayerId
-    var centralMoney: Int = centralMoney
-    var speedDieMode: Boolean = speedDieMode
-    var freeParkingRule: Boolean = freeParkingRule
-    var cells: Array<Cell> = cells
-    var properties: Array<Property> = properties
 }
-

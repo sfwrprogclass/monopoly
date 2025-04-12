@@ -1,7 +1,7 @@
 package com.dallascollege.monopoly.model
 
 import com.dallascollege.monopoly.logic.GameBoard
-import kotlin.random.Random
+
 
 // A class representing an individual Community Chest card
 data class CommunityChestCard(
@@ -9,7 +9,7 @@ data class CommunityChestCard(
     val action: (player: Player, gameBoard: GameBoard) -> Unit // Action to execute
 )
 
-class CommunityChest {
+class CommunityChest(private val gameBoard: GameBoard) {
 
     private val cards: MutableList<CommunityChestCard> = mutableListOf()
 
@@ -19,7 +19,7 @@ class CommunityChest {
             listOf(
                 CommunityChestCard(
                     description = "You have won second prize in a beauty contest. Collect $50.",
-                    action = { player, _ -> player.addMoney(50) }
+                    action = { player, _ -> player.run { addMoney(50) } } // No changes here, just showing for clarity.
                 ),
                 CommunityChestCard(
                     description = "Bank error in your favor. Collect $200.",
@@ -59,7 +59,7 @@ class CommunityChest {
                 ),
                 CommunityChestCard(
                     description = "Holiday Fund matures. Receive $100.",
-                    action = { player, _ -> player.addMoney(100) }
+                    action = { player: Player, _ -> player.addMoney(100) }
                 ),
                 CommunityChestCard(
                     description = "Life insurance matures. Collect $100.",
@@ -104,15 +104,15 @@ class CommunityChest {
                     action = { player, _ ->
                         val houseFee = 40
                         val hotelFee = 115
-                        val totalFee = player.properties.sumOf {
-                            (it.numHouses ?: 0) * houseFee + if ((it.numHotels ?: 0) > 0) hotelFee else 0
+                        val totalFee = player.getPropertyIds().map { id -> gameBoard.getPropertyById(id) }.sumOf {
+                            (it?.numHouses ?: 0) * houseFee + if ((it?.numHotels ?: 0) > 0) hotelFee else 0
                         }
 
-                        if (player.money >= totalFee) {
+                        if (player.totalMoney >= totalFee) {
                             player.deductMoney(totalFee)
                         } else {
                             // Handle insufficient funds
-                            val remainingMoney = player.money
+                            val remainingMoney = player.totalMoney
                             player.deductMoney(remainingMoney)
                             println("${player.name} couldn't fully pay the fees and is now bankrupt!")
                         }
@@ -120,27 +120,10 @@ class CommunityChest {
                 )
             )
         )
+
     }
-
-    // Draw and execute a card for a player
-    fun drawCard(player: Player, gameBoard: GameBoard) {
-        if (cards.isEmpty()) {
-            println("No Community Chest cards available.")
-            return
-        }
-
-        // Randomly select a card
-        val card = cards[Random.nextInt(cards.size)]
-
-        // Print the card description
-        println("Community Chest: ${card.description}")
-
-        // Execute the card's action
-        card.action(player, gameBoard)
-    }
-
-    // Shuffle the deck (optional functionality for better randomness)
-    fun shuffleDeck() {
-        cards.shuffle()
-    }
+// Shuffle the deck (optional functionality for better randomness)
+fun shuffleDeck() {
+    cards.shuffle()
+}
 }

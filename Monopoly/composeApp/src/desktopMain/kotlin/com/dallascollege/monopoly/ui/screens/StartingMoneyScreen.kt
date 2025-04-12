@@ -4,8 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.border
-import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -15,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.dallascollege.monopoly.model.Player
@@ -71,6 +68,7 @@ fun StartingMoneyScreen(players: List<Player>, onNextClick: () -> Unit) {
                             Spacer(modifier = Modifier.height(8.dp))
 
                             Text(
+                                text = player.name,
                                 color = Color.White
                             )
                         }
@@ -107,6 +105,7 @@ fun StartingMoneyScreen(players: List<Player>, onNextClick: () -> Unit) {
                                 Spacer(modifier = Modifier.height(8.dp))
 
                                 Text(
+                                    text = player.name,
                                     color = Color.White
                                 )
                             }

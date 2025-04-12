@@ -1,53 +1,74 @@
+@file:Suppress("UnusedImport")
+
 package com.dallascollege.monopoly.model
 
 import com.dallascollege.monopoly.enums.Token
 import com.dallascollege.monopoly.logic.GameBoard
+import com.dallascollege.monopoly.model.Game
+import com.dallascollege.monopoly.model.Property
 
-class Player(
-    id: Number = 1,
-    totalMoney: Int = 1200,
-    turnNum: Int = 1,
-    name: String,
-    token: Token,
-    propertyIds: Array<Int> = emptyArray(),
-    inJail: Boolean = false,
-    hasOutJailCard: Boolean = false,
-    games: Array<Game> = emptyArray(),
-    isCPU: Boolean = false,
-    numCell: Int = 1
+data class Player(
+    val id: Int,
+    var name: String = "Unnamed Player",
+    var totalMoney: Int = 1500,
+    val token: Token,
+    var inJail: Boolean = false,
+    var hasOutJailCard: Boolean = false,
+    var isCPU: Boolean = false,
+    var numCell: Int = 1,
+    private var games: MutableList<Game> = mutableListOf(),
+    internal var propertyIds: MutableList<Int> = mutableListOf(),
+    var xOffset: Int = 0, // Add an xOffset property (default 0)
+    var yOffset: Int = 0  // Add a yOffset property (default 0)
+
+
 ) {
+    fun getGames(): List<Game> = games
 
-    fun getUtilities(board: GameBoard): Array<Property> {
-        return board.properties
-            .filter { it.isUtility && propertyIds.contains(it.id) }
-            .toTypedArray()
+    fun addGame(game: Game) {
+        games.add(game)
     }
 
-    fun getRailroads(board: GameBoard): Array<Property> {
-        return board.properties
-            .filter { it.isRailRoad && propertyIds.contains(it.id) }
-            .toTypedArray()
+    fun getUtilities(board: GameBoard): List<Property> {
+        return board.properties.filter { it.isUtility && it.id in propertyIds }
     }
 
-    var id: Number = id
+    fun getRailroads(board: GameBoard): List<Property> {
+        return board.properties.filter { it.isRailRoad && it.id in propertyIds }
+    }
 
-    var totalMoney: Int = totalMoney
+    fun getPropertyIds(): List<Int> = propertyIds
 
-    var turnNum: Int = turnNum
+    fun addProperty(id: Int, board: GameBoard) {
+        if (!propertyIds.contains(id) && board.getPropertyById(id) != null) {
+            propertyIds.add(id)
+        }
+    }
 
-    var name: String = name
+    fun removeProperty(id: Int, board: GameBoard) {
+        if (propertyIds.contains(id) && board.getPropertyById(id) != null) {
+            propertyIds.remove(id)
+        }
+    }
 
-    var token: Token = token
+    // Add money to the player's total
+    fun addMoney(amount: Int) {
+        if (amount > 0) {
+            totalMoney += amount
+        }
+    }
 
-    var propertyIds: Array<Int> = propertyIds
-
-    var inJail: Boolean = inJail
-
-    var hasOutJailCard: Boolean = hasOutJailCard
-
-    var games: Array<Game> = games
-
-    var isCPU: Boolean = isCPU
-
-    var numCell: Int = numCell
+    // Deduct money from the player's total
+    fun deductMoney(amount: Int): Boolean {
+        if (amount > 0) {
+            if (totalMoney >= amount) {
+                totalMoney -= amount
+                return true
+            } else {
+                // If the player doesn't have enough money, return false
+                return false
+            }
+        }
+        return false
+    }
 }

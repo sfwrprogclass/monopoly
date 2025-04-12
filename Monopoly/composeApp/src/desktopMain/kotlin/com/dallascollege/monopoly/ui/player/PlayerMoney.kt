@@ -33,7 +33,7 @@ fun PlayerMoneyView(gameBoard: GameBoard) {
     ) {
         currentPlayer?.let { player ->
             Text(
-                text = "${player.name}: \$${player.money}",
+                text = "${player.name}: \$${player.totalMoney}",
                 style = playerInfoTextStyle
             )
         }

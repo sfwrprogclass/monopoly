@@ -1,213 +1,206 @@
 package com.dallascollege.monopoly.model
 
+import com.dallascollege.monopoly.model.Player.*
 import com.dallascollege.monopoly.enums.PropertyColor
+import com.dallascollege.monopoly.logic.GameBoard
+
 
 /**
- * Contains property management utility functions for player interactions
+ * Contains property management utility functions for player interactions.
+ * Handles actions such as buying, building, mortgaging, and trading properties.
  */
-class PlayerPropertyManagement {
+class PlayerPropertyManagement(private val notificationService: NotificationService) {
 
-    /**
-     * Displays a message to the console
-     */
-    fun notify(message: String) {
-        println(message)
+    companion object {
+        private const val HOUSE = "House"
+        private const val HOTEL = "Hotel"
     }
 
     /**
-     * Asks the player if they want to buy a property
-     *
-     * @param player The player who landed on the property
-     * @param property The property to purchase
-     * @param onDecision Callback that receives the player's decision (true to buy, false to decline)
+     * Utility to display a notification message.
      */
-    fun askPlayerIfTheyWantToBuy(
-        player: Player,
-        property: Property,
-        onDecision: (Boolean) -> Unit
-    ) {
-        if (!property.isPurchased && player.money >= property.price) {
-            println("${player.name}, do you want to buy ${property.name} for ${property.price}?")
-            onDecision(true) // Simulate decision logic (replace with actual UI if needed)
+    private fun notify(message: String) {
+        notificationService.sendNotification(message)
+    }
+
+    /**
+     * Checks if the player owns the property.
+     */
+    private fun Property.isOwnedBy(player: Player): Boolean {
+        return if (this.owner != player) {
+            notify("${player.name} does not own ${this.name}.")
+            false
         } else {
-            onDecision(false)
-            notify("${player.name} cannot buy ${property.name}.")
+            true
         }
     }
 
     /**
-     * Notifies that a property was purchased
+     * Prompts the player to decide whether to buy a property.
      */
-    fun notifyPropertyPurchased(player: Player, property: Property) {
-        println("${player.name} has purchased ${property.name} for \$${property.price}.")
+    fun promptBuyDecision(player: Player, property: Property, onDecision: (Boolean) -> Unit) {
+        if (!property.isPurchased && player.totalMoney >= property.price) {
+            notify("${player.name}, do you want to buy ${property.name} for \$${property.price}?")
+            onDecision(true)
+        } else {
+            notify("${player.name} cannot buy ${property.name} (insufficient funds or already purchased).")
+            onDecision(false)
+        }
     }
 
     /**
-     * Notifies that a player has insufficient funds
+     * Builds an improvement (house or hotel) on a property.
      */
-    fun notifyInsufficientFunds(player: Player) {
-        println("${player.name} does not have enough money for this action.")
-    }
-
-    /**
-     * Notifies that rent was paid
-     */
-    fun notifyRentPaid(player: Player, owner: Player, amount: Int) {
-        println("${player.name} paid \$${amount} in rent to ${owner.name}.")
-    }
-
-    /**
-     * Extension function to handle building improvements (houses or hotels)
-     */
-    fun Property.buildImprovement(
+    private fun Property.buildImprovement(
         player: Player,
         improvementType: String,
         buildAction: () -> Boolean,
-        getPrice: () -> Int
+        improvementPrice: Int
     ) {
+        if (!this.isOwnedBy(player)) return
+
+        if (player.totalMoney < improvementPrice) {
+            notify("${player.name} does not have enough money to build a $improvementType on ${this.name}.")
+            return
+        }
+
         if (buildAction()) {
-            player.deductMoney(getPrice())
+            player.totalMoney -= improvementPrice
             notify("${player.name} built a $improvementType on ${this.name}.")
         } else {
-            notify("${player.name} cannot build a $improvementType on ${this.name}.")
+            notify("Cannot build a $improvementType on ${this.name}. Check conditions.")
         }
     }
 
     /**
-     * Builds a house on this property if possible
+     * Builds a house on a property.
      */
-    fun buildHouse(player: Player, property: Property) {
-        property.buildImprovement(player, "House", { property.buildHouse() }, { property.getHousePrice() })
+    fun buildHouse(player: Player, property: Property, gameBoard: GameBoard) {
+        property.buildImprovement(player, HOUSE, { property.buildHouse(gameBoard) }, property.getHousePrice())
     }
 
     /**
-     * Builds a hotel on this property if possible
+     * Builds a hotel on a property.
      */
-    fun buildHotel(player: Player, property: Property) {
-        property.buildImprovement(player, "Hotel", { property.buildHotel() }, { property.getHotelPrice() })
+    fun buildHotel(player: Player, property: Property, gameBoard: GameBoard) {
+        property.buildImprovement(player, HOTEL, { property.buildHotel(gameBoard) }, property.getHotelPrice())
     }
 
     /**
-     * Extension function to handle property mortgage actions
-     */
-    fun Property.handleMortgage(
-        player: Player,
-        mortgageAction: () -> Unit,
-        actionName: String,
-        onMortgage: () -> Unit
-    ) {
-        if (mortgageAction()) {
-            onMortgage()
-            notify("${player.name} successfully $actionName ${this.name}.")
-        } else {
-            notify("${player.name} could not $actionName ${this.name}.")
-        }
-    }
-
-    /**
-     * Mortgages the property if possible
+     * Mortgages a property for the player.
      */
     fun mortgageProperty(player: Player, property: Property) {
-        property.handleMortgage(player, { property.mortgage() }, "mortgaged") {
-            player.addMoney(property.price / 2)
+        if (property.isMortgaged) {
+            notify("${property.name} is already mortgaged.")
+            return
+        }
+
+        if (property.mortgage()) {
+            notify("${player.name} has mortgaged ${property.name} and received \$${property.price / 2}.")
+        } else {
+            notify("Failed to mortgage ${property.name}.")
         }
     }
 
     /**
-     * Lifts the mortgage on the property if possible
+     * Lifts the mortgage from a property, applying a 10% interest fee.
      */
     fun liftMortgage(player: Player, property: Property) {
-        property.handleMortgage(player, { property.unmortgage() }, "unmortgaged") {
-            player.deductMoney((property.price / 2) + (property.price / 10)) // Adds 10% interest
+        if (!property.isMortgaged) {
+            notify("${property.name} is not currently mortgaged.")
+            return
+        }
+
+        if (property.unmortgage()) {
+            notify("${player.name} has lifted the mortgage on ${property.name}.")
+        } else {
+            notify("${player.name} could not afford to lift the mortgage on ${property.name}.")
         }
     }
 
     /**
-     * Trades properties between two players
+     * Trades properties between two players.
      */
-    fun tradeProperties(
-        player1: Player,
-        player2: Player,
-        properties1: List<Property>,
-        properties2: List<Property>
-    ) {
-        properties1.forEach { transferProperty(it, player2) }
-        properties2.forEach { transferProperty(it, player1) }
+    fun tradeProperties(player1: Player, player2: Player, properties1: List<Property>, properties2: List<Property>, gameboard: GameBoard) {
+        val arePropertiesValid = properties1.all { it.owner == player1 } && properties2.all { it.owner == player2 }
 
-        println("Trade completed between ${player1.name} and ${player2.name}.")
+        if (!arePropertiesValid) {
+            notify("Trade failed due to invalid property ownership.")
+            return
+        }
+
+        properties1.forEach { transferProperty(it, player2, gameboard) }
+        properties2.forEach { transferProperty(it, player1, gameboard) }
+
+        notify("Trade completed between ${player1.name} and ${player2.name}.")
     }
 
     /**
-     * Auctions a property among players
+     * Auctions a property among eligible players.
      */
     fun auctionProperty(property: Property, players: List<Player>) {
-        val bidders = players.filter { it.money >= property.price }
+        val bidders = players.filter { it.totalMoney > property.price }
         if (bidders.isEmpty()) {
             notify("No players can afford to bid on ${property.name}.")
             return
         }
 
-        val winner = bidders.maxByOrNull { it.money }!! // Simulating auction logic
-        property.purchase(winner)
-        notifyPropertyPurchased(winner, property)
-    }
+        val winner = bidders.maxByOrNull { it.totalMoney } ?: return
 
-    /**
-     * Handles bankruptcy of a player
-     */
-    fun handleBankruptcy(player: Player, creditor: Player) {
-        // Transfer all assets to the creditor and reset player
-        notify("${player.name} is bankrupt and transferring assets to ${creditor.name}.")
-
-        player.properties.forEach { transferProperty(it, creditor) }
-        player.money = 0
-        player.isCPU = true // Potentially mark as inactive
-    }
-
-    /**
-     * Checks if a player has a monopoly of a given color group
-     *
-     * @param player The player in question
-     * @param colorGroup The color to check
-     * @return `true` if the player owns all properties in the color group
-     */
-    fun checkMonopoly(player: Player, colorGroup: PropertyColor): Boolean {
-        val groupSize = PropertyColor.getColorGroupSize(colorGroup)
-        val ownedInGroup = player.properties.count { it.color == colorGroup && !it.isMortgaged }
-        return ownedInGroup == groupSize
-    }
-
-    /**
-     * Calculates rent for utilities based on the dice roll
-     */
-    fun calculateUtilityRent(utility: Property, diceRoll: Int): Int {
-        return diceRoll * (if (utility.owner?.getUtilityCount() == 1) 4 else 10)
-    }
-
-    /**
-     * Calculates rent for railroads
-     */
-    fun calculateRailroadRent(railroad: Property): Int {
-        return 25 * (railroad.owner?.getRailroadCount() ?: 0)
-    }
-
-    /**
-     * Transfers ownership of a property
-     */
-    fun transferProperty(property: Property, newOwner: Player) {
-        property.owner?.let { previousOwner ->
-            previousOwner._properties.remove(property)
+        if (property.purchase(winner, GameBoard(players.toTypedArray()))) {
+            notify("${winner.name} has won the auction and purchased ${property.name} for \$${property.price}.")
+        } else {
+            notify("${winner.name} failed to complete the auction purchase of ${property.name}.")
         }
-        newOwner._properties.add(property)
-        property.owner = newOwner
-        println("${property.name} transferred to ${newOwner.name}.")
     }
 
     /**
-     * Checks and displays property details
+     * Handles bankruptcy, transferring all a player's assets to a creditor.
      */
-    fun checkPropertyStatus(property: Property) {
-        val ownerText = property.owner?.name ?: "Bank"
-        notify("Property: ${property.name}, Price: ${property.price}, Owned by: $ownerText.")
+    fun handleBankruptcy(player: Player, creditor: Player, gameboard: GameBoard) {
+        notify("${player.name} is bankrupt! Transferring all assets to ${creditor.name}.")
+
+        // Transfer all properties owned by the bankrupt player
+        player.getPropertyIds().forEach { propertyId ->
+            val property = gameboard.getPropertyById(propertyId)
+            if (property != null) {
+                transferProperty(property, creditor, gameboard)
+            }
+        }
+
+        // Set the bankrupt player's money to zero
+        player.totalMoney = 0
     }
+
+    /**
+     * Checks if a player has a monopoly for a given color group.
+     */
+    fun checkMonopoly(player: Player, colorGroup: PropertyColor, gameboard: GameBoard): Boolean {
+        val requiredGroupSize = colorGroup.propertiesInGroup
+        val ownedPropertiesInGroup = gameboard.properties.filter {
+            it.owner == player && it.color == colorGroup && !it.isMortgaged
+        }
+
+        return ownedPropertiesInGroup.size == requiredGroupSize
+    }
+
+    /**
+     * Transfers ownership of a property to a new owner.
+     */
+    fun transferProperty(property: Property, newOwner: Player, gameboard: GameBoard) {
+        property.owner?.let { oldOwner: Player ->
+            oldOwner.removeProperty(property.id, gameboard)
+        }
+        newOwner.addProperty(property.id, gameboard)
+        property.owner = newOwner
+
+        notify("${property.name} has been transferred to ${newOwner.name}.")
+    }
+}
+
+/**
+ * Notification service to decouple messages from console output.
+ */
+interface NotificationService {
+    fun sendNotification(message: String)
 }

@@ -2,6 +2,7 @@ package com.dallascollege.monopoly.model
 
 import com.dallascollege.monopoly.enums.PropertyColor
 import com.dallascollege.monopoly.enums.PropertyColor.NONE
+import com.dallascollege.monopoly.logic.GameBoard
 import kotlin.math.min
 
 class Property(
@@ -20,77 +21,84 @@ class Property(
     var owner: Player? = null
         internal set
 
-    /**
-     * Attempts to purchase this property for the given player
-     */
-    fun purchase(player: Player): Boolean {
+    // Purchase the property
+    fun purchase(player: Player, gameBoard: GameBoard): Boolean {
         if (isPurchased) return false
-        if (player.money < price) return false
+        if (player.totalMoney < price) return false
 
-        player.money -= price
+        player.totalMoney -= price
         isPurchased = true
         owner = player
-        player.addProperty(this)
+        player.addProperty(id, gameBoard)
         return true
     }
 
-    /**
-     * Calculates and charges rent to a player landing on this property
-     */
-    fun chargeRent(player: Player): Int {
+    // Charge rent to a player landing on the property
+    fun chargeRent(player: Player, gameBoard: GameBoard): Int {
         if (!isPurchased || isMortgaged || owner == player) return 0
 
-        val rentAmount = calculateRent()
-        val amountPaid = min(rentAmount, player.money)
-        player.money -= amountPaid
-        owner?.money = (owner?.money ?: 0) + amountPaid
+        val rentAmount = calculateRent(gameBoard)
+        val amountPaid = min(rentAmount, player.totalMoney)
+        player.totalMoney -= amountPaid
+        owner?.totalMoney = (owner?.totalMoney ?: 0) + amountPaid
 
         return amountPaid
     }
 
-    /**
-     * Calculates the rent amount based on property type and development
-     */
-    fun calculateRent(): Int {
+    // Calculate rent based on the property configuration
+    fun calculateRent(gameBoard: GameBoard): Int {
+        val ownsFullSet = owner?.propertyIds?.count {
+            val property = gameBoard.getPropertyById(it)
+            property?.color == color
+        } == PropertyColor.getColorGroupSize(color)
+
         return when {
+            isUtility -> {
+                val utilitiesOwned = owner?.getUtilities(gameBoard)?.size ?: 0
+                baseRent * (4 * utilitiesOwned)
+            }
+            isRailRoad -> {
+                val railroadsOwned = owner?.getRailroads(gameBoard)?.size ?: 0
+                baseRent * (2 * railroadsOwned)
+            }
             numHotels > 0 -> baseRent * (numHotels + 5)
             numHouses > 0 -> baseRent * (numHouses + 1)
+            ownsFullSet -> baseRent * 2 // Double rent for owning the full set
             else -> baseRent
         }
     }
 
-    fun unmortgage(): Boolean {
-        return true
-    }
-
-    /**
-     * Builds a house on this property if possible
-     */
-    fun buildHouse(): Boolean {
+    // Build a house on the property
+    fun buildHouse(gameBoard: GameBoard): Boolean {
         if (numHotels > 0 || numHouses >= 4) return false
-        if (owner?.money ?: 0 < getHousePrice()) return false
 
-        owner?.money = (owner?.money ?: 0) - getHousePrice()
+        val ownsFullSet = owner?.propertyIds?.count {
+            val property = gameBoard.getPropertyById(it)
+            property?.color == color
+        } == PropertyColor.getColorGroupSize(color)
+
+        if (!ownsFullSet) return false
+        if (gameBoard.properties.sumOf { it.numHouses } >= GameBoard.MAX_HOUSES) return false
+        if (owner?.totalMoney ?: 0 < getHousePrice()) return false
+
+        owner?.totalMoney = (owner?.totalMoney ?: 0) - getHousePrice()
         numHouses++
         return true
     }
 
-    /**
-     * Builds a hotel on this property if possible
-     */
-    fun buildHotel(): Boolean {
+    // Build a hotel on the property
+    fun buildHotel(gameBoard: GameBoard): Boolean {
         if (numHouses < 4) return false
-        if (owner?.money ?: 0 < getHotelPrice()) return false
+        if (gameBoard.properties.sumOf { it.numHotels } >= GameBoard.MAX_HOTELS) return false
+        if (owner?.totalMoney ?: 0 < getHotelPrice()) return false
 
-        owner?.money = (owner?.money ?: 0) - getHotelPrice()
+        owner?.totalMoney = (owner?.totalMoney ?: 0) - getHotelPrice()
         numHouses = 0
         numHotels++
         return true
     }
 
-    /**
-     * Gets the price to build a house on this property
-     */
+    // Get the price of a house for the property
     fun getHousePrice(): Int {
         return when (color) {
             PropertyColor.BROWN, PropertyColor.LIGHT_BLUE -> 50
@@ -101,31 +109,25 @@ class Property(
         }
     }
 
-    /**
-     * Gets the price to build a hotel on this property
-     */
+    // Get the price of a hotel for the property
     fun getHotelPrice(): Int {
         return getHousePrice() * 5
     }
 
-    /**
-     * Mortgages the property if it is not already mortgaged
-     */
+    // Mortgage the property
     fun mortgage(): Boolean {
         if (isMortgaged) return false
         isMortgaged = true
-        owner?.money = (owner?.money ?: 0) + (price / 2)
+        owner?.totalMoney = (owner?.totalMoney ?: 0) + (price / 2)
         return true
     }
 
-    /**
-     * Unmortgages the property if it is mortgaged
-     */
+    // Unmortgage the property
     fun unmortgage(): Boolean {
         if (!isMortgaged) return false
-        val unmortgageCost = (price / 2) + (price / 10) // 10% interest
-        if (owner?.money ?: 0 < unmortgageCost) return false
-        owner?.money = (owner?.money ?: 0) - unmortgageCost
+        val unmortgageCost = (price / 2) + (price / 10)
+        if (owner?.totalMoney ?: 0 < unmortgageCost) return false
+        owner?.totalMoney = (owner?.totalMoney ?: 0) - unmortgageCost
         isMortgaged = false
         return true
     }
