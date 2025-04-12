@@ -23,7 +23,7 @@ fun GameBoardView(gameBoard: GameBoard) {
             val playersOnCell = gameBoard.players.filter { it.numCell == cell.numCell }
         }
         Column(modifier = Modifier.fillMaxSize()) {
-            // First row (15%)
+            // First row (15%) for Action Area
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

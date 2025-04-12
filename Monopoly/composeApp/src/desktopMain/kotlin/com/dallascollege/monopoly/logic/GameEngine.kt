@@ -1,54 +1,118 @@
 package com.dallascollege.monopoly.logic
 
-import com.dallascollege.monopoly.enums.Token
-import com.dallascollege.monopoly.model.Dice
 import com.dallascollege.monopoly.model.Player
 
-private var currentPlayerIndex: Int = 0 // Used to track the current player's turn
+//make it static class with static methods for the different actions to be executed
+object GameEngine {
 
-private val players = listOf(
-    Player(id = 1, name = "Battleship", token = Token.BATTLESHIP),
-    Player(id = 2, name = "Top hat", token = Token.TOPHAT)
-)
+    fun movePlayer(board: GameBoard, playerId: Int, steps: Int) {
+        board.getPlayerById(playerId).let { player ->
+            if (player != null) {
+                player.numCell += steps
+            }
+        }
+    }
 
-private val board: GameBoard by lazy {
-    GameBoard(
-        initialPlayers = players.toTypedArray(),
+    fun collectBaseRent(board: GameBoard, playerId: Int) {
+        val player = board.getPlayerById(playerId) ?: return
+        val cell = board.getCellById(player.numCell) ?: return
+        if (!cell.isProperty()) return
 
+        val property = board.getPropertyById(cell.propertyId) ?: return
+        val owner = board.getPropertyOwner(property) ?: return
 
-    ).apply {
-        createModels()
+        if (owner == player) return
+
+        player.totalMoney -= property.baseRent
+        owner.totalMoney += property.baseRent
+    }
+
+    fun collectUtilities(board: GameBoard, playerId: Int) {
+        val player = board.getPlayerById(playerId) ?: return
+        val cell = board.getCellById(player.numCell) ?: return
+        if (!cell.isProperty()) return
+
+        val property = board.getPropertyById(cell.propertyId) ?: return
+        if (!property.isUtility) return
+        val owner = board.getPropertyOwner(property) ?: return
+
+        if (owner == player) return
+
+        val numberOfUtilities: Int = player.getUtilities(board).size
+
+        player.totalMoney -= property.baseRent * numberOfUtilities
+        owner.totalMoney += property.baseRent * numberOfUtilities
+    }
+
+    fun collectRailroads(board: GameBoard, playerId: Int) {
+        val player = board.getPlayerById(playerId) ?: return
+        val cell = board.getCellById(player.numCell) ?: return
+        if (!cell.isProperty()) return
+
+        val property = board.getPropertyById(cell.propertyId) ?: return
+        if (!property.isRailRoad) return
+        val owner = board.getPropertyOwner(property) ?: return
+
+        if (owner == player) return
+
+        val numberOfRailroads: Int = player.getRailroads(board).size
+
+        player.totalMoney -= property.baseRent * numberOfRailroads
+        owner.totalMoney += property.baseRent * numberOfRailroads
+    }
+
+    private fun earnCentralMoney(board: GameBoard, player: Player) {
+        player.totalMoney += board.centralMoney
+        board.centralMoney = 0
+    }
+
+    private fun goToJail(player: Player) {
+        player.inJail = true
+        player.numCell = 23
+    }
+
+    //TODO
+    private fun getChance(player: Player) {
+
+    }
+
+    private fun collectSalary(player: Player) {
+        player.totalMoney += 200
+    }
+
+    //TODO
+    private fun getCommunityChest(player: Player) {
+
+    }
+
+    private fun payIncomeTax(player: Player) {
+        player.totalMoney -= 100
+    }
+
+    private fun payLuxuryTax(player: Player) {
+        player.totalMoney -= 100
+    }
+
+    fun landingAction(board: GameBoard, playerId: Int) {
+        val player = board.getPlayerById(playerId) ?: return
+        val cell = board.getCellById(player.numCell) ?: return
+        if (cell.isProperty()) {
+            collectBaseRent(board, playerId)
+        } else if (cell.isParking) {
+            earnCentralMoney(board, player)
+        } else if (cell.isGoToJail) {
+            goToJail(player)
+        } else if (cell.isChance) {
+            getChance(player)
+        } else if (cell.isCollectSalary) {
+            collectSalary(player)
+        } else if (cell.isCommunityChest) {
+            getCommunityChest(player)
+        } else if (cell.isIncomeTax) {
+            payIncomeTax(player)
+        } else if (cell.isLuxuryTax) {
+            payLuxuryTax(player)
+        }
+        //do nothing if isVisitingJail
     }
 }
-
-
-private fun rollDice(): Int {
-    return (1..6).random() + (1..6).random()
-}
-
-private fun processTurn() {
-    val player = players[currentPlayerIndex]
-    val diceRoll = rollDice()
-    println("${player.name} rolled a $diceRoll!")
-    player.numCell = (player.numCell + diceRoll) % board.cells.size
-
-    // Move to the next player
-    currentPlayerIndex = (currentPlayerIndex + 1) % players.size
-}
-/**
- * Rolls two dice and returns their sum.
- */
-
-    /**
-     * Advances the game to the next player's turn.
-     */
-    internal fun nextTurn() {
-        val currentPlayer = board.players[currentPlayerIndex]
-        val diceRoll = Dice().roll()
-
-        println("${currentPlayer.name} rolled a $diceRoll!")
-        currentPlayer.numCell = (currentPlayer.numCell + diceRoll) % board.cells.size
-
-        // Update to the next player's turn
-        currentPlayerIndex = (currentPlayerIndex + 1) % board.players.size
-    }
