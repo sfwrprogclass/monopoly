@@ -4,6 +4,7 @@ package com.dallascollege.monopoly.model
 
 import com.dallascollege.monopoly.enums.Token
 import com.dallascollege.monopoly.logic.GameBoard
+import com.dallascollege.monopoly.logic.findPropertyById
 import com.dallascollege.monopoly.model.Game
 import com.dallascollege.monopoly.model.Property
 
@@ -17,24 +18,7 @@ data class Player(
     var isCPU: Boolean = false,
     var numCell: Int = 1,
     private var games: MutableList<Game> = mutableListOf(),
-    internal var propertyIds: MutableList<Int> = mutableListOf(),
-    var xOffset: Int = 0, // Add an xOffset property (default 0)
-    var yOffset: Int = 0  // Add a yOffset property (default 0)
-
-data class Player(
-    val id: Int,
-    var name: String = "Unnamed Player",
-    var totalMoney: Int = 1500,
-    val token: Token,
-    var inJail: Boolean = false,
-    var hasOutJailCard: Boolean = false,
-    var isCPU: Boolean = false,
-    var numCell: Int = 1,
-    private var games: MutableList<Game> = mutableListOf(),
-    internal var propertyIds: MutableList<Int> = mutableListOf(),
-    var xOffset: Int = 0, // Add an xOffset property (default 0)
-    var yOffset: Int = 0  // Add a yOffset property (default 0)
-)
+    internal var propertyIds: MutableList<Int> = mutableListOf()
 ) {
     fun getGames(): List<Game> = games
 
@@ -50,20 +34,6 @@ data class Player(
 
         return playerProperties.toTypedArray()
     }
-
-    fun getProperties(board: GameBoard): Array<Property> {
-        val playerProperties = mutableListOf<Property>()
-
-fun getRailroads(board: GameBoard): Array<Property> {
-    return board.properties
-        .filter { it.isRailRoad && propertyIds.contains(it.id) }
-        .toTypedArray()
-}
-        }
-
-        return playerProperties.toTypedArray()
-    }
-
     fun addGame(game: Game) {
         games.add(game)
     }
@@ -72,23 +42,26 @@ fun getRailroads(board: GameBoard): Array<Property> {
         return board.properties.filter { it.isUtility && it.id in propertyIds }
     }
 
-fun getRailroads(board: GameBoard): List<Property> {
-    return board.properties.filter { it.isRailRoad && it.id in propertyIds }
-}
+    fun getRailroads(board: GameBoard): List<Property> {
+        return board.properties.filter { it.isRailRoad && it.id in propertyIds }
+    }
 
     fun getPropertyIds(): List<Int> = propertyIds
 
-    fun addProperty(id: Int, board: GameBoard) {
-        if (!propertyIds.contains(id) && board.getPropertyById(id) != null) {
+    fun addProperty(id: Int, gameBoard: GameBoard) {
+        val property = gameBoard.findPropertyById(id)
+        if (property != null && id !in propertyIds) {
             propertyIds.add(id)
         }
     }
 
-    fun removeProperty(id: Int, board: GameBoard) {
-        if (propertyIds.contains(id) && board.getPropertyById(id) != null) {
+    fun removeProperty(id: Int, gameBoard: GameBoard) {
+        val property = gameBoard.findPropertyById(id)
+        if (property != null && id in propertyIds) {
             propertyIds.remove(id)
         }
     }
+
 
     // Add money to the player's total
     fun addMoney(amount: Int) {

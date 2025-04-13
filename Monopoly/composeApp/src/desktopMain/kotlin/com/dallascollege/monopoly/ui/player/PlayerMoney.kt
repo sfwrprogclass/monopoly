@@ -28,7 +28,7 @@ fun PlayerMoneyView(gameBoard: GameBoard) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(5.dp),
+            .padding(10.dp),
         contentAlignment = Alignment.Center
     ) {
         currentPlayer?.let { player ->

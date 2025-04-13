@@ -11,27 +11,27 @@ import com.dallascollege.monopoly.logic.GameBoard
 fun ActionArea(gameBoard: GameBoard, playerId: Int) {
 
     Column(modifier = Modifier.fillMaxSize()) {
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(1.dp)
-//                .weight(0.1f)
-//        ) {
-//            Row(
-//                modifier = Modifier.fillMaxSize(),
-//                horizontalArrangement = Arrangement.Center
-//            ) {
-//                Box(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
-//                    Text("ACTIONS", modifier = Modifier.padding(1.dp))
-//                }
-//            }
-//        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(2.dp)
+                .weight(0.2f)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Box(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+                    Text("ACTIONS", modifier = Modifier.padding(5.dp))
+                }
+            }
+        }
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(1.dp)
-                .weight(1f)
+                .padding(2.dp)
+                .weight(0.8f)
         ) {
             ActionView(gameBoard, playerId)
         }

@@ -15,94 +15,26 @@ class Cell(
 ) {
 
     var numCell: Int = numCell
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var propertyId: Int = propertyId
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var isGoToJail: Boolean = isGoToJail
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var isLuxuryTax: Boolean = isLuxuryTax
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var isIncomeTax: Boolean = isIncomeTax
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var isChance: Boolean = isChance
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var isCommunityChest: Boolean = isCommunityChest
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var isParking: Boolean = isParking
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var isCollectSalary: Boolean = isCollectSalary
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var isVisitingJail: Boolean = isVisitingJail
-        get() = field
-        set(value) {
-            field = value
-        }
 
     fun isProperty(): Boolean {
         return propertyId != -1
-    }
-
-    fun getName(board: GameBoard): String {
-        if (isProperty()) {
-            val property = board.getPropertyById(propertyId)
-            if (property != null)
-                return property.name
-            else
-                return "Unknown property"
-        } else if (isVisitingJail) {
-                return "Visiting jail"
-        } else if (isCollectSalary) {
-                return "Collect salary"
-        } else if (isParking) {
-            return "Parking"
-        } else if (isCommunityChest) {
-            return "Community Chest"
-        } else if (isChance) {
-            return "Is Chance"
-        } else if (isIncomeTax) {
-            return "Is Income Tax"
-        } else if (isLuxuryTax) {
-            return "Is Luxury Tax"
-        } else if (isGoToJail) {
-            return "Is Go to Jail"
-        } else {
-            return "Unknown cell"
-        }
     }
 }

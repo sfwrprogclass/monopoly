@@ -1,3 +1,5 @@
+@file:Suppress("DuplicatedCode", "DuplicatedCode", "DuplicatedCode", "DuplicatedCode")
+
 package com.dallascollege.monopoly.ui.player
 
 import androidx.compose.foundation.layout.*
@@ -11,21 +13,21 @@ import com.dallascollege.monopoly.logic.GameBoard
 fun PlayersListView(gameBoard: GameBoard) {
 
     Column(modifier = Modifier.fillMaxSize()) {
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(2.dp)
-//                .weight(0.2f)
-//        ) {
-//            Row(
-//                modifier = Modifier.fillMaxSize(),
-//                horizontalArrangement = Arrangement.Center
-//            ) {
-//                Box(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
-//                    Text("PLAYERS", modifier = Modifier.padding(5.dp))
-//                }
-//            }
-//        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(2.dp)
+                .weight(0.2f)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Box(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+                    Text("PLAYERS", modifier = Modifier.padding(5.dp))
+                }
+            }
+        }
 
         Box(
             modifier = Modifier

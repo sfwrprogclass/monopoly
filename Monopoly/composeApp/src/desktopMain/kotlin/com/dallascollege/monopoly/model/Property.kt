@@ -3,6 +3,7 @@ package com.dallascollege.monopoly.model
 import com.dallascollege.monopoly.enums.PropertyColor
 import com.dallascollege.monopoly.enums.PropertyColor.NONE
 import com.dallascollege.monopoly.logic.GameBoard
+import com.dallascollege.monopoly.logic.findPropertyById
 import kotlin.math.min
 
 class Property(
@@ -48,7 +49,7 @@ class Property(
     // Calculate rent based on the property configuration
     fun calculateRent(gameBoard: GameBoard): Int {
         val ownsFullSet = owner?.propertyIds?.count {
-            val property = gameBoard.getPropertyById(it)
+            val property = gameBoard.findPropertyById(it)
             property?.color == color
         } == PropertyColor.getColorGroupSize(color)
 
@@ -73,7 +74,7 @@ class Property(
         if (numHotels > 0 || numHouses >= 4) return false
 
         val ownsFullSet = owner?.propertyIds?.count {
-            val property = gameBoard.getPropertyById(it)
+            val property = gameBoard.findPropertyById(it)
             property?.color == color
         } == PropertyColor.getColorGroupSize(color)
 

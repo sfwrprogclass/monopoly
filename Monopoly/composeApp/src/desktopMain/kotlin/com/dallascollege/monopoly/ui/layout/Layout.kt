@@ -61,7 +61,7 @@ fun Layout(gameBoard: GameBoard) {
                 // Money Display Section
                 Box(
                     modifier = Modifier
-                        .weight(0.10f)
+                        .weight(0.15f)
                         .fillMaxWidth()
                         .background(Color(0xFF98FF98)),
                     contentAlignment = Alignment.Center
