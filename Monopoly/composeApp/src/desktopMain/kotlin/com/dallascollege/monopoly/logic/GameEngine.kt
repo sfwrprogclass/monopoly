@@ -2,7 +2,7 @@ package com.dallascollege.monopoly.logic
 
 import com.dallascollege.monopoly.model.Player
 
-//make it static class with static methods for the different actions to be executed
+// Singleton (Static Class) with static methods for the different actions to be executed
 object GameEngine {
 
     fun movePlayer(board: GameBoard, playerId: Int, steps: Int) {
@@ -22,6 +22,7 @@ object GameEngine {
         }
     }
 
+    // As a player, I can collect the appropriate rent for utilities based on how many in the set I own.
     fun collectBaseRent(board: GameBoard, playerId: Int) {
         val player = board.getPlayerById(playerId) ?: return
         val cell = board.getCellById(player.numCell) ?: return
@@ -29,13 +30,13 @@ object GameEngine {
 
         val property = board.getPropertyById(cell.propertyId) ?: return
         val owner = board.getPropertyOwner(property) ?: return
-
         if (owner == player) return
 
         player.totalMoney -= property.baseRent
         owner.totalMoney += property.baseRent
     }
 
+    // As a player, I can collect the appropriate rent for utilities based on how many in the set I own.
     fun collectUtilities(board: GameBoard, playerId: Int) {
         val player = board.getPlayerById(playerId) ?: return
         val cell = board.getCellById(player.numCell) ?: return
@@ -58,6 +59,7 @@ object GameEngine {
 //        owner.totalMoney += property.baseRent * numberOfUtilities
     }
 
+   // As a player, I can collect the appropriate rent for railroads based on how many in the set I own.
     fun collectRailroads(board: GameBoard, playerId: Int) {
         val player = board.getPlayerById(playerId) ?: return
         val cell = board.getCellById(player.numCell) ?: return
@@ -76,6 +78,7 @@ object GameEngine {
        owner.totalMoney += rentToPay
     }
 
+    //As a player, I can take appropriate action when landing on a non-property space
     private fun earnCentralMoney(board: GameBoard, player: Player) {
         player.totalMoney += board.centralMoney
         board.centralMoney = 0

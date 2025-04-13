@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dallascollege.monopoly.enums.ActionType
 import com.dallascollege.monopoly.model.GameBoard
-import com.dallascollege.monopoly.logic.Property
+import com.dallascollege.monopoly.model.Property
 import com.dallascollege.monopoly.ui.property.PropertyDropDownMenu
 
 @Composable

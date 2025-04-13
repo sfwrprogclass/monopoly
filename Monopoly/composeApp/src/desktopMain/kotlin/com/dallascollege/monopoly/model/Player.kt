@@ -51,6 +51,19 @@ data class Player(
         return playerProperties.toTypedArray()
     }
 
+    fun getProperties(board: GameBoard): Array<Property> {
+        val playerProperties = mutableListOf<Property>()
+
+fun getRailroads(board: GameBoard): Array<Property> {
+    return board.properties
+        .filter { it.isRailRoad && propertyIds.contains(it.id) }
+        .toTypedArray()
+}
+        }
+
+        return playerProperties.toTypedArray()
+    }
+
     fun addGame(game: Game) {
         games.add(game)
     }
