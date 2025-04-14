@@ -104,7 +104,7 @@ class CommunityChest(private val gameBoard: GameBoard) {
                     action = { player, _ ->
                         val houseFee = 40
                         val hotelFee = 115
-                        val totalFee = player.getPropertyIds().map { id -> gameBoard.properties.find { it.id == id } }.sumOf {
+                        val totalFee = player.getPropertyIds().map { id -> gameBoard.getPropertyById(id) }.sumOf {
                             (it?.numHouses ?: 0) * houseFee + if ((it?.numHotels ?: 0) > 0) hotelFee else 0
                         }
 

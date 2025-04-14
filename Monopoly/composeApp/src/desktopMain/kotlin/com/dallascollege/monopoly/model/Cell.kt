@@ -1,5 +1,4 @@
 package com.dallascollege.monopoly.model
-import androidx.compose.ui.graphics.ImageBitmap
 
 class Cell(
     numCell: Int = 1,

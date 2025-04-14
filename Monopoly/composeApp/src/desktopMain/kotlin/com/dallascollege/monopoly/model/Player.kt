@@ -4,7 +4,6 @@ package com.dallascollege.monopoly.model
 
 import com.dallascollege.monopoly.enums.Token
 import com.dallascollege.monopoly.logic.GameBoard
-import com.dallascollege.monopoly.logic.findPropertyById
 import com.dallascollege.monopoly.model.Game
 import com.dallascollege.monopoly.model.Property
 
@@ -18,7 +17,11 @@ data class Player(
     var isCPU: Boolean = false,
     var numCell: Int = 1,
     private var games: MutableList<Game> = mutableListOf(),
-    internal var propertyIds: MutableList<Int> = mutableListOf()
+    internal var propertyIds: MutableList<Int> = mutableListOf(),
+    var xOffset: Int = 0, // Add an xOffset property (default 0)
+    var yOffset: Int = 0  // Add a yOffset property (default 0)
+
+
 ) {
     fun getGames(): List<Game> = games
 
@@ -48,20 +51,17 @@ data class Player(
 
     fun getPropertyIds(): List<Int> = propertyIds
 
-    fun addProperty(id: Int, gameBoard: GameBoard) {
-        val property = gameBoard.findPropertyById(id)
-        if (property != null && id !in propertyIds) {
+    fun addProperty(id: Int, board: GameBoard) {
+        if (!propertyIds.contains(id) && board.getPropertyById(id) != null) {
             propertyIds.add(id)
         }
     }
 
-    fun removeProperty(id: Int, gameBoard: GameBoard) {
-        val property = gameBoard.findPropertyById(id)
-        if (property != null && id in propertyIds) {
+    fun removeProperty(id: Int, board: GameBoard) {
+        if (propertyIds.contains(id) && board.getPropertyById(id) != null) {
             propertyIds.remove(id)
         }
     }
-
 
     // Add money to the player's total
     fun addMoney(amount: Int) {

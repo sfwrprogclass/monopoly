@@ -5,7 +5,6 @@ import com.dallascollege.monopoly.model.Cell
 import com.dallascollege.monopoly.model.Player
 import com.dallascollege.monopoly.model.Property
 
-
 class GameBoard(
     initialPlayers: Array<Player>
 ) {
@@ -25,8 +24,8 @@ class GameBoard(
     var centralMoney: Int = 0
     var speedDieMode: Boolean = false
     var freeParkingRule: Boolean = false
-    var cells: Array<Cell> = mutableListOf<Cell>().apply { addDefaultCells(1) }.toTypedArray()
-    var properties: Array<Property> = mutableListOf<Property>().apply { addDefaultProperties(1) }.toTypedArray()
+    var cells: Array<Cell> = emptyArray()
+    var properties: Array<Property> = emptyArray()
 
     fun createModels() {
         initializeProperties()
@@ -47,28 +46,9 @@ class GameBoard(
 
     // New helper function to add default cells
     private fun MutableList<Cell>.addDefaultCells(startCellId: Int) {
-        var currentCellId = startCellId
-
-        // Add cells for the top side
-        for (i in 1..10) { // Assume 10 cells per side
-            add(Cell(numCell = currentCellId++, isCollectSalary = i == 1)) // First cell: START
-        }
-
-        // Add cells for the right side
-        for (i in 1..10) {
-            add(Cell(numCell = currentCellId++, propertyId = currentCellId)) // Properties or other actions
-        }
-
-        // Add cells for the bottom side
-        for (i in 1..10) {
-            add(Cell(numCell = currentCellId++)) // Use generic cells or add specific logic if required
-        }
-
-        // Add cells for the left side
-        for (i in 1..10) {
-            add(Cell(numCell = currentCellId++, propertyId = if (i % 2 == 0) currentCellId else -1)) // Alternate properties
-        }
-    }
+        add(Cell(numCell = startCellId, isCollectSalary = true))
+        add(Cell(numCell = startCellId + 1, propertyId = FIRST_PROPERTY_ID))
+        // Add additional cells as needed...
     }
 
     // New helper function to add default properties
@@ -78,16 +58,13 @@ class GameBoard(
         // Add additional properties as needed...
     }
 
-fun getPlayerById(id: Int): Player? = GameEngine.players.find { it.id == id }
-fun GameBoard.findPropertyById(propertyId: Int): Property? {
-    require(propertyId > 0) { "Property ID must be greater than 0." }
-    return properties.firstOrNull { it.id == propertyId }
-}
-fun GameBoard.findCellById(cellId: Int): Cell? {
-    require(cellId > 0) { "Cell ID must be greater than 0." }
-    return cells.firstOrNull { it.numCell == cellId }
+    fun getPlayerById(id: Int): Player? = players.find { it.id == id }
+
+    fun getPropertyById(id: Int): Property? = properties.find { it.id == id }
+
+    fun getCellById(numCell: Int): Cell? = cells.find { it.numCell == numCell }
 
     fun getPropertyOwner(property: Property): Player? {
-        return this.players.find { property.id in it.propertyIds }
+        return players.find { property.id in it.propertyIds }
     }
 }

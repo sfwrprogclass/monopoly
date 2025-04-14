@@ -1,8 +1,8 @@
 package com.dallascollege.monopoly.model
 
+import com.dallascollege.monopoly.model.Player.*
 import com.dallascollege.monopoly.enums.PropertyColor
 import com.dallascollege.monopoly.logic.GameBoard
-import com.dallascollege.monopoly.logic.findPropertyById
 
 
 /**
@@ -162,7 +162,7 @@ class PlayerPropertyManagement(private val notificationService: NotificationServ
 
         // Transfer all properties owned by the bankrupt player
         player.getPropertyIds().forEach { propertyId ->
-            val property = gameboard.findPropertyById(propertyId)
+            val property = gameboard.getPropertyById(propertyId)
             if (property != null) {
                 transferProperty(property, creditor, gameboard)
             }
@@ -187,12 +187,11 @@ class PlayerPropertyManagement(private val notificationService: NotificationServ
     /**
      * Transfers ownership of a property to a new owner.
      */
-    fun transferProperty(property: Property, newOwner: Player, gameBoard: GameBoard) {
-        property.owner
-            ?.let { oldOwner ->
-                oldOwner.removeProperty(property.id, gameBoard)
-            }
-        newOwner.addProperty(property.id, gameBoard)
+    fun transferProperty(property: Property, newOwner: Player, gameboard: GameBoard) {
+        property.owner?.let { oldOwner: Player ->
+            oldOwner.removeProperty(property.id, gameboard)
+        }
+        newOwner.addProperty(property.id, gameboard)
         property.owner = newOwner
 
         notify("${property.name} has been transferred to ${newOwner.name}.")
