@@ -23,6 +23,7 @@ fun App() {
     val selectedTokens = remember { mutableStateMapOf<Player, Token>() }
     var turnOrderConfirmed by remember { mutableStateOf(false) }
     var turnOrder by remember { mutableStateOf<List<String>>(emptyList()) }
+    val currentTurn = remember { mutableStateOf(0) }
 
     when {
         showMenu -> {
@@ -75,14 +76,15 @@ fun App() {
 
             val gameBoard = GameBoard(players.toTypedArray())
             gameBoard.createModels()
+            gameBoard.turnOrder = players.map { it.id }.toTypedArray()
+            gameBoard.currentTurn = currentTurn.value
 
             Column(
                 modifier = Modifier.fillMaxSize().padding(5.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Layout(gameBoard)
+                Layout(gameBoard, currentTurn)
             }
         }
     }
 }
-

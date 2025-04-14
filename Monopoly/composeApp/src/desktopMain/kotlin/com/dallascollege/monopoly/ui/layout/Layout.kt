@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,9 +21,10 @@ import com.dallascollege.monopoly.ui.property.PropertyListView
 import com.dallascollege.monopoly.ui.player.playerMoney
 
 @Composable
-fun Layout(gameBoard: GameBoard) {
+fun Layout(gameBoard: GameBoard, currentTurn: MutableState<Int>) {
+    val currentPlayerId = gameBoard.turnOrder.getOrNull(currentTurn.value) ?: return
+
     Row(modifier = Modifier.fillMaxSize()) {
-        // Left Side: Board with Cells
         Card(
             modifier = Modifier
                 .weight(2f)
@@ -41,7 +43,6 @@ fun Layout(gameBoard: GameBoard) {
             }
         }
 
-        // Right Side: Sidebar for Player Info
         Card(
             modifier = Modifier
                 .weight(1f)
@@ -60,7 +61,6 @@ fun Layout(gameBoard: GameBoard) {
                     PlayersListView(gameBoard)
                 }
 
-                // Money Display Section
                 Box(
                     modifier = Modifier
                         .weight(0.10f)
@@ -77,7 +77,7 @@ fun Layout(gameBoard: GameBoard) {
                         .fillMaxWidth()
                         .background(Color(0xFFFFF9C4))
                 ) {
-                    ActionArea(gameBoard, gameBoard.selectedPlayerId)
+                    ActionArea(gameBoard, currentPlayerId, currentTurn)
                 }
                 Box(
                     modifier = Modifier
@@ -93,7 +93,7 @@ fun Layout(gameBoard: GameBoard) {
                         .fillMaxWidth()
                         .background(Color(0XFF98FF98))
                 ) {
-                    DiceRoller(gameBoard)
+                    DiceRoller(gameBoard, currentTurn)
                 }
             }
         }
