@@ -14,6 +14,10 @@ class GameBoard(
     properties: Array<Property> = emptyArray()
 ) {
 
+    fun applyIncomeTax(player: Player) {
+        player.totalMoney -= 200
+    }
+    
     private fun createCells() {
         val cells = arrayOf<Cell>()
         val cellList = cells.toMutableList()
