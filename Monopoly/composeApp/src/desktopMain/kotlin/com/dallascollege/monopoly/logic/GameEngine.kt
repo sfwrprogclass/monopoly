@@ -13,7 +13,10 @@ object GameEngine {
         player.numCell = ((player.numCell - 1 + steps) % totalCells) + 1
 
         if (player.numCell < oldCell) {
-            collectSalary(player)
+            val cellOne = board.getCellById(1)
+            if (cellOne?.isCollectSalary == true) {
+                collectSalary(player)
+            }
         }
     }
 
@@ -99,11 +102,11 @@ object GameEngine {
     }
 
     private fun payIncomeTax(player: Player) {
-        player.totalMoney -= 150
+        player.totalMoney -= 100
     }
 
     private fun payLuxuryTax(player: Player) {
-        player.totalMoney -= 200
+        player.totalMoney -= 100
     }
 
     fun landingAction(board: GameBoard, playerId: Int) {
