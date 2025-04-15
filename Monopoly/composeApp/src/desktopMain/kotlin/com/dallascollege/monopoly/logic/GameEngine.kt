@@ -102,7 +102,7 @@ object GameEngine {
     }
 
     private fun payIncomeTax(player: Player) {
-        player.totalMoney -= 100
+        player.totalMoney -= 200
     }
 
     private fun payLuxuryTax(player: Player) {
