@@ -24,7 +24,6 @@ fun playerMoney(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>) {
         contentAlignment = Alignment.Center
     ) {
         currentPlayer?.let { player ->
-            val startingMoney = 1500
             Text(
                 text = "${player.name}: \$${player.totalMoney}",
                 fontSize = 22.sp,

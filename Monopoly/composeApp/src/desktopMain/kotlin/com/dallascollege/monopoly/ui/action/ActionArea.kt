@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.dallascollege.monopoly.model.GameBoard
 
 @Composable
-fun ActionArea(gameBoard: GameBoard, playerId: Int, currentTurn: MutableState<Int>) {
+fun ActionArea(gameBoard: GameBoard, playerId: Int, currentTurn: MutableState<Int>, selectedPlayerId: MutableState<Int>) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -21,6 +21,6 @@ fun ActionArea(gameBoard: GameBoard, playerId: Int, currentTurn: MutableState<In
             .border(2.dp, Color.Black, RoundedCornerShape(4.dp))
             .background(Color.White)
     ) {
-        ActionView(gameBoard, playerId, currentTurn)
+        ActionView(gameBoard, playerId, currentTurn, selectedPlayerId)
     }
 }

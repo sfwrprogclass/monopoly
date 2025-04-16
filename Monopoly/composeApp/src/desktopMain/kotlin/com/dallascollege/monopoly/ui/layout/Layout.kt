@@ -80,7 +80,7 @@ fun Layout(gameBoard: GameBoard, currentTurn: MutableState<Int>) {
                         .fillMaxWidth()
                         .background(Color(0xFFFFF9C4))
                 ) {
-                    ActionArea(gameBoard, currentPlayerId, currentTurn)
+                    ActionArea(gameBoard, currentPlayerId, currentTurn, selectedPlayerId)
                 }
                 Box(
                     modifier = Modifier

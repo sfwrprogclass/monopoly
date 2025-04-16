@@ -13,7 +13,13 @@ import com.dallascollege.monopoly.model.Property
 import com.dallascollege.monopoly.ui.property.PropertyDropDownMenu
 
 @Composable
-fun ActionView(board: GameBoard, playerId: Int, currentTurn: MutableState<Int>, modifier: Modifier = Modifier) {
+fun ActionView(
+    board: GameBoard,
+    playerId: Int,
+    currentTurn: MutableState<Int>,
+    selectedPlayerId: MutableState<Int>,
+    modifier: Modifier = Modifier)
+{
 
     var selectedActionType by remember { mutableStateOf(ActionType.SKIP)}
     var selectedProperty: Property? by remember { mutableStateOf(null) }
@@ -22,6 +28,7 @@ fun ActionView(board: GameBoard, playerId: Int, currentTurn: MutableState<Int>, 
     var isQuantityEnable by remember { mutableStateOf(false)}
     var isAmountEnable by remember { mutableStateOf(false)}
     var isSelectedPropertyEnabled by remember { mutableStateOf(false)}
+    var isReadOnly = playerId != selectedPlayerId.value
 
     val player = board.players.find { it.id == playerId }
 
@@ -88,7 +95,7 @@ fun ActionView(board: GameBoard, playerId: Int, currentTurn: MutableState<Int>, 
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Select action")
-            ActionTypeDropDownMenu() { actionType -> handleActionTypeChange(actionType) }
+            ActionTypeDropDownMenu(isReadOnly) { actionType -> handleActionTypeChange(actionType) }
         }
 
         Row(
@@ -98,7 +105,7 @@ fun ActionView(board: GameBoard, playerId: Int, currentTurn: MutableState<Int>, 
             Text("Quantity", modifier = Modifier.width(120.dp).padding(end = 8.dp))
             OutlinedTextField(
                 value = quantity,
-                enabled = isQuantityEnable,
+                enabled = isQuantityEnable && !isReadOnly,
                 onValueChange = { quantity = it },
                 textStyle = LocalTextStyle.current.copy(fontSize = 12.sp, textAlign = TextAlign.Center),
                 modifier = Modifier.weight(1f).height(48.dp),
@@ -113,7 +120,7 @@ fun ActionView(board: GameBoard, playerId: Int, currentTurn: MutableState<Int>, 
             Text("Money", modifier = Modifier.width(120.dp).padding(end = 9.dp))
             OutlinedTextField(
                 value = amount,
-                enabled = isAmountEnable,
+                enabled = isAmountEnable && !isReadOnly,
                 onValueChange = { amount = it },
                 textStyle = LocalTextStyle.current.copy(fontSize = 12.sp, textAlign = TextAlign.Center),
                 modifier = Modifier.weight(1f).height(48.dp),
@@ -127,7 +134,10 @@ fun ActionView(board: GameBoard, playerId: Int, currentTurn: MutableState<Int>, 
         ) {
             Text("Select property")
             if (player != null) {
-                PropertyDropDownMenu(player, board, isSelectedPropertyEnabled) { property -> handlePropertyChange(property) }
+                PropertyDropDownMenu(player, board, isSelectedPropertyEnabled && !isReadOnly)
+                {
+                    property -> handlePropertyChange(property)
+                }
             }
         }
 
@@ -135,7 +145,10 @@ fun ActionView(board: GameBoard, playerId: Int, currentTurn: MutableState<Int>, 
             modifier = Modifier.fillMaxWidth().height(40.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            Button(onClick = { executeAction() }) {
+            Button(
+                onClick = { executeAction() },
+                enabled = !isReadOnly
+            ) {
                 Text("Execute action")
             }
         }
