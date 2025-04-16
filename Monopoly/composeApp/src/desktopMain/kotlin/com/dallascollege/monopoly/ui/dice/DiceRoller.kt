@@ -34,6 +34,7 @@ fun DiceRoller(gameBoard: GameBoard, currentTurn: State<Int>) {
         val total = dice1 + dice2
         val currentPlayerId = gameBoard.turnOrder[currentTurn.value]
         GameEngine.movePlayer(gameBoard, currentPlayerId, total)
+        gameBoard.selectedPlayerId = currentPlayerId
         hasRolled = true
     }
 

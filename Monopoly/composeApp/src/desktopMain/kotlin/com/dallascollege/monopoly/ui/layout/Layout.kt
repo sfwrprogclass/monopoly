@@ -8,6 +8,8 @@ import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +25,7 @@ import com.dallascollege.monopoly.ui.player.playerMoney
 @Composable
 fun Layout(gameBoard: GameBoard, currentTurn: MutableState<Int>) {
     val currentPlayerId = gameBoard.turnOrder.getOrNull(currentTurn.value) ?: return
+    val selectedPlayerId = remember { mutableStateOf(gameBoard.selectedPlayerId) }
 
     Row(modifier = Modifier.fillMaxSize()) {
         Card(
@@ -58,7 +61,7 @@ fun Layout(gameBoard: GameBoard, currentTurn: MutableState<Int>) {
                         .fillMaxWidth()
                         .background(Color(0xFFFFF9C4))
                 ) {
-                    PlayersListView(gameBoard)
+                    PlayersListView(gameBoard, selectedPlayerId)
                 }
 
                 Box(
@@ -68,12 +71,12 @@ fun Layout(gameBoard: GameBoard, currentTurn: MutableState<Int>) {
                         .background(Color(0xFF98FF98)),
                     contentAlignment = Alignment.Center
                 ) {
-                    playerMoney(gameBoard)
+                    playerMoney(gameBoard, selectedPlayerId)
                 }
 
                 Box(
                     modifier = Modifier
-                        .weight(0.37f)
+                        .weight(0.40f)
                         .fillMaxWidth()
                         .background(Color(0xFFFFF9C4))
                 ) {
@@ -81,11 +84,11 @@ fun Layout(gameBoard: GameBoard, currentTurn: MutableState<Int>) {
                 }
                 Box(
                     modifier = Modifier
-                        .weight(0.27f)
+                        .weight(0.24f)
                         .fillMaxWidth()
                         .background(Color(0xFFFFF9C4))
                 ) {
-                    PropertyListView(gameBoard)
+                    PropertyListView(gameBoard, selectedPlayerId)
                 }
                 Box(
                     modifier = Modifier
