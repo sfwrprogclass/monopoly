@@ -67,4 +67,38 @@ class PlayerTest {
         assertEquals(1200, player.totalMoney)
         assertTrue(player.inJail)
     }
+    @Test
+    fun `deductMoney reduces totalMoney when sufficient funds are available`() {
+        val player = Player(id = 1, name = "Player 1", totalMoney = 1500, token = Token.BOOT)
+        val result = player.deductMoney(500)
+        assertTrue(result)
+        assertEquals(1000, player.totalMoney)
+    }
+
+    @Test
+    fun `deductMoney returns false when insufficient funds are available`() {
+        val player = Player(id = 1, name = "Player 1", totalMoney = 300, token = Token.BOOT)
+        val result = player.deductMoney(500)
+        assertFalse(result)
+        assertEquals(300, player.totalMoney)
+    }
+
+    @Test
+    fun `addMoney increases totalMoney`() {
+        val player = Player(id = 1, name = "Player 1", totalMoney = 1000, token = Token.BOOT)
+        player.addMoney(500)
+        assertEquals(1500, player.totalMoney)
+    }
+
+    @Test
+    fun `addProperty adds a property to the player's owned properties`() {
+        val gameBoard = GameBoard(
+            players = arrayOf(),
+            properties = arrayOf(Property(id = 1, name = "Baltic Avenue", price = 60))
+        )
+        val player = Player(id = 1, name = "Player 1", token = Token.BOOT)
+        player.addProperty(1, gameBoard)
+        assertEquals(1, player.getProperties(gameBoard).size)
+    }
 }
+

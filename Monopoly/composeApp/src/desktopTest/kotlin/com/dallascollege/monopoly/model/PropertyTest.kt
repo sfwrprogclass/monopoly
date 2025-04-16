@@ -83,4 +83,27 @@ class PropertyTest {
         assertEquals(1, property.numHotels)
         assertTrue(property.isMortgaged)
     }
+    @Test
+    fun `hasHotel returns true when numHotels is greater than 0`() {
+        val property = Property(
+            id = 1,
+            name = "Boardwalk",
+            price = 400,
+            color = PropertyColor.BLUE,
+            numHotels = 1
+        )
+        assertTrue(property.hasHotel)
+    }
+
+    @Test
+    fun `hasHotel returns false when numHotels is 0`() {
+        val property = Property(
+            id = 2,
+            name = "Park Place",
+            price = 350,
+            color = PropertyColor.BLUE,
+            numHotels = 0
+        )
+        assertFalse(property.hasHotel)
+    }
 }

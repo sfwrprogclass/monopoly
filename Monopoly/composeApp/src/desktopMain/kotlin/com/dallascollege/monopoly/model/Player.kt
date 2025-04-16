@@ -15,6 +15,7 @@ class Player(
     isCPU: Boolean = false,
     numCell: Int = 1
 ) {
+    private val ownedPropertyIds = mutableListOf<Int>()
 
     fun getProperties(board: GameBoard): Array<Property> {
         val playerProperties = mutableListOf<Property>()
@@ -42,68 +43,71 @@ class Player(
     }
 
     var id: Int = id
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var totalMoney: Int = totalMoney
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var turnNum: Int = turnNum
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var name: String = name
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var token: Token = token
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var propertyIds: Array<Int> = propertyIds
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var inJail: Boolean = inJail
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var hasOutJailCard: Boolean = hasOutJailCard
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var games: Array<Game> = games
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var isCPU: Boolean = isCPU
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var numCell: Int = numCell
-        get() = field
-        set(value) {
-            field = value
+
+    fun deductMoney(amount: Int): Boolean {
+        return if (totalMoney >= amount) {
+            totalMoney -= amount
+            true
+        } else {
+            false
         }
+    }
+    fun addMoney(amount: Int) {
+        totalMoney += amount
+    }
+
+    fun addProperty(propertyId: Int, gameBoard: GameBoard) {
+        // Find the property by its ID
+        val property = gameBoard.properties.find { it.id == propertyId }
+
+        // Validate that the property exists
+        if (property == null) {
+            throw IllegalArgumentException("Property with ID $propertyId does not exist on the game board.")
+        }
+
+        // Check if the property is already owned
+        if (property.ownerId != null) {
+            throw IllegalStateException("Property with ID $propertyId is already owned by another player.")
+        }
+
+        // Check if the property is not already in ownedPropertyIds
+        if (ownedPropertyIds.contains(propertyId)) {
+            throw IllegalStateException("Property with ID $propertyId is already owned by this player.")
+        }
+
+        // Add the property to the player's list and assign the ownership
+        ownedPropertyIds.add(propertyId)
+        property.ownerId = id
+    }
+    // New buyProperty Function
+    fun buyProperty(propertyId: Int, gameBoard: GameBoard, price: Int) {
+        // Deduct money for the purchase
+        if (deductMoney(price)) {
+            // Add property ownership
+            addProperty(propertyId, gameBoard)
+        } else {
+            throw IllegalStateException("Not enough money to buy the property.")
+        }
+    }
+
 }

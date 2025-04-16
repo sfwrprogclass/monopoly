@@ -93,5 +93,21 @@ class GameBoardTest {
         val owner = gameBoard.getPropertyOwner(property)
         assertEquals("Player1", owner?.name)
     }
+    @Test
+    fun `GameBoard initializes with players and properties`() {
+        val players = arrayOf(Player(id = 1, name = "Player 1", token = Token.BOOT))
+        val properties = arrayOf(Property(id = 1, name = "Baltic Avenue", price = 60))
+        val gameBoard = GameBoard(players = players, properties = properties)
 
+        assertEquals(1, gameBoard.players.size)
+        assertEquals(1, gameBoard.properties.size)
+    }
+
+    @Test
+    fun `lastDiceRoll can be set and retrieved`() {
+        val gameBoard = GameBoard(players = arrayOf(), properties = arrayOf())
+        gameBoard.lastDiceRoll = listOf(3, 4)
+        assertEquals(listOf(3, 4), gameBoard.lastDiceRoll)
+    }
 }
+

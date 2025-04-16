@@ -13,7 +13,7 @@ class GameBoard(
     cells: Array<Cell> = emptyArray(),
     properties: Array<Property> = emptyArray(),
 ) {
-
+    var lastDiceRoll: List<Int>? = null
     private fun createCells() {
         val cells = arrayOf<Cell>()
         val cellList = cells.toMutableList()
@@ -581,61 +581,25 @@ class GameBoard(
     }
 
     fun getPropertyOwner(property: Property): Player? {
-        return players.find( { it.propertyIds.contains(property.id)})
+        return players.find { it.propertyIds.contains(property.id)}
     }
 
     var players: Array<Player> = players
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var turnOrder: Array<Int> = turnOrder
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var currentTurn: Int = currentTurn
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var selectedPlayerId: Int = selectedPlayerId
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var centralMoney: Int = centralMoney
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var speedDieMode: Boolean = speedDieMode
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var freeParkingRule: Boolean = freeParkingRule
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var cells: Array<Cell> = cells
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var properties: Array<Property> = properties
-        get() = field
-        set(value) {
-            field = value
-        }
 }
 
