@@ -1,12 +1,12 @@
 package com.dallascollege.monopoly.ui.player
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -16,51 +16,51 @@ import com.dallascollege.monopoly.enums.convertTokenToImageStr
 import com.dallascollege.monopoly.model.GameBoard
 
 @Composable
-fun PlayerView(gameBoard: GameBoard, playerId: Int, modifier: Modifier = Modifier) {
+fun PlayerView(gameBoard: GameBoard, playerId: Int, selectedPlayerId: MutableState<Int>, modifier: Modifier = Modifier) {
 
     val player = gameBoard.players.find { it.id == playerId }
 
-    fun selectPlayer(): Unit {
-        gameBoard.selectedPlayerId = playerId
+    LaunchedEffect(gameBoard.currentTurn) {
+       selectedPlayerId.value = gameBoard.turnOrder[gameBoard.currentTurn]
     }
 
-    Box(
-        modifier = modifier // Use external modifier
-            .padding(2.dp)
-        ) {
+    val isSelected = playerId == selectedPlayerId.value
+    val backgroundColor = if (isSelected) Color(0xFF90CAF9) else Color(0xFFFFC1E3)
+
+    Box(modifier = modifier.padding(2.dp)) {
         Button(
-            modifier = Modifier
-                .padding(5.dp, 0.dp, 5.dp, 0.dp),
+            onClick = {
+                selectedPlayerId.value = playerId
+                gameBoard.selectedPlayerId = playerId
+            },
             shape = RoundedCornerShape(2.dp),
-            onClick = { selectPlayer() }
+            colors = ButtonDefaults.buttonColors(backgroundColor = backgroundColor)
         ) {
-            if (player != null) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                    ) {
+            player?.let {
+                Row(modifier = Modifier.fillMaxSize()) {
                     Box(
-                        modifier = Modifier.weight(0.3f).fillMaxHeight()
+                        modifier = Modifier
+                            .weight(0.3f)
+                            .fillMaxHeight()
                     ) {
                         Image(
                             painter = painterResource("images/${convertTokenToImageStr(player.token)}.png"),
-                            contentDescription = "Cell",
+                            contentDescription = "Player Token",
                             modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Fit // Ensures the image scales to fill the Box
+                            contentScale = ContentScale.Fit
                         )
                     }
                     Box(
-                        modifier = Modifier.weight(0.7f).fillMaxHeight()
+                        modifier = Modifier
+                            .weight(0.7f)
+                            .fillMaxHeight()
                     ) {
-                        //UNCOMMENT ONCE THE turnOrder and currentTurn are set so we display * in the player turn
-//                        if (gameBoard.turnOrder[gameBoard.currentTurn] == playerId) {
-//                            Text(
-//                                text = "*",
-//                                modifier = Modifier.padding(0.dp,0.dp,2.dp, 0.dp)
-//                            )
-//                        }
-
-                        Text(player.name)
+                        Text(
+                            text = buildString {
+                                if (gameBoard.turnOrder[gameBoard.currentTurn] == playerId) append(" * ")
+                                append(player.name)
+                            }
+                        )
                     }
                 }
             }

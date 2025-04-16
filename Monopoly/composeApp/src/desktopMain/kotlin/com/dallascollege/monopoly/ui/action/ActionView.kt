@@ -13,7 +13,13 @@ import com.dallascollege.monopoly.model.Property
 import com.dallascollege.monopoly.ui.property.PropertyDropDownMenu
 
 @Composable
-fun ActionView(board: GameBoard, playerId: Int, modifier: Modifier = Modifier) {
+fun ActionView(
+    board: GameBoard,
+    playerId: Int,
+    currentTurn: MutableState<Int>,
+    selectedPlayerId: MutableState<Int>,
+    modifier: Modifier = Modifier)
+{
 
     var selectedActionType by remember { mutableStateOf(ActionType.SKIP)}
     var selectedProperty: Property? by remember { mutableStateOf(null) }
@@ -22,6 +28,7 @@ fun ActionView(board: GameBoard, playerId: Int, modifier: Modifier = Modifier) {
     var isQuantityEnable by remember { mutableStateOf(false)}
     var isAmountEnable by remember { mutableStateOf(false)}
     var isSelectedPropertyEnabled by remember { mutableStateOf(false)}
+    var isReadOnly = playerId != selectedPlayerId.value
 
     val player = board.players.find { it.id == playerId }
 
@@ -58,44 +65,21 @@ fun ActionView(board: GameBoard, playerId: Int, modifier: Modifier = Modifier) {
 
     fun executeAction(): Unit {
         when (selectedActionType) {
-            ActionType.BUY_HOTEL -> {
-                //TODO
-            }
-            ActionType.BUY_HOUSE -> {
-                //TODO
-            }
-            ActionType.SELL_HOTEL -> {
-                //TODO
-            }
-            ActionType.SELL_HOUSE -> {
-                //TODO
-            }
-            ActionType.PAY_RENT -> {
-                //TODO
-            }
-            ActionType.PAY_BANK -> {
-                //TODO
-            }
-            ActionType.GO_TO_JAIL -> {
-                //TODO
-            }
-            ActionType.GET_OUT_OF_JAIL -> {
-                //TODO
-            }
-            ActionType.MORTGAGE_PROPERTY -> {
-                //TODO
-            }
-            ActionType.PURCHASE_PROPERTY -> {
-                //TODO
-            }
-            ActionType.SURRENDER -> {
-                //TODO
-            }
-            ActionType.SKIP -> {
-                //TODO
-            }
+            ActionType.BUY_HOTEL -> {}
+            ActionType.BUY_HOUSE -> {}
+            ActionType.SELL_HOTEL -> {}
+            ActionType.SELL_HOUSE -> {}
+            ActionType.PAY_RENT -> {}
+            ActionType.PAY_BANK -> {}
+            ActionType.GO_TO_JAIL -> {}
+            ActionType.GET_OUT_OF_JAIL -> {}
+            ActionType.MORTGAGE_PROPERTY -> {}
+            ActionType.PURCHASE_PROPERTY -> {}
+            ActionType.SURRENDER -> {}
+            ActionType.SKIP -> {}
             ActionType.FINISH_TURN -> {
-                //TODO
+                currentTurn.value = (currentTurn.value + 1) % board.turnOrder.size
+                board.currentTurn = currentTurn.value
             }
         }
     }
@@ -104,40 +88,28 @@ fun ActionView(board: GameBoard, playerId: Int, modifier: Modifier = Modifier) {
         modifier = Modifier
             .fillMaxSize()
             .padding(5.dp, 0.dp, 5.dp, 0.dp),
-        verticalArrangement = Arrangement.spacedBy(5.dp) // Adds spacing between rows
+        verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().height(40.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Select action")
-            ActionTypeDropDownMenu() {
-                actionType -> handleActionTypeChange(actionType)
-            }
+            ActionTypeDropDownMenu(isReadOnly) { actionType -> handleActionTypeChange(actionType) }
         }
 
         Row(
             modifier = Modifier.fillMaxWidth().height(48.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                "Quantity",
-                modifier = Modifier
-                    .width(120.dp)
-                    .padding(end = 8.dp)
-            )
+            Text("Quantity", modifier = Modifier.width(120.dp).padding(end = 8.dp))
             OutlinedTextField(
                 value = quantity,
-                enabled = isQuantityEnable,
+                enabled = isQuantityEnable && !isReadOnly,
                 onValueChange = { quantity = it },
-                textStyle = LocalTextStyle.current.copy(
-                    fontSize = 12.sp,
-                    textAlign = TextAlign.Center,
-                ),
-                modifier = Modifier
-                    .weight(1f)
-                    .height(48.dp),
-                singleLine = true,
+                textStyle = LocalTextStyle.current.copy(fontSize = 12.sp, textAlign = TextAlign.Center),
+                modifier = Modifier.weight(1f).height(48.dp),
+                singleLine = true
             )
         }
 
@@ -145,26 +117,15 @@ fun ActionView(board: GameBoard, playerId: Int, modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth().height(48.dp),
             horizontalArrangement = Arrangement.Start
         ) {
-            Text(
-                "Money",
-                modifier = Modifier
-                    .width(120.dp)
-                    .padding(end = 9.dp)
-            )
+            Text("Money", modifier = Modifier.width(120.dp).padding(end = 9.dp))
             OutlinedTextField(
                 value = amount,
-                enabled = isAmountEnable,
+                enabled = isAmountEnable && !isReadOnly,
                 onValueChange = { amount = it },
-                textStyle = LocalTextStyle.current.copy(
-                    fontSize = 12.sp,
-                    textAlign = TextAlign.Center,
-                ),
-                modifier = Modifier
-                    .weight(1f)
-                    .height(48.dp),
-                singleLine = true,
+                textStyle = LocalTextStyle.current.copy(fontSize = 12.sp, textAlign = TextAlign.Center),
+                modifier = Modifier.weight(1f).height(48.dp),
+                singleLine = true
             )
-
         }
 
         Row(
@@ -173,7 +134,8 @@ fun ActionView(board: GameBoard, playerId: Int, modifier: Modifier = Modifier) {
         ) {
             Text("Select property")
             if (player != null) {
-                PropertyDropDownMenu(player, board, isSelectedPropertyEnabled) {
+                PropertyDropDownMenu(player, board, isSelectedPropertyEnabled && !isReadOnly)
+                {
                     property -> handlePropertyChange(property)
                 }
             }
@@ -183,10 +145,12 @@ fun ActionView(board: GameBoard, playerId: Int, modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth().height(40.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            Button(onClick = { executeAction() }) {
+            Button(
+                onClick = { executeAction() },
+                enabled = !isReadOnly
+            ) {
                 Text("Execute action")
             }
         }
     }
 }
-
