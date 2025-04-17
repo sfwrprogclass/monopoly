@@ -32,7 +32,7 @@ class PlayerTest {
 
         board.createModels()
     }
-
+    // JENNY
     @Test
     fun `getProperties returns only player's owned properties`() {
         val player = board.players[0]
@@ -41,7 +41,7 @@ class PlayerTest {
         val ids = properties.map { it.id }
         assertTrue(ids.containsAll(listOf(2, 3, 11)))
     }
-
+    // JENNY
     @Test
     fun `getUtilities returns only utilities the player owns`() {
         val player = board.players[0]
@@ -49,7 +49,7 @@ class PlayerTest {
         assertEquals(1, utilities.size)
         assertEquals(3, utilities[0].id)
     }
-
+    // JENNY
     @Test
     fun `getRailroads returns only railroads the player owns`() {
         val player = board.players[0]
@@ -58,7 +58,7 @@ class PlayerTest {
         assertEquals(1, railroads.size)
         assertTrue(ids.containsAll(listOf(11)), "Checked that we got all the railroads owned by player")
     }
-
+    // JENNY
     @Test
     fun `player properties are mutable`() {
         val player = board.players[0]

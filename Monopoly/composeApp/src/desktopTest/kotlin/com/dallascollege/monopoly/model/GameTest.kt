@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 import java.util.Date
 
 class GameTest {
-
+// JENNY
     @Test
     fun `game should store and return correct values`() {
         val testDate = Date()
@@ -21,7 +21,7 @@ class GameTest {
         assertFalse(game.owedPlayer)
         assertEquals(testDate, game.date)
     }
-
+// JENNY
     @Test
     fun `game should allow updating values`() {
         val game = Game(

@@ -42,7 +42,7 @@ class GameEngineTest {
 
         player = gameBoard.getPlayerById(1)!!
     }
-
+    // JENNY
     @Test
     fun `movePlayer should move player correctly`() {
         val initialPosition = player.numCell
@@ -50,7 +50,7 @@ class GameEngineTest {
 
         assertEquals(initialPosition + 5, player.numCell)
     }
-
+    // JENNY
     // As a player, I can collect the base rent when someone lands on my property.
     @Test
     fun `collectBaseRent should deduct and add rent correctly`() {
@@ -69,7 +69,7 @@ class GameEngineTest {
         assertEquals(1550, owner.totalMoney)
     }
 
-
+    // JENNY BACKLOG
     @Test
     fun `As a player, I can collect the appropriate rent for utilities based on how many in the set I own`() {
         val owner = Player(id = 2, name = "Player2", token = Token.DOG)
@@ -94,7 +94,7 @@ class GameEngineTest {
         assertEquals(1300, player.totalMoney)
         assertEquals(1700, owner.totalMoney)
     }
-
+// JENNY BACKLOG
 
     @Test
     fun `As a player, I can collect the appropriate rent for railroads based on how many in the set I own`() {
@@ -116,7 +116,7 @@ class GameEngineTest {
         assertEquals(1700, owner.totalMoney)
     }
 
-
+    // JENNY BACKLOG
     @Test
     fun `As a player, I can take appropriate action when landing on a non-property space`() {
         val incomeTaxCell = Cell(numCell = 4, isIncomeTax = true)
