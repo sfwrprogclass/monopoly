@@ -79,8 +79,9 @@ class Player(
     fun addProperty(propertyId: Int, gameBoard: GameBoard) {
         // Find the property by its ID
         val property = gameBoard.properties.find { it.id == propertyId }
+        requireNotNull(property) { "Property with ID $propertyId does not exist on the game board." }
+        propertyIds = propertyIds + propertyId
 
-        // Validate that the property exists
         if (property == null) {
             throw IllegalArgumentException("Property with ID $propertyId does not exist on the game board.")
         }
@@ -109,5 +110,4 @@ class Player(
             throw IllegalStateException("Not enough money to buy the property.")
         }
     }
-
 }

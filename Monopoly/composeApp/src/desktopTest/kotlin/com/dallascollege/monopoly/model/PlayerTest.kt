@@ -92,13 +92,20 @@ class PlayerTest {
 
     @Test
     fun `addProperty adds a property to the player's owned properties`() {
+        // Arrange
+        val property = Property(id = 1, name = "San Diego Drive", price = 60)
         val gameBoard = GameBoard(
             players = arrayOf(),
-            properties = arrayOf(Property(id = 1, name = "Baltic Avenue", price = 60))
+            properties = arrayOf(property)
         )
         val player = Player(id = 1, name = "Player 1", token = Token.BOOT)
+
+        // Act
         player.addProperty(1, gameBoard)
-        assertEquals(1, player.getProperties(gameBoard).size)
-    }
-}
+
+        // Assert
+        val ownedProperties = player.getProperties(gameBoard)
+        assertEquals(1, ownedProperties.size, "Player should own exactly one property")
+        assertTrue(ownedProperties.any { it.id == 1 && it.name == "San Diego Drive" }, "The player should own the correct property")}}
+
 
