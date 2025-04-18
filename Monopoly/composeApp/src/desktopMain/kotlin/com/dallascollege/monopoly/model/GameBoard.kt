@@ -12,6 +12,7 @@ class GameBoard(
     freeParkingRule: Boolean = false,
     cells: Array<Cell> = emptyArray(),
     properties: Array<Property> = emptyArray(),
+    private val onGameFinished: (winnerId: Int) -> Unit
 ) {
 
     private fun createCells() {
@@ -582,6 +583,10 @@ class GameBoard(
 
     fun getPropertyOwner(property: Property): Player? {
         return players.find( { it.propertyIds.contains(property.id)})
+    }
+
+    fun finishGame (winnerId: Int) {
+        onGameFinished.invoke(winnerId)
     }
 
     var players: Array<Player> = players

@@ -8,11 +8,8 @@ import androidx.compose.ui.Modifier
 import com.dallascollege.monopoly.enums.Token
 import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Player
-import com.dallascollege.monopoly.ui.screens.TokenSelectionScreen
-import com.dallascollege.monopoly.ui.screens.PlayerSelectionScreen
-import com.dallascollege.monopoly.ui.screens.TurnOrderScreen
-import com.dallascollege.monopoly.ui.screens.MenuScreen
 import com.dallascollege.monopoly.ui.layout.Layout
+import com.dallascollege.monopoly.ui.screens.*
 
 @Composable
 fun App() {
@@ -24,6 +21,7 @@ fun App() {
     var turnOrderConfirmed by remember { mutableStateOf(false) }
     var turnOrder by remember { mutableStateOf<List<String>>(emptyList()) }
     val currentTurn = remember { mutableStateOf(0) }
+    var winnerId by remember { mutableStateOf<Int?>(null) }
 
     when {
         showMenu -> {
@@ -57,6 +55,23 @@ fun App() {
                 }
             )
         }
+        winnerId != null -> {
+            val winnerName = players.find{it.id == winnerId}?.name
+            winnerName?.let {
+                VictoryScreen(it) {
+                    showMenu = true
+                    winnerId = null
+                    playerCount = null
+                    players.clear()
+                    allTokensSelected = false
+                    selectedTokens.clear()
+                    turnOrderConfirmed = false
+                    turnOrder = emptyList()
+                    currentTurn.value = 0
+                }
+            }
+
+        }
         else -> {
             players.forEach { player ->
                 selectedTokens[player]?.let { player.token = it }
@@ -74,7 +89,9 @@ fun App() {
                 player.name = "Player ${index + 1}"
             }
 
-            val gameBoard = GameBoard(players.toTypedArray())
+            val gameBoard = GameBoard(players.toTypedArray()) {
+                winnerId = it
+            }
             gameBoard.createModels()
             gameBoard.turnOrder = players.map { it.id }.toTypedArray()
             gameBoard.currentTurn = currentTurn.value
