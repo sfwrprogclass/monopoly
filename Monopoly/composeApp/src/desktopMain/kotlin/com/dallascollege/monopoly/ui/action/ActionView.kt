@@ -81,6 +81,10 @@ fun ActionView(
                 currentTurn.value = (currentTurn.value + 1) % board.turnOrder.size
                 board.currentTurn = currentTurn.value
             }
+
+            ActionType.FINISH_GAME ->{
+                board.finishGame(playerId)
+            }
         }
     }
 
