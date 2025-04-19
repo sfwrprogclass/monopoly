@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 class ActionTest {
-
+//Jenny
     @Test
     fun `action should correctly store its properties`() {
         val action = Action(
@@ -22,7 +22,7 @@ class ActionTest {
         assertEquals(12, action.propertyId)
         assertEquals(200, action.money)
     }
-
+//Jenny
     @Test
     fun `actionType toString should return correct text`() {
         val type = ActionType.BUY_HOUSE

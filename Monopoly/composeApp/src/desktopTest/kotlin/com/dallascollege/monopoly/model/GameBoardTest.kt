@@ -38,7 +38,7 @@ class GameBoardTest {
 
         gameBoard.createModels()
     }
-
+    //Jenny
     @Test
     fun `getPlayerById should return the correct player`() {
         val player = gameBoard.getPlayerById(1)
@@ -47,7 +47,7 @@ class GameBoardTest {
         val nonExistentPlayer = gameBoard.getPlayerById(999)
         assertEquals(null, nonExistentPlayer)
     }
-
+    //Jenny
     @Test
     fun `getPropertyById should return the correct property`() {
         val property = Property(id = 1, name = "San Diego Drive", price = 60, color = PropertyColor.BROWN)
@@ -59,7 +59,7 @@ class GameBoardTest {
         val nonExistentProperty = gameBoard.getPropertyById(999)
         assertEquals(null, nonExistentProperty)
     }
-
+// JENNY
     @Test
     fun `getCellById should return the correct cell`() {
         val cell = Cell(numCell = 1, isCollectSalary = true)
@@ -71,7 +71,7 @@ class GameBoardTest {
         val nonExistentCell = gameBoard.getCellById(999)
         assertEquals(null, nonExistentCell)
     }
-
+//Jenny
     @Test
     fun `createModels should initialize both cells and properties`() {
         gameBoard.cells = emptyArray()
@@ -81,7 +81,7 @@ class GameBoardTest {
         assertEquals(40, gameBoard.cells.size)
         assertEquals(28, gameBoard.properties.size)
     }
-
+// Jenny
     @Test
     fun `getPropertyOwner should return correct player for owned property`() {
         val property = Property(id = 1, name = "San Diego Drive", price = 60, color = PropertyColor.BROWN)

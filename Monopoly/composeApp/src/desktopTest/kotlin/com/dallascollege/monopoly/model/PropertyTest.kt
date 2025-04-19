@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 class PropertyTest {
-
+    // JENNY
     @Test
     fun `property is correctly initialized with default values`() {
         val property = Property(
@@ -27,7 +27,7 @@ class PropertyTest {
         assertEquals(0, property.numHotels)
         assertFalse(property.isMortgaged)
     }
-
+    // JENNY
     @Test
     fun `property is correctly initialized with all custom values`() {
         val property = Property(
@@ -56,7 +56,7 @@ class PropertyTest {
         assertEquals(0, property.numHotels)
         assertTrue(property.isMortgaged)
     }
-
+    // JENNY
     @Test
     fun `property setters work correctly`() {
         val property = Property(id = 3, name = "California Drive", price = 160, color = PropertyColor.PINK)

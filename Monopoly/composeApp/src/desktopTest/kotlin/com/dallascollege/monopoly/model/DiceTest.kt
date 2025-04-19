@@ -41,13 +41,14 @@ class DiceTest {
         dice2 = Dice()
     }
 
-
+    // Jenny
     @Test
     fun `roll should return number between 1 and 6`() {
         val result = dice1.roll()
         assertTrue(result in 1..6, "Dice roll should return a number between 1 and 6")
     }
 
+    // Jenny backlog
     @Test
     fun `player should advance correctly based on dice roll`() {
 
@@ -61,7 +62,7 @@ class DiceTest {
         assertTrue(totalMove in 2..12, "Sum of two dice should be between 2 and 12")
         assertEquals(totalMove + previousNumCell, player.numCell, "Player should have advanced by the total of two dice rolls")
     }
-
+    // Jenny BACDKLOG
     @Test
     fun testDiceRollerUpdatesPlayerPosition() {
 
@@ -79,6 +80,7 @@ class DiceTest {
         assertEquals(initialPosition + totalMove, player.numCell, "Player position should increase after rolling dice" )
     }
 
+    // Jenny BACKLOG
     @Test
     fun `user should be able to track token location` () {
 

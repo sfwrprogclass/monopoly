@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 class CellTest {
-
+    //Jenny
     @Test
     fun `cell should correctly store its default values`() {
         val cell = Cell()
@@ -21,13 +21,13 @@ class CellTest {
         assertFalse(cell.isVisitingJail)
         assertFalse(cell.isProperty())  // Because propertyId = -1
     }
-
+    //Jenny
     @Test
     fun `cell should identify as property when propertyId is not -1`() {
         val cell = Cell(propertyId = 5)
         assertTrue(cell.isProperty())
     }
-
+    // Jenny
     @Test
     fun `cell should set and return correct values`() {
         val cell = Cell(
