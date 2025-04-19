@@ -1,14 +1,17 @@
 package com.dallascollege.monopoly.ui.action
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.ui.Modifier
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dallascollege.monopoly.enums.ActionType
+import com.dallascollege.monopoly.enums.ActionType.PURCHASE_PROPERTY
+import com.dallascollege.monopoly.logic.PropertyManager
 import com.dallascollege.monopoly.model.GameBoard
+import com.dallascollege.monopoly.model.Player
 import com.dallascollege.monopoly.model.Property
 import com.dallascollege.monopoly.ui.property.PropertyDropDownMenu
 
@@ -62,7 +65,7 @@ fun ActionView(
     fun handlePropertyChange(property: Property) {
         selectedProperty = property
     }
-
+@Composable
     fun executeAction(): Unit {
         when (selectedActionType) {
             ActionType.BUY_HOTEL -> {}
@@ -74,7 +77,12 @@ fun ActionView(
             ActionType.GO_TO_JAIL -> {}
             ActionType.GET_OUT_OF_JAIL -> {}
             ActionType.MORTGAGE_PROPERTY -> {}
-            ActionType.PURCHASE_PROPERTY -> {}
+            PURCHASE_PROPERTY -> {
+                val propertyManager = PropertyManager(board, remember(SnackbarHost()), rememberCoroutineScope())
+                player?.let {
+                    propertyManager.purchaseProperty(it)
+                }
+            }
             ActionType.SURRENDER -> {}
             ActionType.SKIP -> {}
             ActionType.FINISH_TURN -> {

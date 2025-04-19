@@ -1,19 +1,20 @@
 package com.dallascollege.monopoly
 
-import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.dallascollege.monopoly.enums.Token
 import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Player
-import com.dallascollege.monopoly.ui.screens.TokenSelectionScreen
-import com.dallascollege.monopoly.ui.screens.PlayerSelectionScreen
-import com.dallascollege.monopoly.ui.screens.TurnOrderScreen
-import com.dallascollege.monopoly.ui.screens.MenuScreen
 import com.dallascollege.monopoly.ui.layout.Layout
-import com.dallascollege.monopoly.ui.screens.startingMoneyScreen
+import com.dallascollege.monopoly.ui.screens.MenuScreen
+import com.dallascollege.monopoly.ui.screens.PlayerSelectionScreen
+import com.dallascollege.monopoly.ui.screens.TokenSelectionScreen
+import com.dallascollege.monopoly.ui.screens.TurnOrderScreen
 
 @Composable
 fun App() {
@@ -24,6 +25,7 @@ fun App() {
     val selectedTokens = remember { mutableStateMapOf<Player, Token>() }
     var turnOrderConfirmed by remember { mutableStateOf(false) }
     var turnOrder by remember { mutableStateOf<List<String>>(emptyList()) }
+    val currentTurn = remember { mutableStateOf(0) }
 
     when {
         showMenu -> {
@@ -41,7 +43,8 @@ fun App() {
         }
         !allTokensSelected -> {
             TokenSelectionScreen(players) { player, token ->
-                selectedTokens[player] = Token.values().find { it.name.equals(token, ignoreCase = true) } ?: Token.TOP_HAT
+                val fixedToken = token.uppercase().replace(" ", "")
+                selectedTokens[player] = Token.valueOf(fixedToken)
                 if (selectedTokens.size == players.size) {
                     allTokensSelected = true
                 }
@@ -49,20 +52,13 @@ fun App() {
         }
         !turnOrderConfirmed -> {
             TurnOrderScreen(
-                playerTokens = selectedTokens.values.map { it.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() } },
+                playerTokens = selectedTokens.values.map { it.toString() },
                 onNextClicked = { finalOrder ->
                     turnOrder = finalOrder
                     turnOrderConfirmed = true
-                    showStartingMoneyScreen = true
                 }
             )
         }
-        showStartingMoneyScreen -> {
-            startingMoneyScreen(players) {
-                showStartingMoneyScreen = false
-            }
-        }
-
         else -> {
             players.forEach { player ->
                 selectedTokens[player]?.let { player.token = it }

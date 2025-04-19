@@ -82,22 +82,19 @@ class Player(
         requireNotNull(property) { "Property with ID $propertyId does not exist on the game board." }
         propertyIds = propertyIds + propertyId
 
-        if (property == null) {
-            throw IllegalArgumentException("Property with ID $propertyId does not exist on the game board.")
-        }
-
         // Check if the property is already owned
         if (property.ownerId != null) {
             throw IllegalStateException("Property with ID $propertyId is already owned by another player.")
         }
 
         // Check if the property is not already in ownedPropertyIds
-        if (ownedPropertyIds.contains(propertyId)) {
+                if (ownedPropertyIds.contains(propertyId)) {
             throw IllegalStateException("Property with ID $propertyId is already owned by this player.")
         }
 
         // Add the property to the player's list and assign the ownership
         ownedPropertyIds.add(propertyId)
+        propertyIds = propertyIds + propertyId
         property.ownerId = id
     }
     // New buyProperty Function
