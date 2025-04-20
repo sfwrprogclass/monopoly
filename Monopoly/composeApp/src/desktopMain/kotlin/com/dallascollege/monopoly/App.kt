@@ -34,7 +34,7 @@ fun App() {
                 playerCount = count
                 players.clear()
                 players.addAll(List(count) {
-                    val token = Token.values().getOrNull(it) ?: Token.BOOT
+                    val token = Token.entries.getOrNull(it) ?: Token.BOOT
                     Player(id = it + 1, name = "Player ${it + 1}", token = token)
                 })
             }

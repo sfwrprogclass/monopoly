@@ -106,4 +106,8 @@ class Player(
         set(value) {
             field = value
         }
+
+    fun isEliminated(): Boolean {
+        return totalMoney <= 0
+    }
 }

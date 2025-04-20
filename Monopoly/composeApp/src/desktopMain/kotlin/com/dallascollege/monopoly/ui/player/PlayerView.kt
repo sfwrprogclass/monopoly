@@ -57,10 +57,14 @@ fun PlayerView(gameBoard: GameBoard, playerId: Int, selectedPlayerId: MutableSta
                     ) {
                         Text(
                             text = buildString {
-                                if (gameBoard.turnOrder[gameBoard.currentTurn] == playerId) append(" * ")
+                                if (gameBoard.turnOrder[gameBoard.currentTurn] == playerId && !player.isEliminated())
+                                    append(" 🟢 ")
                                 append(player.name)
                             }
                         )
+                        if (player.isEliminated()) {
+                            Text(" 🔴 ")
+                        }
                     }
                 }
             }
