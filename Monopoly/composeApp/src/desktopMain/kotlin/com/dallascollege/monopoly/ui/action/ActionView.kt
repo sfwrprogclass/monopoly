@@ -8,6 +8,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dallascollege.monopoly.enums.ActionType
+import com.dallascollege.monopoly.logic.GameEngine
 import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Property
 import com.dallascollege.monopoly.ui.property.PropertyDropDownMenu
@@ -74,13 +75,10 @@ fun ActionView(
             ActionType.GO_TO_JAIL -> {}
             ActionType.GET_OUT_OF_JAIL -> {}
             ActionType.MORTGAGE_PROPERTY -> {}
-            ActionType.PURCHASE_PROPERTY -> {}
+            ActionType.PURCHASE_PROPERTY -> GameEngine.purchaseProperty(board, playerId)
             ActionType.SURRENDER -> {}
             ActionType.SKIP -> {}
-            ActionType.FINISH_TURN -> {
-                currentTurn.value = (currentTurn.value + 1) % board.turnOrder.size
-                board.currentTurn = currentTurn.value
-            }
+            ActionType.FINISH_TURN ->  GameEngine.finishTurn(board, currentTurn)
         }
     }
 

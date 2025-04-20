@@ -88,7 +88,7 @@ class GameBoardTest {
         gameBoard.properties = arrayOf(property)
 
         val player = gameBoard.getPlayerById(1)
-        player?.propertyIds = arrayOf(1)
+        player?.propertyIds = mutableListOf(1)
 
         val owner = gameBoard.getPropertyOwner(property)
         assertEquals("Player1", owner?.name)

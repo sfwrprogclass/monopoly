@@ -25,7 +25,7 @@ class PlayerTest {
                 Player(
                     name = "Jenny",
                     token = Token.BOOT,
-                    propertyIds = arrayOf(2, 3, 11)
+                    propertyIds = mutableListOf(2, 3, 11)
                 )
             )
         )

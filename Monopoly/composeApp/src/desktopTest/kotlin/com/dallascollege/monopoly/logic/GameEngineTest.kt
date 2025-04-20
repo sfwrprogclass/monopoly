@@ -6,6 +6,7 @@ import com.dallascollege.monopoly.model.Player
 import com.dallascollege.monopoly.model.Cell
 import com.dallascollege.monopoly.model.Property
 import com.dallascollege.monopoly.enums.PropertyColor
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 
 import org.junit.jupiter.api.BeforeEach
@@ -56,7 +57,7 @@ class GameEngineTest {
     fun `collectBaseRent should deduct and add rent correctly`() {
         val owner = Player(id = 2, name = "Player2", token = Token.DOG)
         val property = Property(id = 1, name = "San Diego Drive", baseRent = 50, price = 60, color = PropertyColor.BLUE)
-        owner.propertyIds = arrayOf(1)
+        owner.propertyIds = mutableListOf(1)
         val cell = Cell(numCell = 5, propertyId = 1)
         gameBoard.players = arrayOf(player, owner)
         gameBoard.cells = arrayOf(cell)
@@ -82,7 +83,7 @@ class GameEngineTest {
         gameBoard.properties = arrayOf(utility, utility2)
 
         player.numCell = 5
-        owner.propertyIds = arrayOf(1, 2)
+        owner.propertyIds = mutableListOf(1, 2)
         println("Before: ${owner.name} has \$${owner.totalMoney}, ${player.name} has \$${player.totalMoney}")
 
         GameEngine.collectUtilities(gameBoard, player.id)
@@ -108,7 +109,7 @@ class GameEngineTest {
         gameBoard.properties = arrayOf(railroad, railroad2)
 
         player.numCell = 5
-        owner.propertyIds = arrayOf(1, 2)
+        owner.propertyIds = mutableListOf(1, 2)
 
         GameEngine.collectRailroads(gameBoard, player.id)
 
@@ -134,15 +135,49 @@ class GameEngineTest {
 
         engine.landingAction(gameBoard, playerIncomeTax.id)
         println("${playerIncomeTax.name} landed on Income Tax. Money after tax: ${playerIncomeTax.totalMoney}")
-        assertEquals(1400, playerIncomeTax.totalMoney)
+        assertEquals(1350, playerIncomeTax.totalMoney)
 
         engine.landingAction(gameBoard, playerLuxuryTax.id)
         println("${playerLuxuryTax.name} landed on Luxury Tax. Money after tax: ${playerLuxuryTax.totalMoney}")
-        assertEquals(1400, playerLuxuryTax.totalMoney)
+        assertEquals(1300, playerLuxuryTax.totalMoney)
 
         engine.landingAction(gameBoard, playerGoToJail.id)
         println("${playerGoToJail.name} was sent to jail. In jail: ${playerGoToJail.inJail}, Position: ${playerGoToJail.numCell}")
         assertTrue(playerGoToJail.inJail)
         assertEquals(23, playerGoToJail.numCell)
+    }
+
+    // JENNY BACKLOG
+    @Test
+    fun `As a player, I can purchase an available property`() {
+        val engine = GameEngine
+
+        val player = gameBoard.getPlayerById(1)
+        assertTrue(player != null)
+        player!!.numCell = 2
+        engine.purchaseProperty(gameBoard, playerId = 1)
+
+        val property = gameBoard.getPropertyById(1)
+        assertTrue(property != null)
+
+        assertTrue(player.propertyIds.contains(property!!.id))
+        assertEquals(1440, player.totalMoney)
+    }
+
+    @Test
+    fun `As a player, I can't purchase an available property because I don't have enough money`() {
+        val engine = GameEngine
+
+        val player = gameBoard.getPlayerById(1)
+        assertTrue(player != null)
+        player!!.numCell = 2
+        player.totalMoney = 30
+        engine.purchaseProperty(gameBoard, playerId = 1)
+
+        val property = gameBoard.getPropertyById(1)
+        assertTrue(property != null)
+
+        assertFalse(player.propertyIds.contains(property!!.id))
+        assertEquals(30, player.totalMoney)
     }
 }

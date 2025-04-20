@@ -8,10 +8,10 @@ class Player(
     turnNum: Int = 1,
     name: String,
     token: Token,
-    propertyIds: Array<Int> = emptyArray(),
+    propertyIds: MutableList<Int> = mutableListOf<Int>(),
     inJail: Boolean = false,
     hasOutJailCard: Boolean = false,
-    games: Array<Game> = emptyArray(),
+    games: MutableList<Game> = mutableListOf<Game>(),
     isCPU: Boolean = false,
     numCell: Int = 1
 ) {
@@ -71,7 +71,7 @@ class Player(
             field = value
         }
 
-    var propertyIds: Array<Int> = propertyIds
+    var propertyIds: MutableList<Int> = propertyIds
         get() = field
         set(value) {
             field = value
@@ -89,7 +89,7 @@ class Player(
             field = value
         }
 
-    var games: Array<Game> = games
+    var games: MutableList<Game> = games
         get() = field
         set(value) {
             field = value

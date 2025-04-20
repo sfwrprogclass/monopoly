@@ -1,5 +1,6 @@
 package com.dallascollege.monopoly.logic
 
+import androidx.compose.runtime.MutableState
 import com.dallascollege.monopoly.model.*
 
 // Singleton (Static Class) with static methods for the different actions to be executed
@@ -127,5 +128,21 @@ object GameEngine {
             payLuxuryTax(player)
         }
         //do nothing if isVisitingJail
+    }
+
+    fun finishTurn(board: GameBoard, currentTurn: MutableState<Int>) {
+        currentTurn.value = (currentTurn.value + 1) % board.turnOrder.size
+        board.currentTurn = currentTurn.value
+    }
+
+    fun purchaseProperty(board: GameBoard, playerId: Int) {
+        val player = board.getPlayerById(playerId) ?: return
+        val cell = board.getCellById(player.numCell) ?: return
+        val property = board.getPropertyById(cell.propertyId) ?: return
+
+        if (player.totalMoney >= property.price) {
+            player.propertyIds.add(property.id)
+            player.totalMoney -= property.price
+        }
     }
 }
