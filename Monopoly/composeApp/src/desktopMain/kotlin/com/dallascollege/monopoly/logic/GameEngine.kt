@@ -18,13 +18,14 @@ object GameEngine {
         }
     }
 
-    // As a player, I can collect the appropriate rent for utilities based on how many in the set I own.
+    // As a player, I can collect the base rent when someone lands on my property (unless property is mortgaged).
     fun collectBaseRent(board: GameBoard, playerId: Int) {
         val player = board.getPlayerById(playerId) ?: return
         val cell = board.getCellById(player.numCell) ?: return
         if (!cell.isProperty()) return
 
         val property = board.getPropertyById(cell.propertyId) ?: return
+        if (property.isMortgaged) return
         val owner = board.getPropertyOwner(property) ?: return
         if (owner == player) return
 

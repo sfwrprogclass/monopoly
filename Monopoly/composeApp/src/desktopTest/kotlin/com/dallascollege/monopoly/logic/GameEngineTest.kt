@@ -70,6 +70,24 @@ class GameEngineTest {
         assertEquals(1550, owner.totalMoney)
     }
 
+    // JENNY
+    @Test
+    fun `collectBaseRent should not be able to deduct and add rent correctly because property is mortgaged`() {
+        val owner = Player(id = 2, name = "Player2", token = Token.DOG)
+        val property = Property(id = 1, name = "San Diego Drive", baseRent = 50, price = 60, color = PropertyColor.BLUE, isMortgaged = true)
+        owner.propertyIds = mutableListOf(1)
+        val cell = Cell(numCell = 5, propertyId = 1)
+        gameBoard.players = arrayOf(player, owner)
+        gameBoard.cells = arrayOf(cell)
+        gameBoard.properties = arrayOf(property)
+
+        player.numCell = 5
+        GameEngine.collectBaseRent(gameBoard, player.id)
+
+        assertEquals(1500, player.totalMoney)
+        assertEquals(1500, owner.totalMoney)
+    }
+
     // JENNY BACKLOG
     @Test
     fun `As a player, I can collect the appropriate rent for utilities based on how many in the set I own`() {
@@ -164,6 +182,7 @@ class GameEngineTest {
         assertEquals(1440, player.totalMoney)
     }
 
+    // JENNY BACKLOG
     @Test
     fun `As a player, I can't purchase an available property because I don't have enough money`() {
         val engine = GameEngine
