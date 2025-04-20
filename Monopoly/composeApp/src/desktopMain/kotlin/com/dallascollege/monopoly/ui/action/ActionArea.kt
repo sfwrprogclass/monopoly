@@ -18,7 +18,7 @@ fun ActionArea(gameBoard: GameBoard, playerId: Int, currentTurn: MutableState<In
         modifier = Modifier
             .fillMaxSize()
             .padding(5.dp)
-            .border(2.dp, Color.Black, RoundedCornerShape(4.dp))
+            .border(0.5.dp, Color.Black, RoundedCornerShape(4.dp))
             .background(Color.White)
     ) {
         ActionView(gameBoard, playerId, currentTurn, selectedPlayerId)
