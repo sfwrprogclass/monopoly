@@ -127,6 +127,14 @@ object GameEngine {
     }
 
     fun finishTurn(board: GameBoard, currentTurn: MutableState<Int>) {
+        do {
+            setNextTurn(board, currentTurn)
+            val currentPlayerId = board.turnOrder[currentTurn.value]
+            val player = board.getPlayerById(currentPlayerId)
+        } while (player?.isEliminated(board) == true)
+    }
+
+    private fun setNextTurn(board: GameBoard, currentTurn: MutableState<Int>) {
         currentTurn.value = (currentTurn.value + 1) % board.turnOrder.size
         board.currentTurn = currentTurn.value
     }

@@ -107,7 +107,18 @@ class Player(
             field = value
         }
 
-    fun isEliminated(): Boolean {
+    fun isEliminated(board: GameBoard): Boolean {
+//        var mortgageAllPropertiesMoney = 0
+//
+//        propertyIds.forEach { id ->
+//            val property = board.getPropertyById(id)
+//            if (property != null) {
+//                mortgageAllPropertiesMoney += property.price / 2
+//                //TODO: calculate the money user can get selling houses and hotels
+//            }
+//        }
+//
+//        return totalMoney + mortgageAllPropertiesMoney <= 0
         return totalMoney <= 0
     }
 }
