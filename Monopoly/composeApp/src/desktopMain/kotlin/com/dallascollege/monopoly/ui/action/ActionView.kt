@@ -41,7 +41,7 @@ fun ActionView(
                 isAmountEnable = false
                 isSelectedPropertyEnabled = false
             }
-            ActionType.BUY_HOUSE, ActionType.BUY_HOTEL, ActionType.SELL_HOTEL, ActionType.SELL_HOUSE -> {
+            ActionType.BUY_HOUSE, ActionType.UPGRADE_TO_HOTEL, ActionType.DOWNGRADE_TO_HOUSES, ActionType.SELL_HOUSE -> {
                 isQuantityEnable = true
                 isAmountEnable = false
                 isSelectedPropertyEnabled = true
@@ -65,9 +65,9 @@ fun ActionView(
 
     fun executeAction() {
         when (selectedActionType) {
-            ActionType.BUY_HOTEL -> {}
+            ActionType.UPGRADE_TO_HOTEL -> {}
             ActionType.BUY_HOUSE -> {}
-            ActionType.SELL_HOTEL -> {}
+            ActionType.DOWNGRADE_TO_HOUSES -> {}
             ActionType.SELL_HOUSE -> {}
             ActionType.PAY_RENT -> {}
             ActionType.PAY_BANK -> {}
