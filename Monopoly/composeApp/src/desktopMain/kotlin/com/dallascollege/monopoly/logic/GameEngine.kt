@@ -45,18 +45,14 @@ object GameEngine {
 
         if (owner == player) return
 
-//        val numberOfUtilities: Int = player.getUtilities(board).size
         val numberOfUtilities = owner.getUtilities(board).size
 
         val rentToPay = property.baseRent * numberOfUtilities
         player.totalMoney -= rentToPay
         owner.totalMoney += rentToPay
-
-//        player.totalMoney -= property.baseRent * numberOfUtilities
-//        owner.totalMoney += property.baseRent * numberOfUtilities
     }
 
-   // As a player, I can collect the appropriate rent for railroads based on how many in the set I own.
+    // As a player, I can collect the appropriate rent for railroads based on how many in the set I own.
     fun collectRailroads(board: GameBoard, playerId: Int) {
         val player = board.getPlayerById(playerId) ?: return
         val cell = board.getCellById(player.numCell) ?: return
@@ -68,11 +64,10 @@ object GameEngine {
 
         if (owner == player) return
 
-
-       val numberOfRailroads: Int = owner.getRailroads(board).size
-       val rentToPay = property.baseRent * numberOfRailroads
-       player.totalMoney -= rentToPay
-       owner.totalMoney += rentToPay
+        val numberOfRailroads: Int = owner.getRailroads(board).size
+        val rentToPay = property.baseRent * numberOfRailroads
+        player.totalMoney -= rentToPay
+        owner.totalMoney += rentToPay
     }
 
     //As a player, I can take appropriate action when landing on a non-property space
@@ -146,4 +141,18 @@ object GameEngine {
             player.totalMoney -= property.price
         }
     }
+
+    fun mortgageProperty(board: GameBoard, playerId: Int, propertyId: Int) {
+        val player = board.getPlayerById(playerId) ?: return
+        val property = board.getPropertyById(propertyId) ?: return
+
+        if (board.getPropertyOwner(property) != player) return
+        if (property.isMortgaged) return
+        if (property.numHouses > 0 || property.numHotels > 0) return
+
+
+        property.isMortgaged = true
+        player.totalMoney += property.price / 2
+    }
+
 }

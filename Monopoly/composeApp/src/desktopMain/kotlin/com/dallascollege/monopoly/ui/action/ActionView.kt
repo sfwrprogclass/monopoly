@@ -19,21 +19,20 @@ fun ActionView(
     playerId: Int,
     currentTurn: MutableState<Int>,
     selectedPlayerId: MutableState<Int>,
-    modifier: Modifier = Modifier)
-{
-
-    var selectedActionType by remember { mutableStateOf(ActionType.SKIP)}
+    modifier: Modifier = Modifier
+) {
+    var selectedActionType by remember { mutableStateOf(ActionType.SKIP) }
     var selectedProperty: Property? by remember { mutableStateOf(null) }
     var quantity by remember { mutableStateOf("0") }
     var amount by remember { mutableStateOf("0") }
-    var isQuantityEnable by remember { mutableStateOf(false)}
-    var isAmountEnable by remember { mutableStateOf(false)}
-    var isSelectedPropertyEnabled by remember { mutableStateOf(false)}
+    var isQuantityEnable by remember { mutableStateOf(false) }
+    var isAmountEnable by remember { mutableStateOf(false) }
+    var isSelectedPropertyEnabled by remember { mutableStateOf(false) }
     var isReadOnly = playerId != selectedPlayerId.value
 
     val player = board.players.find { it.id == playerId }
 
-    fun handleActionTypeChange(actionType: ActionType){
+    fun handleActionTypeChange(actionType: ActionType) {
         selectedActionType = actionType
 
         when (actionType) {
@@ -64,7 +63,7 @@ fun ActionView(
         selectedProperty = property
     }
 
-    fun executeAction(): Unit {
+    fun executeAction() {
         when (selectedActionType) {
             ActionType.BUY_HOTEL -> {}
             ActionType.BUY_HOUSE -> {}
@@ -74,11 +73,13 @@ fun ActionView(
             ActionType.PAY_BANK -> {}
             ActionType.GO_TO_JAIL -> {}
             ActionType.GET_OUT_OF_JAIL -> {}
-            ActionType.MORTGAGE_PROPERTY -> {}
+            ActionType.MORTGAGE_PROPERTY -> selectedProperty?.let {
+                GameEngine.mortgageProperty(board, playerId, it.id)
+            }
             ActionType.PURCHASE_PROPERTY -> GameEngine.purchaseProperty(board, playerId)
             ActionType.SURRENDER -> {}
             ActionType.SKIP -> {}
-            ActionType.FINISH_TURN ->  GameEngine.finishTurn(board, currentTurn)
+            ActionType.FINISH_TURN -> GameEngine.finishTurn(board, currentTurn)
         }
     }
 
@@ -132,9 +133,8 @@ fun ActionView(
         ) {
             Text("Select property")
             if (player != null) {
-                PropertyDropDownMenu(player, board, isSelectedPropertyEnabled && !isReadOnly)
-                {
-                    property -> handlePropertyChange(property)
+                PropertyDropDownMenu(player, board, isSelectedPropertyEnabled && !isReadOnly) {
+                        property -> handlePropertyChange(property)
                 }
             }
         }
