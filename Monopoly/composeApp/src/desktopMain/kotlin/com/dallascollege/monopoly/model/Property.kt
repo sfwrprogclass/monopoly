@@ -80,4 +80,8 @@ class Property(
         set(value) {
             field = value
         }
+
+    fun isMortgageable(): Boolean {
+        return !isMortgaged && numHotels == 0 && numHouses == 0;
+    }
 }

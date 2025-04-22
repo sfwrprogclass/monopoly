@@ -32,11 +32,7 @@ fun DiceRoller(gameBoard: GameBoard, currentTurn: MutableState<Int>) {
         dice2 = dice.roll()
 
         val total = dice1 + dice2
-        var currentPlayerId = gameBoard.turnOrder[currentTurn.value]
-        //we skip eliminated players from the turn order
-        while (gameBoard.getPlayerById(currentPlayerId)!!.isEliminated()){
-            GameEngine.finishTurn(gameBoard, currentTurn)
-        }
+        val currentPlayerId = gameBoard.turnOrder[currentTurn.value]
 
         GameEngine.movePlayer(gameBoard, currentPlayerId, total)
         GameEngine.landingAction(gameBoard, currentPlayerId)

@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.dallascollege.monopoly.enums.convertTokenToImageStr
 import com.dallascollege.monopoly.model.GameBoard
@@ -57,14 +59,14 @@ fun PlayerView(gameBoard: GameBoard, playerId: Int, selectedPlayerId: MutableSta
                     ) {
                         Text(
                             text = buildString {
-                                if (gameBoard.turnOrder[gameBoard.currentTurn] == playerId && !player.isEliminated())
+                                if (gameBoard.turnOrder[gameBoard.currentTurn] == playerId && !player.isEliminated(gameBoard))
                                     append(" 🟢 ")
                                 append(player.name)
-                            }
+                            },
+                            style = TextStyle(
+                                textDecoration = if (player.isEliminated(gameBoard)) TextDecoration.LineThrough else TextDecoration.None
+                            )
                         )
-                        if (player.isEliminated()) {
-                            Text(" 🔴 ")
-                        }
                     }
                 }
             }
