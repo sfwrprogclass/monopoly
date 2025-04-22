@@ -1,7 +1,13 @@
 package com.dallascollege.monopoly.logic
 
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.runtime.MutableState
-import com.dallascollege.monopoly.model.*
+import com.dallascollege.monopoly.model.GameBoard
+import com.dallascollege.monopoly.model.Player
+import com.dallascollege.monopoly.ui.SnackbarManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 // Singleton (Static Class) with static methods for the different actions to be executed
 object GameEngine {
@@ -31,6 +37,13 @@ object GameEngine {
 
         player.totalMoney -= property.baseRent
         owner.totalMoney += property.baseRent
+
+        CoroutineScope(Dispatchers.Main).launch{
+            SnackbarManager.showMessage(
+                message = "${player.name} paid rent of ${property.baseRent} to ${owner.name}",
+                duration = SnackbarDuration.Short
+            )
+        }
     }
 
     // As a player, I can collect the appropriate rent for utilities based on how many in the set I own.
