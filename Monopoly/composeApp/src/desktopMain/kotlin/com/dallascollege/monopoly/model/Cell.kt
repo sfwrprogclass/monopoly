@@ -3,7 +3,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 
 class Cell(
     numCell: Int = 1,
-    propertyId: Int = 1,
+    propertyId: Int = -1,
     isGoToJail: Boolean = false,
     isLuxuryTax: Boolean = false,
     isIncomeTax: Boolean = false,
@@ -73,4 +73,36 @@ class Cell(
         set(value) {
             field = value
         }
+
+    fun isProperty(): Boolean {
+        return propertyId != -1
+    }
+
+    fun getName(board: GameBoard): String {
+        if (isProperty()) {
+            val property = board.getPropertyById(propertyId)
+            if (property != null)
+                return property.name
+            else
+                return "Unknown property"
+        } else if (isVisitingJail) {
+                return "Visiting jail"
+        } else if (isCollectSalary) {
+                return "Collect salary"
+        } else if (isParking) {
+            return "Parking"
+        } else if (isCommunityChest) {
+            return "Community Chest"
+        } else if (isChance) {
+            return "Is Chance"
+        } else if (isIncomeTax) {
+            return "Is Income Tax"
+        } else if (isLuxuryTax) {
+            return "Is Luxury Tax"
+        } else if (isGoToJail) {
+            return "Is Go to Jail"
+        } else {
+            return "Unknown cell"
+        }
+    }
 }

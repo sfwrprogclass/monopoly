@@ -13,7 +13,7 @@ fun GameBoardView(gameBoard: GameBoard) {
     var i = 21
 
     Column(modifier = Modifier.fillMaxSize()) {
-        // First row (15%)
+        // First row (15%) for Action Area
         Box(
             modifier = Modifier
                 .fillMaxWidth()

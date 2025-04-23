@@ -3,19 +3,45 @@ package com.dallascollege.monopoly.model
 import com.dallascollege.monopoly.enums.Token
 
 class Player(
-    id: Number = 1,
-    totalMoney: Int = 1200,
+    id: Int = 1,
+    totalMoney: Int = 1500,
     turnNum: Int = 1,
     name: String,
     token: Token,
-    propertyIds: Array<Int> = emptyArray(),
+    propertyIds: MutableList<Int> = mutableListOf<Int>(),
     inJail: Boolean = false,
     hasOutJailCard: Boolean = false,
-    games: Array<Game> = emptyArray(),
+    games: MutableList<Game> = mutableListOf<Game>(),
     isCPU: Boolean = false,
     numCell: Int = 1
 ) {
-    var id: Number = id
+
+    fun getProperties(board: GameBoard): Array<Property> {
+        val playerProperties = mutableListOf<Property>()
+
+        propertyIds.forEach { id ->
+            val property = board.properties.find { it.id == id }
+            if (property != null) {
+                playerProperties.add(property)
+            }
+        }
+
+        return playerProperties.toTypedArray()
+    }
+
+    fun getUtilities(board: GameBoard): Array<Property> {
+        return board.properties
+            .filter { it.isUtility && propertyIds.contains(it.id) }
+            .toTypedArray()
+    }
+
+    fun getRailroads(board: GameBoard): Array<Property> {
+        return board.properties
+            .filter { it.isRailRoad && propertyIds.contains(it.id) }
+            .toTypedArray()
+    }
+
+    var id: Int = id
         get() = field
         set(value) {
             field = value
@@ -45,7 +71,7 @@ class Player(
             field = value
         }
 
-    var propertyIds: Array<Int> = propertyIds
+    var propertyIds: MutableList<Int> = propertyIds
         get() = field
         set(value) {
             field = value
@@ -63,7 +89,7 @@ class Player(
             field = value
         }
 
-    var games: Array<Game> = games
+    var games: MutableList<Game> = games
         get() = field
         set(value) {
             field = value
@@ -80,4 +106,19 @@ class Player(
         set(value) {
             field = value
         }
+
+    fun isEliminated(board: GameBoard): Boolean {
+//        var mortgageAllPropertiesMoney = 0
+//
+//        propertyIds.forEach { id ->
+//            val property = board.getPropertyById(id)
+//            if (property != null) {
+//                mortgageAllPropertiesMoney += property.price / 2
+//                //TODO: calculate the money user can get selling houses and hotels
+//            }
+//        }
+//
+//        return totalMoney + mortgageAllPropertiesMoney <= 0
+        return totalMoney <= 0
+    }
 }

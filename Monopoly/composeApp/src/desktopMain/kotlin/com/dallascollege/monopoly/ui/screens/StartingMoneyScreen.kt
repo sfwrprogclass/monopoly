@@ -26,7 +26,6 @@ fun StartingMoneyScreen(players: List<Player>, onNextClick: () -> Unit) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 90.dp)
         ) {
 
             val topPlayers = players.take(4)
