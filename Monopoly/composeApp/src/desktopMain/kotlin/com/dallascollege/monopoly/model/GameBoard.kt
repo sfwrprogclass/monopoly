@@ -310,18 +310,32 @@ class GameBoard(
         propertyList.add(
             Property(
                 id = id,
-                name = "San Diego Drive",
+                name = "Mediterranean Avenue",
                 price = 60,
-                color = PropertyColor.BROWN
+                baseRent = 2,
+                color = PropertyColor.BROWN,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
         propertyList.add(
             Property(
                 id = id,
-                name = "Kansas Drive",
-                price = 90,
-                color = PropertyColor.BROWN
+                name = "Baltic Avenue",
+                price = 60,
+                baseRent = 4,
+                color = PropertyColor.BROWN,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -330,34 +344,62 @@ class GameBoard(
                 id = id,
                 name = "Beverly RailRoad",
                 price = 200,
+                baseRent = 16,
                 isUtility = true,
+
+                isPurchased = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false,
             )
         )
         id++
         propertyList.add(
             Property(
                 id = id,
-                name = "Vermont Drive",
+                name = "Oriental Avenue",
+                price = 100,
+                baseRent = 32,
+                color = PropertyColor.LIGHT_BLUE,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
+            )
+        )
+        id++
+        propertyList.add(
+            Property(
+                id = id,
+                name = "Vermont Avenue",
+                price = 100,
+                baseRent = 32,
+                color = PropertyColor.LIGHT_BLUE,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
+            )
+        )
+        id++
+        propertyList.add(
+            Property(
+                id = id,
+                name = "Connecticut Avenue",
                 price = 120,
-                color = PropertyColor.LIGHT_BLUE
-            )
-        )
-        id++
-        propertyList.add(
-            Property(
-                id = id,
-                name = "Phoenix Drive",
-                price = 130,
-                color = PropertyColor.LIGHT_BLUE
-            )
-        )
-        id++
-        propertyList.add(
-            Property(
-                id = id,
-                name = "Boston Drive",
-                price = 150,
-                color = PropertyColor.LIGHT_BLUE
+                baseRent = 36,
+                color = PropertyColor.LIGHT_BLUE,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -366,7 +408,14 @@ class GameBoard(
                 id = id,
                 name = "Olivia Gardens",
                 price = 140,
-                color = PropertyColor.PINK
+                baseRent = 40,
+                color = PropertyColor.PINK,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -375,7 +424,14 @@ class GameBoard(
                 id = id,
                 name = "Car Company",
                 price = 150,
-                isUtility = true
+                baseRent = 40,
+                isUtility = true,
+
+                isPurchased = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -384,7 +440,14 @@ class GameBoard(
                 id = id,
                 name = "California Drive",
                 price = 160,
-                color = PropertyColor.PINK
+                baseRent = 44,
+                color = PropertyColor.PINK,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -393,7 +456,14 @@ class GameBoard(
                 id = id,
                 name = "States drive",
                 price = 140,
-                color = PropertyColor.PINK
+                baseRent = 44,
+                color = PropertyColor.PINK,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -402,7 +472,14 @@ class GameBoard(
                 id = id,
                 name = "Manhattan Railroad",
                 price = 200,
-                isRailRoad = true
+                baseRent = 16,
+                isRailRoad = true,
+
+                isPurchased = false,
+                isUtility = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -411,7 +488,14 @@ class GameBoard(
                 id = id,
                 name = "Bethany Drive",
                 price = 180,
-                color = PropertyColor.ORANGE
+                baseRent = 48,
+                color = PropertyColor.ORANGE,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -419,8 +503,15 @@ class GameBoard(
             Property(
                 id = id,
                 name = "New York Drive",
-                price = 20,
-                color = PropertyColor.ORANGE
+                price = 200,
+                baseRent = 50,
+                color = PropertyColor.ORANGE,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -429,7 +520,14 @@ class GameBoard(
                 id = id,
                 name = "Atlanta Drive",
                 price = 200,
-                color = PropertyColor.ORANGE
+                baseRent = 50,
+                color = PropertyColor.ORANGE,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -438,7 +536,14 @@ class GameBoard(
                 id = id,
                 name = "Almond Drive",
                 price = 200,
-                color = PropertyColor.RED
+                baseRent = 50,
+                color = PropertyColor.RED,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -447,7 +552,14 @@ class GameBoard(
                 id = id,
                 name = "Clement Drive",
                 price = 200,
-                color = PropertyColor.RED
+                baseRent = 50,
+                color = PropertyColor.RED,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -456,7 +568,14 @@ class GameBoard(
                 id = id,
                 name = "Pacific Drive",
                 price = 260,
-                color = PropertyColor.RED
+                baseRent = 60,
+                color = PropertyColor.RED,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -465,7 +584,14 @@ class GameBoard(
                 id = id,
                 name = "Water Works",
                 price = 60,
-                isUtility = true
+                baseRent = 2,
+                isUtility = true,
+
+                isPurchased = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -474,7 +600,14 @@ class GameBoard(
                 id = id,
                 name = "Rodeo Drive",
                 price = 260,
-                color = PropertyColor.YELLOW
+                baseRent = 60,
+                color = PropertyColor.YELLOW,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -483,7 +616,14 @@ class GameBoard(
                 id = id,
                 name = "Nashville Drive",
                 price = 260,
-                color = PropertyColor.YELLOW
+                baseRent = 60,
+                color = PropertyColor.YELLOW,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -492,7 +632,14 @@ class GameBoard(
                 id = id,
                 name = "Railroad",
                 price = 200,
-                isRailRoad = true
+                baseRent = 16,
+                isRailRoad = true,
+
+                isPurchased = false,
+                isUtility = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -501,7 +648,14 @@ class GameBoard(
                 id = id,
                 name = "Oakville",
                 price = 230,
-                color = PropertyColor.YELLOW
+                baseRent = 50,
+                color = PropertyColor.YELLOW,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -510,7 +664,14 @@ class GameBoard(
                 id = id,
                 name = "Atlantic Drive",
                 price = 300,
-                color = PropertyColor.GREEN
+                baseRent = 75,
+                color = PropertyColor.GREEN,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -519,7 +680,14 @@ class GameBoard(
                 id = id,
                 name = "Clement Drive", //change name because is duplicated in RED property color
                 price = 300,
-                color = PropertyColor.GREEN
+                baseRent = 75,
+                color = PropertyColor.GREEN,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -528,7 +696,14 @@ class GameBoard(
                 id = id,
                 name = "Riverside",
                 price = 250,
-                color = PropertyColor.GREEN
+                baseRent = 70,
+                color = PropertyColor.GREEN,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -537,7 +712,14 @@ class GameBoard(
                 id = id,
                 name = "Short line",
                 price = 200,
-                color = PropertyColor.WHITE
+                baseRent = 16,
+
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = true,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -546,7 +728,14 @@ class GameBoard(
                 id = id,
                 name = "Folklore Heights",
                 price = 200,
-                color = PropertyColor.BLUE
+                baseRent = 16,
+                color = PropertyColor.BLUE,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
         id++
@@ -555,7 +744,14 @@ class GameBoard(
                 id = id,
                 name = "Salt Lake",
                 price = 350,
-                color = PropertyColor.BLUE
+                baseRent = 100,
+                color = PropertyColor.BLUE,
+                isPurchased = false,
+                isUtility = false,
+                isRailRoad = false,
+                numHouses = 0,
+                numHotels = 0,
+                isMortgaged = false
             )
         )
 
@@ -585,57 +781,21 @@ class GameBoard(
     }
 
     var players: Array<Player> = players
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var turnOrder: Array<Int> = turnOrder
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var currentTurn: Int = currentTurn
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var selectedPlayerId: Int = selectedPlayerId
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var centralMoney: Int = centralMoney
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var speedDieMode: Boolean = speedDieMode
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var freeParkingRule: Boolean = freeParkingRule
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var cells: Array<Cell> = cells
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var properties: Array<Property> = properties
-        get() = field
-        set(value) {
-            field = value
-        }
 }
 
