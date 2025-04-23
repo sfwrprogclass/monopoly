@@ -20,6 +20,7 @@ import com.dallascollege.monopoly.ui.screens.MenuScreen
 import com.dallascollege.monopoly.ui.screens.PlayerSelectionScreen
 import com.dallascollege.monopoly.ui.screens.TokenSelectionScreen
 import com.dallascollege.monopoly.ui.screens.TurnOrderScreen
+import com.dallascollege.monopoly.ui.screens.StartingMoneyScreen
 import kotlinx.coroutines.launch
 
 
@@ -50,6 +51,7 @@ fun App() {
     var turnOrderConfirmed by remember { mutableStateOf(false) }
     var turnOrder by remember { mutableStateOf<List<String>>(emptyList()) }
     val currentTurn = remember { mutableStateOf(0) }
+    var showStartingMoneyScreen by remember { mutableStateOf(false) }
 
     when {
         showMenu -> {
@@ -80,8 +82,14 @@ fun App() {
                 onNextClicked = { finalOrder ->
                     turnOrder = finalOrder
                     turnOrderConfirmed = true
+                    showStartingMoneyScreen = true
                 }
             )
+        }
+        showStartingMoneyScreen -> {
+            StartingMoneyScreen(players) {
+                showStartingMoneyScreen = false
+            }
         }
         else -> {
             players.forEach { player ->
