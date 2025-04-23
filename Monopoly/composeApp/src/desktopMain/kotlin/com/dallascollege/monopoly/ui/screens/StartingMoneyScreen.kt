@@ -23,9 +23,11 @@ fun StartingMoneyScreen(players: List<Player>, onNextClick: () -> Unit) {
             .padding(16.dp)
     ) {
 
+        TitleBox(title= "Players Starting Money", modifier = Modifier.align(Alignment.TopCenter))
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(top = 120.dp)
         ) {
 
             val topPlayers = players.take(4)
@@ -115,5 +117,22 @@ fun StartingMoneyScreen(players: List<Player>, onNextClick: () -> Unit) {
         ) {
             Text("Next", color = Color.White)
         }
+
+    }
+}
+@Composable
+fun TitleBox(title: String, modifier: Modifier = Modifier){
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .background(Color(0xFF4B0082), RoundedCornerShape(8.dp))
+            .padding(vertical = 12.dp)
+    ){
+        Text(
+            text = title,
+            style = MaterialTheme.typography.h6.copy(color = Color.White),
+            modifier = Modifier.align(Alignment.Center)
+        )
     }
 }
