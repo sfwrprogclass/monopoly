@@ -314,12 +314,6 @@ class GameBoard(
                 price = 60,
                 baseRent = 2,
                 color = PropertyColor.BROWN,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -330,12 +324,6 @@ class GameBoard(
                 price = 60,
                 baseRent = 4,
                 color = PropertyColor.BROWN,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -345,13 +333,7 @@ class GameBoard(
                 name = "Beverly RailRoad",
                 price = 200,
                 baseRent = 16,
-                isUtility = true,
-
-                isPurchased = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false,
+                isRailRoad = true,
             )
         )
         id++
@@ -362,12 +344,6 @@ class GameBoard(
                 price = 100,
                 baseRent = 32,
                 color = PropertyColor.LIGHT_BLUE,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -378,12 +354,6 @@ class GameBoard(
                 price = 100,
                 baseRent = 32,
                 color = PropertyColor.LIGHT_BLUE,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -394,12 +364,6 @@ class GameBoard(
                 price = 120,
                 baseRent = 36,
                 color = PropertyColor.LIGHT_BLUE,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -410,12 +374,6 @@ class GameBoard(
                 price = 140,
                 baseRent = 40,
                 color = PropertyColor.PINK,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -426,12 +384,6 @@ class GameBoard(
                 price = 150,
                 baseRent = 40,
                 isUtility = true,
-
-                isPurchased = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -442,12 +394,6 @@ class GameBoard(
                 price = 160,
                 baseRent = 44,
                 color = PropertyColor.PINK,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -458,12 +404,6 @@ class GameBoard(
                 price = 140,
                 baseRent = 44,
                 color = PropertyColor.PINK,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -474,12 +414,6 @@ class GameBoard(
                 price = 200,
                 baseRent = 16,
                 isRailRoad = true,
-
-                isPurchased = false,
-                isUtility = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -490,12 +424,6 @@ class GameBoard(
                 price = 180,
                 baseRent = 48,
                 color = PropertyColor.ORANGE,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -506,12 +434,6 @@ class GameBoard(
                 price = 200,
                 baseRent = 50,
                 color = PropertyColor.ORANGE,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -522,12 +444,6 @@ class GameBoard(
                 price = 200,
                 baseRent = 50,
                 color = PropertyColor.ORANGE,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -538,12 +454,6 @@ class GameBoard(
                 price = 200,
                 baseRent = 50,
                 color = PropertyColor.RED,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -554,12 +464,6 @@ class GameBoard(
                 price = 200,
                 baseRent = 50,
                 color = PropertyColor.RED,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -570,12 +474,6 @@ class GameBoard(
                 price = 260,
                 baseRent = 60,
                 color = PropertyColor.RED,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -586,12 +484,6 @@ class GameBoard(
                 price = 60,
                 baseRent = 2,
                 isUtility = true,
-
-                isPurchased = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -602,12 +494,6 @@ class GameBoard(
                 price = 260,
                 baseRent = 60,
                 color = PropertyColor.YELLOW,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -618,12 +504,6 @@ class GameBoard(
                 price = 260,
                 baseRent = 60,
                 color = PropertyColor.YELLOW,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -634,12 +514,6 @@ class GameBoard(
                 price = 200,
                 baseRent = 16,
                 isRailRoad = true,
-
-                isPurchased = false,
-                isUtility = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -650,12 +524,6 @@ class GameBoard(
                 price = 230,
                 baseRent = 50,
                 color = PropertyColor.YELLOW,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -666,12 +534,6 @@ class GameBoard(
                 price = 300,
                 baseRent = 75,
                 color = PropertyColor.GREEN,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -682,12 +544,6 @@ class GameBoard(
                 price = 300,
                 baseRent = 75,
                 color = PropertyColor.GREEN,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -698,12 +554,6 @@ class GameBoard(
                 price = 250,
                 baseRent = 70,
                 color = PropertyColor.GREEN,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -713,13 +563,7 @@ class GameBoard(
                 name = "Short line",
                 price = 200,
                 baseRent = 16,
-
-                isPurchased = false,
-                isUtility = false,
                 isRailRoad = true,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -730,12 +574,6 @@ class GameBoard(
                 price = 200,
                 baseRent = 16,
                 color = PropertyColor.BLUE,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
         id++
@@ -746,12 +584,6 @@ class GameBoard(
                 price = 350,
                 baseRent = 100,
                 color = PropertyColor.BLUE,
-                isPurchased = false,
-                isUtility = false,
-                isRailRoad = false,
-                numHouses = 0,
-                numHotels = 0,
-                isMortgaged = false
             )
         )
 
