@@ -1,6 +1,7 @@
 package com.dallascollege.monopoly.logic
 
 import androidx.compose.runtime.MutableState
+import com.dallascollege.monopoly.enums.ActionType
 import com.dallascollege.monopoly.model.*
 
 // Singleton (Static Class) with static methods for the different actions to be executed
@@ -28,7 +29,6 @@ object GameEngine {
         if (property.isMortgaged) return
         val owner = board.getPropertyOwner(property) ?: return
         if (owner == player) return
-
         player.totalMoney -= property.baseRent
         owner.totalMoney += property.baseRent
     }
@@ -143,8 +143,9 @@ object GameEngine {
         val player = board.getPlayerById(playerId) ?: return
         val cell = board.getCellById(player.numCell) ?: return
         val property = board.getPropertyById(cell.propertyId) ?: return
+        val isPropertyOwned = board.isPropertyOwned(playerId)
 
-        if (player.totalMoney >= property.price) {
+        if (player.totalMoney >= property.price && !isPropertyOwned) {
             player.propertyIds.add(property.id)
             player.totalMoney -= property.price
         }
@@ -163,4 +164,20 @@ object GameEngine {
         player.totalMoney += property.price / 2
     }
 
+    //////////////////////////////////
+
+    fun canPurchaseProperty(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
+        val player = gameBoard.getPlayerById(selectedPlayerId.value) ?: return false
+        val cell = gameBoard.getCellById(player.numCell) ?: return false
+
+        return cell.isProperty() && !gameBoard.isPropertyOwned(cell.propertyId)
+    }
+
+    fun canPerformAction(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>, actionType: ActionType): Boolean {
+        return when (actionType) {
+            ActionType.PURCHASE_PROPERTY -> canPurchaseProperty(gameBoard, selectedPlayerId)
+            // Add other ActionType cases here as needed
+            else -> return true
+        }
+    }
 }

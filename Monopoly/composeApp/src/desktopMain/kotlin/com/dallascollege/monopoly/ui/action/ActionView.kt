@@ -94,7 +94,7 @@ fun ActionView(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Select action")
-            ActionTypeDropDownMenu(isReadOnly) { actionType -> handleActionTypeChange(actionType) }
+            ActionTypeDropDownMenu(board, selectedPlayerId, isReadOnly) { actionType -> handleActionTypeChange(actionType) }
         }
 
         Row(
@@ -145,7 +145,7 @@ fun ActionView(
         ) {
             Button(
                 onClick = { executeAction() },
-                enabled = !isReadOnly
+                enabled = !isReadOnly && GameEngine.canPerformAction(board, selectedPlayerId, selectedActionType)
             ) {
                 Text("Execute action")
             }

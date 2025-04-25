@@ -14,9 +14,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dallascollege.monopoly.enums.ActionType
+import com.dallascollege.monopoly.logic.GameEngine
+import com.dallascollege.monopoly.model.GameBoard
 
 @Composable
-fun ActionTypeDropDownMenu(isReadOnly: Boolean, handleActionTypeChange: (ActionType) -> Unit) {
+fun ActionTypeDropDownMenu(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>, isReadOnly: Boolean, handleActionTypeChange: (ActionType) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     var selectedActionType by remember { mutableStateOf(ActionType.SKIP)}
     val excludedActionTypes = listOf( ActionType.PAY_RENT, ActionType.PAY_BANK, ActionType.GO_TO_JAIL)
@@ -26,6 +28,8 @@ fun ActionTypeDropDownMenu(isReadOnly: Boolean, handleActionTypeChange: (ActionT
         expanded = false
         handleActionTypeChange(selectedActionType)
     }
+
+
 
     Box {
         Button(
@@ -54,6 +58,7 @@ fun ActionTypeDropDownMenu(isReadOnly: Boolean, handleActionTypeChange: (ActionT
                 .filter {it !in excludedActionTypes}
                 .forEach({
                     DropdownMenuItem(
+                        enabled = GameEngine.canPerformAction(gameBoard, selectedPlayerId, it), //
                         content = { Text(it.text) },
                         modifier = Modifier.background(if (it == selectedActionType) selectedColor else unselectedColor),
                         onClick = { handleClick(it) }

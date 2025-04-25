@@ -112,7 +112,7 @@ class Player(
 //
 //        propertyIds.forEach { id ->
 //            val property = board.getPropertyById(id)
-//            if (property != null) {
+//            if (property != null && !property.isMortgage) {
 //                mortgageAllPropertiesMoney += property.price / 2
 //                //TODO: calculate the money user can get selling houses and hotels
 //            }

@@ -584,6 +584,10 @@ class GameBoard(
         return players.find( { it.propertyIds.contains(property.id)})
     }
 
+    fun isPropertyOwned(propertyId: Int): Boolean {
+        return players.any { it.propertyIds.contains(propertyId) }
+    }
+
     var players: Array<Player> = players
         get() = field
         set(value) {
