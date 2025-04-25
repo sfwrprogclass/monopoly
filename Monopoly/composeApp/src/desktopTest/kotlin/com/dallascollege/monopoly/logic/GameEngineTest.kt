@@ -43,6 +43,20 @@ class GameEngineTest {
 
         player = gameBoard.getPlayerById(1)!!
     }
+
+    //JENNY
+    @Test
+    fun `player should start the game with the standard rules, at Go cell and with $1500`() {
+        val player = gameBoard.getPlayerById(1)
+
+        assertTrue(player != null)
+        if (player != null) {
+            assertEquals(player.numCell, 1, "Player start atGO cel#1")
+            assertEquals(player.totalMoney, 1500, "Player has $1500.00")
+
+            println("--------> Player '${player.name}' starts at Go (cell 1) with \$${player.totalMoney}.")
+        }
+    }
     // JENNY
     @Test
     fun `movePlayer should move player correctly`() {
@@ -51,6 +65,7 @@ class GameEngineTest {
 
         assertEquals(initialPosition + 5, player.numCell)
     }
+
     // JENNY
     // As a player, I can collect the base rent when someone lands on my property.
     @Test
@@ -64,8 +79,14 @@ class GameEngineTest {
         gameBoard.properties = arrayOf(property)
 
         player.numCell = 5
+        println("Before rent collection:")
+        println("Player totalMoney: ${player.totalMoney}")
+        println("Owner totalMoney: ${owner.totalMoney}")
         GameEngine.collectBaseRent(gameBoard, player.id)
 
+        println("After rent collection:")
+        println("Player totalMoney: ${player.totalMoney}")
+        println("Owner totalMoney: ${owner.totalMoney}")
         assertEquals(1450, player.totalMoney)
         assertEquals(1550, owner.totalMoney)
     }
@@ -102,19 +123,19 @@ class GameEngineTest {
 
         player.numCell = 5
         owner.propertyIds = mutableListOf(1, 2)
-        println("Before: ${owner.name} has \$${owner.totalMoney}, ${player.name} has \$${player.totalMoney}")
+        println("--------> Before: ${owner.name} has \$${owner.totalMoney}, ${player.name} has \$${player.totalMoney}")
 
         GameEngine.collectUtilities(gameBoard, player.id)
 
-        println("After: ${owner.name} has \$${owner.totalMoney}, ${player.name} has \$${player.totalMoney}")
+        println("--------> After: ${owner.name} has \$${owner.totalMoney}, ${player.name} has \$${player.totalMoney}")
         println("${owner.name} owns utilities with IDs: ${owner.propertyIds.joinToString(", ")}")
         println("${player.name} landed on cell ${player.numCell}, which is property ID: ${cell.propertyId}")
 
         assertEquals(1300, player.totalMoney)
         assertEquals(1700, owner.totalMoney)
     }
-// JENNY BACKLOG
 
+    // JENNY BACKLOG
     @Test
     fun `As a player, I can collect the appropriate rent for railroads based on how many in the set I own`() {
         val owner = Player(id = 2, name = "Player2", token = Token.DOG)
@@ -152,17 +173,17 @@ class GameEngineTest {
         val engine = GameEngine
 
         engine.landingAction(gameBoard, playerIncomeTax.id)
-        println("${playerIncomeTax.name} landed on Income Tax. Money after tax: ${playerIncomeTax.totalMoney}")
+        println("--------> The ${playerIncomeTax.name} landed on Income Tax. Total money after tax (-150): /$${playerIncomeTax.totalMoney}")
         assertEquals(1350, playerIncomeTax.totalMoney)
 
         engine.landingAction(gameBoard, playerLuxuryTax.id)
-        println("${playerLuxuryTax.name} landed on Luxury Tax. Money after tax: ${playerLuxuryTax.totalMoney}")
+        println("--------> The ${playerLuxuryTax.name} landed on Luxury Tax. total money after tax (-200): /$${playerLuxuryTax.totalMoney}")
         assertEquals(1300, playerLuxuryTax.totalMoney)
 
         engine.landingAction(gameBoard, playerGoToJail.id)
-        println("${playerGoToJail.name} was sent to jail. In jail: ${playerGoToJail.inJail}, Position: ${playerGoToJail.numCell}")
         assertTrue(playerGoToJail.inJail)
         assertEquals(23, playerGoToJail.numCell)
+        println("--------> The ${playerGoToJail.name} was sent to jail. In jail: ${playerGoToJail.inJail}, Position: ${playerGoToJail.numCell}")
     }
 
     // JENNY BACKLOG
@@ -180,6 +201,8 @@ class GameEngineTest {
 
         assertTrue(player.propertyIds.contains(property!!.id))
         assertEquals(1440, player.totalMoney)
+
+        println("--------> Player '${player.name}' purchased '${property.name}' for \$${property.price}.")
     }
 
     // JENNY BACKLOG
@@ -198,5 +221,6 @@ class GameEngineTest {
 
         assertFalse(player.propertyIds.contains(property!!.id))
         assertEquals(30, player.totalMoney)
+        println("--------> Player '${player.name}' can not purchase '${property!!.name}' because he only has \$${player.totalMoney}.")
     }
 }
