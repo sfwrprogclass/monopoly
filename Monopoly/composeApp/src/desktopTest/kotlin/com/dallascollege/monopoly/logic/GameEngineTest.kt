@@ -69,7 +69,7 @@ class GameEngineTest {
     // JENNY
     // As a player, I can collect the base rent when someone lands on my property.
     @Test
-    fun `collectBaseRent should deduct and add rent correctly`() {
+    fun `collectRent should deduct and add rent correctly`() {
         val owner = Player(id = 2, name = "Player2", token = Token.DOG)
         val property = Property(id = 1, name = "San Diego Drive", baseRent = 50, price = 60, color = PropertyColor.BLUE)
         owner.propertyIds = mutableListOf(1)
@@ -82,7 +82,7 @@ class GameEngineTest {
         println("Before rent collection:")
         println("Player totalMoney: ${player.totalMoney}")
         println("Owner totalMoney: ${owner.totalMoney}")
-        GameEngine.collectBaseRent(gameBoard, player.id)
+        GameEngine.collectRent(gameBoard, player.id)
 
         println("After rent collection:")
         println("Player totalMoney: ${player.totalMoney}")
@@ -93,7 +93,7 @@ class GameEngineTest {
 
     // JENNY
     @Test
-    fun `collectBaseRent should not be able to deduct and add rent correctly because property is mortgaged`() {
+    fun `collectRent should not be able to deduct and add rent correctly because property is mortgaged`() {
         val owner = Player(id = 2, name = "Player2", token = Token.DOG)
         val property = Property(id = 1, name = "San Diego Drive", baseRent = 50, price = 60, color = PropertyColor.BLUE, isMortgaged = true)
         owner.propertyIds = mutableListOf(1)
@@ -103,10 +103,25 @@ class GameEngineTest {
         gameBoard.properties = arrayOf(property)
 
         player.numCell = 5
-        GameEngine.collectBaseRent(gameBoard, player.id)
+        GameEngine.collectRent(gameBoard, player.id)
 
         assertEquals(1500, player.totalMoney)
         assertEquals(1500, owner.totalMoney)
+    }
+
+    // JENNY
+    @Test
+    fun `collectRent should collect double base rent when someone lands on my property and I own all color properties `() {
+        val owner = Player(id = 2, name = "Player2", token = Token.DOG)
+        gameBoard.players = arrayOf(player, owner)
+        gameBoard.createModels()
+        owner.propertyIds = mutableListOf(1, 2)
+
+        player.numCell = 4
+        GameEngine.collectRent(gameBoard, player.id)
+
+        assertEquals(1492, player.totalMoney)
+        assertEquals(1508, owner.totalMoney)
     }
 
     // JENNY BACKLOG

@@ -12,22 +12,24 @@ class PlayerTest {
 
     @BeforeEach
     fun setup() {
-        board = GameBoard(
-            properties = arrayOf(
-                Property(id = 1, name = "San Diego Drive", price = 60, color = PropertyColor.BROWN),
-                Property(id = 2, name = "Kansas Drive", price = 90, color = PropertyColor.BROWN),
-                Property(id = 3, name = "Beverly RailRoad", price = 200, isUtility = true),
-                Property(id = 4, name = "Vermont Drive", price = 120, PropertyColor.LIGHT_BLUE),
-                Property(id = 5, name = "Phoenix Drive", price = 130, PropertyColor.LIGHT_BLUE),
-                Property(id = 11, name = "Manhattan Railroad", price = 200)
-            ),
-            players = arrayOf(
-                Player(
-                    name = "Jenny",
-                    token = Token.BOOT,
-                    propertyIds = mutableListOf(2, 3, 11)
-                )
+        val players = arrayOf(
+            Player(
+                name = "Jenny",
+                token = Token.BOOT,
+                propertyIds = mutableListOf(2, 8, 11)
             )
+        )
+
+        val turnOrder = arrayOf(1)
+
+        board = GameBoard(
+            players = players,
+            turnOrder = turnOrder,
+            currentTurn = 1,
+            selectedPlayerId = 1,
+            centralMoney = 0,
+            speedDieMode = false,
+            freeParkingRule = false,
         )
 
         board.createModels()
@@ -39,15 +41,16 @@ class PlayerTest {
         val properties = player.getProperties(board)
         assertEquals(3, properties.size)
         val ids = properties.map { it.id }
-        assertTrue(ids.containsAll(listOf(2, 3, 11)))
+        assertTrue(ids.containsAll(listOf(2, 8, 11)))
     }
     // JENNY
     @Test
     fun `getUtilities returns only utilities the player owns`() {
         val player = board.players[0]
         val utilities = player.getUtilities(board)
+
         assertEquals(1, utilities.size)
-        assertEquals(3, utilities[0].id)
+        assertEquals(8, utilities[0].id)
     }
     // JENNY
     @Test

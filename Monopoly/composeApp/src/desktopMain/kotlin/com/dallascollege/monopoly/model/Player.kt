@@ -1,6 +1,8 @@
 package com.dallascollege.monopoly.model
 
+import com.dallascollege.monopoly.enums.PropertyColor
 import com.dallascollege.monopoly.enums.Token
+import com.dallascollege.monopoly.utils.PROPERTY_COLOR_VALUES
 
 class Player(
     id: Int = 1,
@@ -120,5 +122,12 @@ class Player(
 //
 //        return totalMoney + mortgageAllPropertiesMoney <= 0
         return totalMoney <= 0
+    }
+
+    fun hasAllPropertiesByColor(board: GameBoard, color: PropertyColor): Boolean {
+        val properties = getProperties(board)
+
+        val numberOfProperties = properties.count { it.color == color }
+        return numberOfProperties == PROPERTY_COLOR_VALUES[color]
     }
 }

@@ -27,7 +27,7 @@ object GameEngine {
     }
 
     // As a player, I can collect the base rent when someone lands on my property (unless property is mortgaged).
-    fun collectBaseRent(board: GameBoard, playerId: Int) {
+    fun collectRent(board: GameBoard, playerId: Int) {
         val player = board.getPlayerById(playerId) ?: return
         val cell = board.getCellById(player.numCell) ?: return
         if (!cell.isProperty()) return
@@ -36,8 +36,11 @@ object GameEngine {
         if (property.isMortgaged) return
         val owner = board.getPropertyOwner(property) ?: return
         if (owner == player) return
-        player.totalMoney -= property.baseRent
-        owner.totalMoney += property.baseRent
+
+        val rent = if (owner.hasAllPropertiesByColor(board, property.color)) property.baseRent * 2 else property.baseRent
+
+        player.totalMoney -= rent
+        owner.totalMoney += rent
 
         CoroutineScope(Dispatchers.Main).launch{
             SnackbarManager.showMessage(
@@ -121,7 +124,7 @@ object GameEngine {
         val player = board.getPlayerById(playerId) ?: return
         val cell = board.getCellById(player.numCell) ?: return
         if (cell.isProperty()) {
-            collectBaseRent(board, playerId)
+            collectRent(board, playerId)
         } else if (cell.isParking) {
             earnCentralMoney(board, player)
         } else if (cell.isGoToJail) {
