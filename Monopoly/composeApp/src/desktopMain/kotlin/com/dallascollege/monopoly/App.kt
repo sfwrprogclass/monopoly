@@ -1,19 +1,46 @@
 package com.dallascollege.monopoly
 
-import androidx.compose.ui.unit.dp
+// Add the following dependency to your Gradle file instead:
+// implementation "androidx.compose.ui:ui-tooling:1.x.x"
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.*
-import androidx.compose.foundation.layout.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.dallascollege.monopoly.enums.Token
 import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Player
-import com.dallascollege.monopoly.ui.screens.TokenSelectionScreen
-import com.dallascollege.monopoly.ui.screens.PlayerSelectionScreen
-import com.dallascollege.monopoly.ui.screens.TurnOrderScreen
-import com.dallascollege.monopoly.ui.screens.MenuScreen
+import com.dallascollege.monopoly.ui.SnackbarManager
 import com.dallascollege.monopoly.ui.layout.Layout
+import com.dallascollege.monopoly.ui.screens.MenuScreen
+import com.dallascollege.monopoly.ui.screens.PlayerSelectionScreen
+import com.dallascollege.monopoly.ui.screens.TokenSelectionScreen
+import com.dallascollege.monopoly.ui.screens.TurnOrderScreen
+import com.dallascollege.monopoly.ui.screens.StartingMoneyScreen
+import kotlinx.coroutines.launch
 
+
+@Composable
+fun SnackbarHost(){
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit){
+        SnackbarManager.messages.collect { message ->
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    message = message,
+                    actionLabel = "OK",
+                    duration = SnackbarDuration.Short
+                )
+            }
+        }
+    }
+}
 @Composable
 fun App() {
     var showMenu by remember { mutableStateOf(true) }
@@ -24,6 +51,7 @@ fun App() {
     var turnOrderConfirmed by remember { mutableStateOf(false) }
     var turnOrder by remember { mutableStateOf<List<String>>(emptyList()) }
     val currentTurn = remember { mutableStateOf(0) }
+    var showStartingMoneyScreen by remember { mutableStateOf(false) }
 
     when {
         showMenu -> {
@@ -54,8 +82,14 @@ fun App() {
                 onNextClicked = { finalOrder ->
                     turnOrder = finalOrder
                     turnOrderConfirmed = true
+                    showStartingMoneyScreen = true
                 }
             )
+        }
+        showStartingMoneyScreen -> {
+            StartingMoneyScreen(players) {
+                showStartingMoneyScreen = false
+            }
         }
         else -> {
             players.forEach { player ->
