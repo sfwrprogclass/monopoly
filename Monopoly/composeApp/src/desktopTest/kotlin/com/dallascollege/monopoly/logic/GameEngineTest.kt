@@ -8,6 +8,8 @@ import com.dallascollege.monopoly.model.Property
 import com.dallascollege.monopoly.enums.PropertyColor
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import androidx.compose.runtime.mutableStateOf
+
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -199,4 +201,38 @@ class GameEngineTest {
         assertFalse(player.propertyIds.contains(property!!.id))
         assertEquals(30, player.totalMoney)
     }
+
+
+    // Maria backlog
+    @Test
+    fun `As a player, I roll again or go to jail when doubles are rolled`() {
+        val player = gameBoard.getPlayerById(1)!!
+        player.consecutiveDoubles = 0
+        val currentTurn = 0
+        val engine = GameEngine
+
+        // First roll: doubles (e.g., 4 and 4)
+        engine.handleTurnWithDice(gameBoard, mutableStateOf(currentTurn), die1 = 4, die2 = 4)
+
+        // Assert - Player should roll again, doubles counter should be 1
+        assertEquals(1, player.consecutiveDoubles)
+        assertFalse(player.inJail) // Player should not be in jail yet
+
+        // Second roll: doubles again (e.g., 4 and 4)
+        engine.handleTurnWithDice(gameBoard, mutableStateOf(currentTurn), die1 = 4, die2 = 4)
+
+        // Assert - Player should roll again, doubles counter should be 2
+        assertEquals(2, player.consecutiveDoubles)
+        assertFalse(player.inJail) // Player should not be in jail yet
+
+        // Third roll: doubles again (e.g., 4 and 4) - Player should go to jail
+        engine.handleTurnWithDice(gameBoard, mutableStateOf(currentTurn), die1 = 4, die2 = 4)
+
+        // Assert - After three doubles, the player should go to jail
+        assertEquals(0, player.consecutiveDoubles) // Doubles counter should reset
+        assertTrue(player.inJail) // Player should be in jail
+        assertEquals(23, player.numCell) // Player's position should be jail (usually position 23)
+    }
+
+
 }

@@ -14,7 +14,9 @@ class Player(
     games: MutableList<Game> = mutableListOf<Game>(),
     isCPU: Boolean = false,
     numCell: Int = 1
+
 ) {
+
 
     fun getProperties(board: GameBoard): Array<Property> {
         val playerProperties = mutableListOf<Property>()
@@ -88,6 +90,8 @@ class Player(
         set(value) {
             field = value
         }
+
+    var consecutiveDoubles: Int = 0
 
     var games: MutableList<Game> = games
         get() = field
