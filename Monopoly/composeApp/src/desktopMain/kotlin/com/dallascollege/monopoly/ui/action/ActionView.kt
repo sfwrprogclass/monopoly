@@ -12,6 +12,8 @@ import com.dallascollege.monopoly.logic.GameEngine
 import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Property
 import com.dallascollege.monopoly.ui.property.PropertyDropDownMenu
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun ActionView(
@@ -19,6 +21,7 @@ fun ActionView(
     playerId: Int,
     currentTurn: MutableState<Int>,
     selectedPlayerId: MutableState<Int>,
+    message: MutableState<String>,
     modifier: Modifier = Modifier
 ) {
     var selectedActionType by remember { mutableStateOf(ActionType.SKIP) }
@@ -76,7 +79,7 @@ fun ActionView(
             ActionType.MORTGAGE_PROPERTY -> selectedProperty?.let {
                 GameEngine.mortgageProperty(board, playerId, it.id)
             }
-            ActionType.PURCHASE_PROPERTY -> GameEngine.purchaseProperty(board, playerId)
+            ActionType.PURCHASE_PROPERTY -> GameEngine.purchaseProperty(board, playerId, message)
             ActionType.SURRENDER -> {}
             ActionType.SKIP -> {}
             ActionType.FINISH_TURN -> GameEngine.finishTurn(board, currentTurn)
@@ -89,12 +92,17 @@ fun ActionView(
             .padding(5.dp, 0.dp, 5.dp, 0.dp),
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
+
         Row(
             modifier = Modifier.fillMaxWidth().height(40.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Select action")
-            ActionTypeDropDownMenu(board, selectedPlayerId, isReadOnly) { actionType -> handleActionTypeChange(actionType) }
+            ActionTypeDropDownMenu(board, selectedPlayerId, isReadOnly) { actionType ->
+                handleActionTypeChange(
+                    actionType
+                )
+            }
         }
 
         Row(
@@ -133,8 +141,8 @@ fun ActionView(
         ) {
             Text("Select property")
             if (player != null) {
-                PropertyDropDownMenu(player, board, isSelectedPropertyEnabled && !isReadOnly) {
-                        property -> handlePropertyChange(property)
+                PropertyDropDownMenu(player, board, isSelectedPropertyEnabled && !isReadOnly) { property ->
+                    handlePropertyChange(property)
                 }
             }
         }

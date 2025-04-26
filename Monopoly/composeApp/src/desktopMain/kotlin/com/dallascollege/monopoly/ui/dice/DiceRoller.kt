@@ -16,7 +16,7 @@ import com.dallascollege.monopoly.model.GameBoard
 
 @Composable
 @Preview
-fun DiceRoller(gameBoard: GameBoard, currentTurn: MutableState<Int>) {
+fun DiceRoller(gameBoard: GameBoard, currentTurn: MutableState<Int>, message: MutableState<String>) {
     val dice = remember { Dice() }
     var dice1 by remember { mutableStateOf(1) }
     var dice2 by remember { mutableStateOf(1) }
@@ -35,7 +35,7 @@ fun DiceRoller(gameBoard: GameBoard, currentTurn: MutableState<Int>) {
         val currentPlayerId = gameBoard.turnOrder[currentTurn.value]
 
         GameEngine.movePlayer(gameBoard, currentPlayerId, total)
-        GameEngine.landingAction(gameBoard, currentPlayerId)
+        GameEngine.landingAction(gameBoard, currentPlayerId, message)
 
         gameBoard.selectedPlayerId = currentPlayerId
         hasRolled = true

@@ -1,15 +1,9 @@
 package com.dallascollege.monopoly.logic
 
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.runtime.MutableState
 import com.dallascollege.monopoly.enums.ActionType
-import com.dallascollege.monopoly.model.*
 import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Player
-import com.dallascollege.monopoly.ui.SnackbarManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 // Singleton (Static Class) with static methods for the different actions to be executed
 object GameEngine {
@@ -27,7 +21,7 @@ object GameEngine {
     }
 
     // As a player, I can collect the base rent when someone lands on my property (unless property is mortgaged).
-    fun collectRent(board: GameBoard, playerId: Int) {
+    fun collectRent(board: GameBoard, playerId: Int, message: MutableState<String>) {
         val player = board.getPlayerById(playerId) ?: return
         val cell = board.getCellById(player.numCell) ?: return
         if (!cell.isProperty()) return
@@ -42,12 +36,7 @@ object GameEngine {
         player.totalMoney -= rent
         owner.totalMoney += rent
 
-        CoroutineScope(Dispatchers.Main).launch{
-            SnackbarManager.showMessage(
-                message = "${player.name} paid rent of ${property.baseRent} to ${owner.name}",
-                duration = SnackbarDuration.Short
-            )
-        }
+        message.value = "${player.name} paid rent of ${property.baseRent} to ${owner.name}"
     }
 
     // As a player, I can collect the appropriate rent for utilities based on how many in the set I own.
@@ -120,11 +109,11 @@ object GameEngine {
         player.totalMoney -= 200
     }
 
-    fun landingAction(board: GameBoard, playerId: Int) {
+    fun landingAction(board: GameBoard, playerId: Int, message: MutableState<String>) {
         val player = board.getPlayerById(playerId) ?: return
         val cell = board.getCellById(player.numCell) ?: return
         if (cell.isProperty()) {
-            collectRent(board, playerId)
+            collectRent(board, playerId, message)
         } else if (cell.isParking) {
             earnCentralMoney(board, player)
         } else if (cell.isGoToJail) {
@@ -156,7 +145,9 @@ object GameEngine {
         board.currentTurn = currentTurn.value
     }
 
-    fun purchaseProperty(board: GameBoard, playerId: Int) {
+    //to display notifications message always needs to be passed as a parameter of the function and then
+    // the notification will be automatically prompted!
+    fun purchaseProperty(board: GameBoard, playerId: Int, message: MutableState<String>) {
         val player = board.getPlayerById(playerId) ?: return
         val cell = board.getCellById(player.numCell) ?: return
         val property = board.getPropertyById(cell.propertyId) ?: return
@@ -165,6 +156,7 @@ object GameEngine {
         if (player.totalMoney >= property.price && !isPropertyOwned) {
             player.propertyIds.add(property.id)
             player.totalMoney -= property.price
+            message.value = "${player.name} purchased ${property.name}"
         }
     }
 
