@@ -310,7 +310,7 @@ class GameBoard(
         propertyList.add(
             Property(
                 id = id,
-                name = "Mediterranean Avenue",
+                name = "San Diego Drive",
                 price = 60,
                 baseRent = 2,
                 color = PropertyColor.BROWN,
@@ -320,7 +320,7 @@ class GameBoard(
         propertyList.add(
             Property(
                 id = id,
-                name = "Baltic Avenue",
+                name = "Kansas Drive",
                 price = 60,
                 baseRent = 4,
                 color = PropertyColor.BROWN,
@@ -340,7 +340,7 @@ class GameBoard(
         propertyList.add(
             Property(
                 id = id,
-                name = "Oriental Avenue",
+                name = "Vermont Drive",
                 price = 100,
                 baseRent = 32,
                 color = PropertyColor.LIGHT_BLUE,
@@ -350,7 +350,7 @@ class GameBoard(
         propertyList.add(
             Property(
                 id = id,
-                name = "Vermont Avenue",
+                name = "Phoenix Drive",
                 price = 100,
                 baseRent = 32,
                 color = PropertyColor.LIGHT_BLUE,
@@ -360,7 +360,7 @@ class GameBoard(
         propertyList.add(
             Property(
                 id = id,
-                name = "Connecticut Avenue",
+                name = "Boston Drive",
                 price = 120,
                 baseRent = 36,
                 color = PropertyColor.LIGHT_BLUE,
@@ -400,7 +400,7 @@ class GameBoard(
         propertyList.add(
             Property(
                 id = id,
-                name = "States drive",
+                name = "States Drive",
                 price = 140,
                 baseRent = 44,
                 color = PropertyColor.PINK,

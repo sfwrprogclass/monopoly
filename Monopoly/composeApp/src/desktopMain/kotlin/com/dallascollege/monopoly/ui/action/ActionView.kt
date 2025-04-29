@@ -24,7 +24,7 @@ fun ActionView(
     modifier: Modifier = Modifier
 ) {
     var selectedActionType by remember { mutableStateOf(ActionType.SKIP) }
-    var selectedProperty: Property? by remember { mutableStateOf(null) }
+    var selectedPropertyId: Int? by remember { mutableStateOf(null) } // <-- now tracking ID only
     var quantity by remember { mutableStateOf("0") }
     var amount by remember { mutableStateOf("0") }
     var isQuantityEnable by remember { mutableStateOf(false) }
@@ -50,7 +50,7 @@ fun ActionView(
                 isAmountEnable = false
                 isSelectedPropertyEnabled = true
             }
-            ActionType.MORTGAGE_PROPERTY -> {
+            ActionType.MORTGAGE_PROPERTY, ActionType.UNMORTGAGE_PROPERTY -> { // <-- also enables for unmortgage
                 isQuantityEnable = false
                 isAmountEnable = false
                 isSelectedPropertyEnabled = true
@@ -64,10 +64,12 @@ fun ActionView(
     }
 
     fun handlePropertyChange(property: Property) {
-        selectedProperty = property
+        selectedPropertyId = property.id // <-- only saving ID now
     }
 
     suspend fun executeAction() {
+        println("Selected action: $selectedActionType, Selected property id: $selectedPropertyId")
+
         when (selectedActionType) {
             ActionType.UPGRADE_TO_HOTEL -> {}
             ActionType.BUY_HOUSE -> {}
@@ -77,8 +79,15 @@ fun ActionView(
             ActionType.PAY_BANK -> {}
             ActionType.GO_TO_JAIL -> {}
             ActionType.GET_OUT_OF_JAIL -> {}
-            ActionType.MORTGAGE_PROPERTY -> selectedProperty?.let {
-                GameEngine.mortgageProperty(board, playerId, it.id)
+            ActionType.MORTGAGE_PROPERTY -> selectedPropertyId?.let { propertyId ->
+                board.getPropertyById(propertyId)?.let { liveProperty ->
+                    GameEngine.mortgageProperty(board, playerId, liveProperty.id)
+                }
+            } //TESTING
+            ActionType.UNMORTGAGE_PROPERTY -> selectedPropertyId?.let { propertyId ->
+                board.getPropertyById(propertyId)?.let { liveProperty ->
+                    GameEngine.unmortgageProperty(board, playerId, liveProperty.id, message)
+                }
             }
             ActionType.PURCHASE_PROPERTY -> GameEngine.purchaseProperty(board, playerId, message)
             ActionType.SURRENDER -> {}

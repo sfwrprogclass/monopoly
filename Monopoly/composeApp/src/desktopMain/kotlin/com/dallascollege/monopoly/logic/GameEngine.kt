@@ -79,7 +79,7 @@ object GameEngine {
         owner.totalMoney += rentToPay
     }
 
-    //As a player, I can take appropriate action when landing on a non-property space
+    // As a player, I can take appropriate action when landing on a non-property space
     private fun earnCentralMoney(board: GameBoard, player: Player) {
         player.totalMoney += board.centralMoney
         board.centralMoney = 0
@@ -135,7 +135,7 @@ object GameEngine {
         } else if (cell.isLuxuryTax) {
             payLuxuryTax(player)
         }
-        //do nothing if isVisitingJail
+        // do nothing if isVisitingJail
         return ""
     }
 
@@ -160,7 +160,7 @@ object GameEngine {
         board.currentTurn = currentTurn.value
     }
 
-    //to display notifications message always needs to be passed as a parameter of the function and then
+    // to display notifications message always needs to be passed as a parameter of the function and then
     // the notification will be automatically prompted!
     fun purchaseProperty(board: GameBoard, playerId: Int, message: MutableState<String>): String {
         val player = board.getPlayerById(playerId) ?: return ""
@@ -177,9 +177,13 @@ object GameEngine {
         return ""
     }
 
+// testing lines to figure out why there's a unmortgage bug
     fun mortgageProperty(board: GameBoard, playerId: Int, propertyId: Int) {
         val player = board.getPlayerById(playerId) ?: return
         val property = board.getPropertyById(propertyId) ?: return
+
+        println("Attempting to mortgage property: ${property.name}")
+        println("Before mortgaging: property.isMortgaged = ${property.isMortgaged}")
 
         if (board.getPropertyOwner(property) != player) return
         if (property.isMortgaged) return
@@ -187,6 +191,33 @@ object GameEngine {
 
         property.isMortgaged = true
         player.totalMoney += property.price / 2
+
+        println("After mortgaging: property.isMortgaged = ${property.isMortgaged}")
+    }
+
+// INCOMPLETE. TESTING
+    fun unmortgageProperty(board: GameBoard, playerId: Int, propertyId: Int, message: MutableState<String>) {
+        val player = board.getPlayerById(playerId) ?: return
+        val property = board.getPropertyById(propertyId) ?: return
+
+        println("Checking unmortgage:")
+        println(" - property.isMortgaged = ${property.isMortgaged}")
+        println(" - property owner = ${board.getPropertyOwner(property)?.name}")
+        println(" - player = ${player.name}")
+
+        if (property.isMortgaged && board.getPropertyOwner(property) == player) {
+            val unmortgageCost = (property.price / 2) + ((property.price / 2) / 10)
+            println(" - unmortgageCost = $unmortgageCost")
+            println(" - player.totalMoney = ${player.totalMoney}")
+
+            if (player.totalMoney >= unmortgageCost) {
+                player.totalMoney -= unmortgageCost
+                property.isMortgaged = false
+                message.value = "${player.name} unmortgaged ${property.name} for $$unmortgageCost"
+            } else {
+                message.value = "${player.name} does not have enough money to unmortgage ${property.name}"
+            }
+        }
     }
 
     //////////////////////////////////
@@ -201,12 +232,10 @@ object GameEngine {
     fun canPerformAction(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>, actionType: ActionType): Boolean {
         return when (actionType) {
             ActionType.PURCHASE_PROPERTY -> canPurchaseProperty(gameBoard, selectedPlayerId)
-            // Add other ActionType cases here as needed
-            else -> return true
+            else -> true
         }
     }
 
-    // all of this is AI component things
     suspend fun performAITurn(board: GameBoard, playerId: Int, message: MutableState<String>) {
         val player = board.getPlayerById(playerId) ?: return
         executeTurnStep(board, player, message, isHuman = false)
