@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import com.dallascollege.monopoly.enums.ActionType
 import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Player
+import com.dallascollege.monopoly.model.Dice
 
 // Singleton (Static Class) with static methods for the different actions to be executed
 object GameEngine {
@@ -82,7 +83,7 @@ object GameEngine {
         board.centralMoney = 0
     }
 
-    private fun goToJail(player: Player) {
+     fun goToJail(player: Player) {
         player.inJail = true
         player.numCell = 23
     }
@@ -171,6 +172,45 @@ object GameEngine {
 
         property.isMortgaged = true
         player.totalMoney += property.price / 2
+    }
+
+    fun handleTurnWithDice(
+        board: GameBoard,
+        currentTurn: MutableState<Int>,
+        message: MutableState<String>,
+        die1: Int? = null,
+        die2: Int? = null
+    ) {
+        val playerId = board.turnOrder[currentTurn.value]
+        val player = board.getPlayerById(playerId) ?: return
+
+
+        val dice = Dice()
+        val roll1 = die1 ?: dice.roll()
+        val roll2 = die2 ?: dice.roll()
+        val total = roll1 + roll2
+
+        if (roll1 == roll2) {
+            player.consecutiveDoubles += 1
+        } else {
+            player.consecutiveDoubles = 0
+        }
+
+        if (player.consecutiveDoubles == 3) {
+            player.consecutiveDoubles = 0
+            goToJail(player)
+            finishTurn(board, currentTurn)
+            return
+        }
+
+        movePlayer(board, playerId, total)
+        landingAction(board, playerId, message)
+        board.selectedPlayerId = playerId
+
+        // Only finish turn if not doubles
+        if (roll1 != roll2) {
+            finishTurn(board, currentTurn)
+        }
     }
 
     //////////////////////////////////

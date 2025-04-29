@@ -8,10 +8,13 @@ import com.dallascollege.monopoly.model.Property
 import com.dallascollege.monopoly.enums.PropertyColor
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import androidx.compose.runtime.mutableStateOf
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+
+
 
 class GameEngineTest {
 
@@ -79,10 +82,12 @@ class GameEngineTest {
         gameBoard.properties = arrayOf(property)
 
         player.numCell = 5
+        val message = mutableStateOf("")
+
         println("Before rent collection:")
         println("Player totalMoney: ${player.totalMoney}")
         println("Owner totalMoney: ${owner.totalMoney}")
-        GameEngine.collectRent(gameBoard, player.id)
+        GameEngine.collectRent(gameBoard, player.id, message)
 
         println("After rent collection:")
         println("Player totalMoney: ${player.totalMoney}")
@@ -103,7 +108,8 @@ class GameEngineTest {
         gameBoard.properties = arrayOf(property)
 
         player.numCell = 5
-        GameEngine.collectRent(gameBoard, player.id)
+        val message = mutableStateOf("")
+        GameEngine.collectRent(gameBoard, player.id, message)
 
         assertEquals(1500, player.totalMoney)
         assertEquals(1500, owner.totalMoney)
@@ -118,7 +124,8 @@ class GameEngineTest {
         owner.propertyIds = mutableListOf(1, 2)
 
         player.numCell = 4
-        GameEngine.collectRent(gameBoard, player.id)
+        val message = mutableStateOf("")
+        GameEngine.collectRent(gameBoard, player.id, message)
 
         assertEquals(1492, player.totalMoney)
         assertEquals(1508, owner.totalMoney)
@@ -186,16 +193,17 @@ class GameEngineTest {
         gameBoard.cells = arrayOf(incomeTaxCell, luxuryTaxCell, goToJailCell)
 
         val engine = GameEngine
+        val message = mutableStateOf("")
 
-        engine.landingAction(gameBoard, playerIncomeTax.id)
+        engine.landingAction(gameBoard, playerIncomeTax.id, message)
         println("--------> The ${playerIncomeTax.name} landed on Income Tax. Total money after tax (-150): /$${playerIncomeTax.totalMoney}")
         assertEquals(1350, playerIncomeTax.totalMoney)
 
-        engine.landingAction(gameBoard, playerLuxuryTax.id)
+        engine.landingAction(gameBoard, playerLuxuryTax.id, message)
         println("--------> The ${playerLuxuryTax.name} landed on Luxury Tax. total money after tax (-200): /$${playerLuxuryTax.totalMoney}")
         assertEquals(1300, playerLuxuryTax.totalMoney)
 
-        engine.landingAction(gameBoard, playerGoToJail.id)
+        engine.landingAction(gameBoard, playerGoToJail.id, message)
         assertTrue(playerGoToJail.inJail)
         assertEquals(23, playerGoToJail.numCell)
         println("--------> The ${playerGoToJail.name} was sent to jail. In jail: ${playerGoToJail.inJail}, Position: ${playerGoToJail.numCell}")
@@ -209,7 +217,9 @@ class GameEngineTest {
         val player = gameBoard.getPlayerById(1)
         assertTrue(player != null)
         player!!.numCell = 2
-        engine.purchaseProperty(gameBoard, playerId = 1)
+        val message = mutableStateOf("")
+        engine.purchaseProperty(gameBoard, playerId = 1, message)
+
 
         val property = gameBoard.getPropertyById(1)
         assertTrue(property != null)
@@ -229,7 +239,8 @@ class GameEngineTest {
         assertTrue(player != null)
         player!!.numCell = 2
         player.totalMoney = 30
-        engine.purchaseProperty(gameBoard, playerId = 1)
+        val message = mutableStateOf("")
+        engine.purchaseProperty(gameBoard, playerId = 1, message )
 
         val property = gameBoard.getPropertyById(1)
         assertTrue(property != null)
@@ -238,4 +249,29 @@ class GameEngineTest {
         assertEquals(30, player.totalMoney)
         println("--------> Player '${player.name}' can not purchase '${property!!.name}' because he only has \$${player.totalMoney}.")
     }
+
+    // Maria backlog
+    @Test
+    fun `player should go to jail after rolling three consecutive doubles`() {
+        player.consecutiveDoubles = 2
+        val currentTurn = mutableStateOf(0)
+        val message = mutableStateOf("")
+
+        GameEngine.handleTurnWithDice(
+            board = gameBoard,
+            currentTurn = currentTurn,
+            message = message,
+            die1 = 4,
+            die2 = 4
+        )
+
+        assertTrue(player.inJail, "Player should be in jail after 3 doubles")
+        assertEquals(23, player.numCell, "Player should be on Jail cell (23)")
+        assertEquals(0, player.consecutiveDoubles, "consecutiveDoubles should be reset after jail")
+
+        println("--------> Player '${player.name}' rolled 3 doubles and was sent to jail (cell ${player.numCell}).")
+    }
+
 }
+
+
