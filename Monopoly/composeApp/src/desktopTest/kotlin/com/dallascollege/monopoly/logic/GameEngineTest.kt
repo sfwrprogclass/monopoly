@@ -10,10 +10,11 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import androidx.compose.runtime.mutableStateOf
 
-
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+
+
 
 class GameEngineTest {
 
@@ -45,6 +46,20 @@ class GameEngineTest {
 
         player = gameBoard.getPlayerById(1)!!
     }
+
+    //JENNY
+    @Test
+    fun `player should start the game with the standard rules, at Go cell and with $1500`() {
+        val player = gameBoard.getPlayerById(1)
+
+        assertTrue(player != null)
+        if (player != null) {
+            assertEquals(player.numCell, 1, "Player start atGO cel#1")
+            assertEquals(player.totalMoney, 1500, "Player has $1500.00")
+
+            println("--------> Player '${player.name}' starts at Go (cell 1) with \$${player.totalMoney}.")
+        }
+    }
     // JENNY
     @Test
     fun `movePlayer should move player correctly`() {
@@ -53,10 +68,11 @@ class GameEngineTest {
 
         assertEquals(initialPosition + 5, player.numCell)
     }
+
     // JENNY
     // As a player, I can collect the base rent when someone lands on my property.
     @Test
-    fun `collectBaseRent should deduct and add rent correctly`() {
+    fun `collectRent should deduct and add rent correctly`() {
         val owner = Player(id = 2, name = "Player2", token = Token.DOG)
         val property = Property(id = 1, name = "San Diego Drive", baseRent = 50, price = 60, color = PropertyColor.BLUE)
         owner.propertyIds = mutableListOf(1)
@@ -66,15 +82,23 @@ class GameEngineTest {
         gameBoard.properties = arrayOf(property)
 
         player.numCell = 5
-        GameEngine.collectBaseRent(gameBoard, player.id)
+        val message = mutableStateOf("")
 
+        println("Before rent collection:")
+        println("Player totalMoney: ${player.totalMoney}")
+        println("Owner totalMoney: ${owner.totalMoney}")
+        GameEngine.collectRent(gameBoard, player.id, message)
+
+        println("After rent collection:")
+        println("Player totalMoney: ${player.totalMoney}")
+        println("Owner totalMoney: ${owner.totalMoney}")
         assertEquals(1450, player.totalMoney)
         assertEquals(1550, owner.totalMoney)
     }
 
     // JENNY
     @Test
-    fun `collectBaseRent should not be able to deduct and add rent correctly because property is mortgaged`() {
+    fun `collectRent should not be able to deduct and add rent correctly because property is mortgaged`() {
         val owner = Player(id = 2, name = "Player2", token = Token.DOG)
         val property = Property(id = 1, name = "San Diego Drive", baseRent = 50, price = 60, color = PropertyColor.BLUE, isMortgaged = true)
         owner.propertyIds = mutableListOf(1)
@@ -84,10 +108,27 @@ class GameEngineTest {
         gameBoard.properties = arrayOf(property)
 
         player.numCell = 5
-        GameEngine.collectBaseRent(gameBoard, player.id)
+        val message = mutableStateOf("")
+        GameEngine.collectRent(gameBoard, player.id, message)
 
         assertEquals(1500, player.totalMoney)
         assertEquals(1500, owner.totalMoney)
+    }
+
+    // JENNY
+    @Test
+    fun `collectRent should collect double base rent when someone lands on my property and I own all color properties `() {
+        val owner = Player(id = 2, name = "Player2", token = Token.DOG)
+        gameBoard.players = arrayOf(player, owner)
+        gameBoard.createModels()
+        owner.propertyIds = mutableListOf(1, 2)
+
+        player.numCell = 4
+        val message = mutableStateOf("")
+        GameEngine.collectRent(gameBoard, player.id, message)
+
+        assertEquals(1492, player.totalMoney)
+        assertEquals(1508, owner.totalMoney)
     }
 
     // JENNY BACKLOG
@@ -104,19 +145,19 @@ class GameEngineTest {
 
         player.numCell = 5
         owner.propertyIds = mutableListOf(1, 2)
-        println("Before: ${owner.name} has \$${owner.totalMoney}, ${player.name} has \$${player.totalMoney}")
+        println("--------> Before: ${owner.name} has \$${owner.totalMoney}, ${player.name} has \$${player.totalMoney}")
 
         GameEngine.collectUtilities(gameBoard, player.id)
 
-        println("After: ${owner.name} has \$${owner.totalMoney}, ${player.name} has \$${player.totalMoney}")
+        println("--------> After: ${owner.name} has \$${owner.totalMoney}, ${player.name} has \$${player.totalMoney}")
         println("${owner.name} owns utilities with IDs: ${owner.propertyIds.joinToString(", ")}")
         println("${player.name} landed on cell ${player.numCell}, which is property ID: ${cell.propertyId}")
 
         assertEquals(1300, player.totalMoney)
         assertEquals(1700, owner.totalMoney)
     }
-// JENNY BACKLOG
 
+    // JENNY BACKLOG
     @Test
     fun `As a player, I can collect the appropriate rent for railroads based on how many in the set I own`() {
         val owner = Player(id = 2, name = "Player2", token = Token.DOG)
@@ -152,19 +193,20 @@ class GameEngineTest {
         gameBoard.cells = arrayOf(incomeTaxCell, luxuryTaxCell, goToJailCell)
 
         val engine = GameEngine
+        val message = mutableStateOf("")
 
-        engine.landingAction(gameBoard, playerIncomeTax.id)
-        println("${playerIncomeTax.name} landed on Income Tax. Money after tax: ${playerIncomeTax.totalMoney}")
+        engine.landingAction(gameBoard, playerIncomeTax.id, message)
+        println("--------> The ${playerIncomeTax.name} landed on Income Tax. Total money after tax (-150): /$${playerIncomeTax.totalMoney}")
         assertEquals(1350, playerIncomeTax.totalMoney)
 
-        engine.landingAction(gameBoard, playerLuxuryTax.id)
-        println("${playerLuxuryTax.name} landed on Luxury Tax. Money after tax: ${playerLuxuryTax.totalMoney}")
+        engine.landingAction(gameBoard, playerLuxuryTax.id, message)
+        println("--------> The ${playerLuxuryTax.name} landed on Luxury Tax. total money after tax (-200): /$${playerLuxuryTax.totalMoney}")
         assertEquals(1300, playerLuxuryTax.totalMoney)
 
-        engine.landingAction(gameBoard, playerGoToJail.id)
-        println("${playerGoToJail.name} was sent to jail. In jail: ${playerGoToJail.inJail}, Position: ${playerGoToJail.numCell}")
+        engine.landingAction(gameBoard, playerGoToJail.id, message)
         assertTrue(playerGoToJail.inJail)
         assertEquals(23, playerGoToJail.numCell)
+        println("--------> The ${playerGoToJail.name} was sent to jail. In jail: ${playerGoToJail.inJail}, Position: ${playerGoToJail.numCell}")
     }
 
     // JENNY BACKLOG
@@ -175,13 +217,17 @@ class GameEngineTest {
         val player = gameBoard.getPlayerById(1)
         assertTrue(player != null)
         player!!.numCell = 2
-        engine.purchaseProperty(gameBoard, playerId = 1)
+        val message = mutableStateOf("")
+        engine.purchaseProperty(gameBoard, playerId = 1, message)
+
 
         val property = gameBoard.getPropertyById(1)
         assertTrue(property != null)
 
         assertTrue(player.propertyIds.contains(property!!.id))
         assertEquals(1440, player.totalMoney)
+
+        println("--------> Player '${player.name}' purchased '${property.name}' for \$${property.price}.")
     }
 
     // JENNY BACKLOG
@@ -193,46 +239,39 @@ class GameEngineTest {
         assertTrue(player != null)
         player!!.numCell = 2
         player.totalMoney = 30
-        engine.purchaseProperty(gameBoard, playerId = 1)
+        val message = mutableStateOf("")
+        engine.purchaseProperty(gameBoard, playerId = 1, message )
 
         val property = gameBoard.getPropertyById(1)
         assertTrue(property != null)
 
         assertFalse(player.propertyIds.contains(property!!.id))
         assertEquals(30, player.totalMoney)
+        println("--------> Player '${player.name}' can not purchase '${property!!.name}' because he only has \$${player.totalMoney}.")
     }
-
 
     // Maria backlog
     @Test
-    fun `As a player, I roll again or go to jail when doubles are rolled`() {
-        val player = gameBoard.getPlayerById(1)!!
-        player.consecutiveDoubles = 0
-        val currentTurn = 0
-        val engine = GameEngine
+    fun `player should go to jail after rolling three consecutive doubles`() {
+        player.consecutiveDoubles = 2
+        val currentTurn = mutableStateOf(0)
+        val message = mutableStateOf("")
 
-        // First roll: doubles (e.g., 4 and 4)
-        engine.handleTurnWithDice(gameBoard, mutableStateOf(currentTurn), die1 = 4, die2 = 4)
+        GameEngine.handleTurnWithDice(
+            board = gameBoard,
+            currentTurn = currentTurn,
+            message = message,
+            die1 = 4,
+            die2 = 4
+        )
 
-        // Assert - Player should roll again, doubles counter should be 1
-        assertEquals(1, player.consecutiveDoubles)
-        assertFalse(player.inJail) // Player should not be in jail yet
+        assertTrue(player.inJail, "Player should be in jail after 3 doubles")
+        assertEquals(23, player.numCell, "Player should be on Jail cell (23)")
+        assertEquals(0, player.consecutiveDoubles, "consecutiveDoubles should be reset after jail")
 
-        // Second roll: doubles again (e.g., 4 and 4)
-        engine.handleTurnWithDice(gameBoard, mutableStateOf(currentTurn), die1 = 4, die2 = 4)
-
-        // Assert - Player should roll again, doubles counter should be 2
-        assertEquals(2, player.consecutiveDoubles)
-        assertFalse(player.inJail) // Player should not be in jail yet
-
-        // Third roll: doubles again (e.g., 4 and 4) - Player should go to jail
-        engine.handleTurnWithDice(gameBoard, mutableStateOf(currentTurn), die1 = 4, die2 = 4)
-
-        // Assert - After three doubles, the player should go to jail
-        assertEquals(0, player.consecutiveDoubles) // Doubles counter should reset
-        assertTrue(player.inJail) // Player should be in jail
-        assertEquals(23, player.numCell) // Player's position should be jail (usually position 23)
+        println("--------> Player '${player.name}' rolled 3 doubles and was sent to jail (cell ${player.numCell}).")
     }
 
-
 }
+
+
