@@ -28,14 +28,16 @@ fun App() {
     var turnOrder by remember { mutableStateOf<List<String>>(emptyList()) }
     val currentTurn = remember { mutableStateOf(0) }
     var showStartingMoneyScreen by remember { mutableStateOf(false) }
+    var automatedPlayersEnabled by remember { mutableStateOf(false) }
 
     when {
         showMenu -> {
             MenuScreen { showMenu = false }
         }
         playerCount == null -> {
-            PlayerSelectionScreen { count, automatedPlayersEnabled ->
+            PlayerSelectionScreen { count, automatedEnabled ->
                 playerCount = count
+                automatedPlayersEnabled = automatedEnabled
                 players.clear()
                 players.addAll(List(count) { index ->
                     val token = Token.entries.getOrNull(index) ?: Token.BOOT
@@ -43,7 +45,7 @@ fun App() {
                         id = index + 1,
                         name = "Player ${index + 1}",
                         token = token,
-                        isAI = (automatedPlayersEnabled && index != 0) // Player 2+ are AI
+                        isAI = if (automatedPlayersEnabled) (index != 0) else false
                     )
                 })
             }
@@ -81,13 +83,18 @@ fun App() {
                 turnOrder.indexOf(player.token.toString())
             }
 
-            // force human player to be first
-            val humanPlayer = sortedPlayers.find { !it.isAI }
-            val aiPlayers = sortedPlayers.filter { it.isAI }
+                // If AI is enabled, force human first
+            val finalPlayers = if (automatedPlayersEnabled) {
+                val humanPlayer = sortedPlayers.find { !it.isAI }
+                val aiPlayers = sortedPlayers.filter { it.isAI }
 
-            val finalPlayers = mutableListOf<Player>()
-            humanPlayer?.let { finalPlayers.add(it) }
-            finalPlayers.addAll(aiPlayers)
+                val finalList = mutableListOf<Player>()
+                humanPlayer?.let { finalList.add(it) }
+                finalList.addAll(aiPlayers)
+                finalList
+            } else {
+                sortedPlayers
+            }
 
             players.clear()
             players.addAll(finalPlayers)
