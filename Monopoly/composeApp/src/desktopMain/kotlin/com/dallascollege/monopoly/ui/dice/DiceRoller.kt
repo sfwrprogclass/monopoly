@@ -21,7 +21,6 @@ fun DiceRoller(gameBoard: GameBoard, currentTurn: MutableState<Int>, message: Mu
     var hasRolled by remember { mutableStateOf(false) }
 
 
-    // Reset roll availability on turn change
     LaunchedEffect(currentTurn.value) {
         hasRolled = false
     }
@@ -31,13 +30,10 @@ fun DiceRoller(gameBoard: GameBoard, currentTurn: MutableState<Int>, message: Mu
         dice1 = dice.roll()
         dice2 = dice.roll()
 
-
         val total = dice1 + dice2
         val currentPlayerId = gameBoard.turnOrder[currentTurn.value]
         val player = gameBoard.getPlayerById(currentPlayerId) ?: return
 
-
-        // Doubles tracking
         if (dice1 == dice2) {
             player.consecutiveDoubles += 1
         } else {
@@ -45,31 +41,24 @@ fun DiceRoller(gameBoard: GameBoard, currentTurn: MutableState<Int>, message: Mu
         }
 
 
-        // Check for 3 consecutive doubles
         if (player.consecutiveDoubles == 3) {
-            // Player goes to jail and we update the message
+
             message.value = "${player.name} rolled three doubles! Go to jail."
-            GameEngine.goToJail(player) // Send player to jail
+            GameEngine.goToJail(player)
             player.consecutiveDoubles = 0
             hasRolled = true
-            GameEngine.finishTurn(gameBoard, currentTurn) // End turn after going to jail
+            GameEngine.finishTurn(gameBoard, currentTurn)
             return
         }
 
-
-        // Move player and handle landing action
         GameEngine.movePlayer(gameBoard, currentPlayerId, total)
         GameEngine.landingAction(gameBoard, currentPlayerId, message)
 
-
         gameBoard.selectedPlayerId = currentPlayerId
 
-
-        // Only end the turn if it's not a double
         hasRolled = dice1 != dice2
 
 
-        // If it's a double, update the message and allow another roll
         if (dice1 == dice2) {
             message.value = "${player.name} rolled doubles! Roll again !"
         }

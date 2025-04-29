@@ -252,7 +252,7 @@ class GameEngineTest {
 
     // Maria backlog
     @Test
-    fun `player should go to jail after rolling three consecutive doubles`() {
+    fun `As a player, I roll again or go to jail when doubles are rolled`() {
         player.consecutiveDoubles = 2
         val currentTurn = mutableStateOf(0)
         val message = mutableStateOf("")
