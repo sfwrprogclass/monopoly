@@ -12,8 +12,7 @@ import com.dallascollege.monopoly.logic.GameEngine
 import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Property
 import com.dallascollege.monopoly.ui.property.PropertyDropDownMenu
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.launch // <-- added for coroutine launching
 
 @Composable
 fun ActionView(
@@ -32,6 +31,8 @@ fun ActionView(
     var isAmountEnable by remember { mutableStateOf(false) }
     var isSelectedPropertyEnabled by remember { mutableStateOf(false) }
     var isReadOnly = playerId != selectedPlayerId.value
+
+    val coroutineScope = rememberCoroutineScope()
 
     val player = board.players.find { it.id == playerId }
 
@@ -66,7 +67,7 @@ fun ActionView(
         selectedProperty = property
     }
 
-    fun executeAction() {
+    suspend fun executeAction() {
         when (selectedActionType) {
             ActionType.UPGRADE_TO_HOTEL -> {}
             ActionType.BUY_HOUSE -> {}
@@ -82,7 +83,7 @@ fun ActionView(
             ActionType.PURCHASE_PROPERTY -> GameEngine.purchaseProperty(board, playerId, message)
             ActionType.SURRENDER -> {}
             ActionType.SKIP -> {}
-            ActionType.FINISH_TURN -> GameEngine.finishTurn(board, currentTurn)
+            ActionType.FINISH_TURN -> GameEngine.finishTurn(board, currentTurn, message)
         }
     }
 
@@ -152,7 +153,11 @@ fun ActionView(
             horizontalArrangement = Arrangement.Center
         ) {
             Button(
-                onClick = { executeAction() },
+                onClick = {
+                    coroutineScope.launch {
+                        executeAction()
+                    }
+                },
                 enabled = !isReadOnly && GameEngine.canPerformAction(board, selectedPlayerId, selectedActionType)
             ) {
                 Text("Execute action")

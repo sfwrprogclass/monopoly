@@ -1,7 +1,5 @@
 package com.dallascollege.monopoly
 
-// Add the following dependency to your Gradle file instead:
-// implementation "androidx.compose.ui:ui-tooling:1.x.x"
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -36,12 +34,17 @@ fun App() {
             MenuScreen { showMenu = false }
         }
         playerCount == null -> {
-            PlayerSelectionScreen { count ->
+            PlayerSelectionScreen { count, automatedPlayersEnabled ->
                 playerCount = count
                 players.clear()
-                players.addAll(List(count) {
-                    val token = Token.entries.getOrNull(it) ?: Token.BOOT
-                    Player(id = it + 1, name = "Player ${it + 1}", token = token)
+                players.addAll(List(count) { index ->
+                    val token = Token.entries.getOrNull(index) ?: Token.BOOT
+                    Player(
+                        id = index + 1,
+                        name = "Player ${index + 1}",
+                        token = token,
+                        isAI = (automatedPlayersEnabled && index != 0) // Player 2+ are AI
+                    )
                 })
             }
         }
@@ -78,8 +81,16 @@ fun App() {
                 turnOrder.indexOf(player.token.toString())
             }
 
+            // force human player to be first
+            val humanPlayer = sortedPlayers.find { !it.isAI }
+            val aiPlayers = sortedPlayers.filter { it.isAI }
+
+            val finalPlayers = mutableListOf<Player>()
+            humanPlayer?.let { finalPlayers.add(it) }
+            finalPlayers.addAll(aiPlayers)
+
             players.clear()
-            players.addAll(sortedPlayers)
+            players.addAll(finalPlayers)
 
             players.forEachIndexed { index, player ->
                 player.id = index + 1

@@ -15,7 +15,8 @@ class Player(
     hasOutJailCard: Boolean = false,
     games: MutableList<Game> = mutableListOf<Game>(),
     isCPU: Boolean = false,
-    numCell: Int = 1
+    numCell: Int = 1,
+    var isAI: Boolean = false // ai players
 ) {
 
     fun getProperties(board: GameBoard): Array<Property> {
@@ -110,17 +111,17 @@ class Player(
         }
 
     fun isEliminated(board: GameBoard): Boolean {
-//        var mortgageAllPropertiesMoney = 0
-//
-//        propertyIds.forEach { id ->
-//            val property = board.getPropertyById(id)
-//            if (property != null && !property.isMortgage) {
-//                mortgageAllPropertiesMoney += property.price / 2
-//                //TODO: calculate the money user can get selling houses and hotels
-//            }
-//        }
-//
-//        return totalMoney + mortgageAllPropertiesMoney <= 0
+        //        var mortgageAllPropertiesMoney = 0
+        //
+        //        propertyIds.forEach { id ->
+        //            val property = board.getPropertyById(id)
+        //            if (property != null && !property.isMortgage) {
+        //                mortgageAllPropertiesMoney += property.price / 2
+        //                //TODO: calculate the money user can get selling houses and hotels
+        //            }
+        //        }
+        //
+        //        return totalMoney + mortgageAllPropertiesMoney <= 0
         return totalMoney <= 0
     }
 
