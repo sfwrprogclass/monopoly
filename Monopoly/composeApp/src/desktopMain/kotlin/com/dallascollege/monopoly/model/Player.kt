@@ -97,12 +97,13 @@ class Player(
             field = value
         }
 
-
     var numCell: Int = numCell
         get() = field
         set(value) {
             field = value
         }
+
+    var consecutiveDoubles: Int = 0 // track doubles for jail
 
     fun isEliminated(board: GameBoard): Boolean {
         //        var mortgageAllPropertiesMoney = 0
