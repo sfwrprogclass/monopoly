@@ -1,7 +1,5 @@
 package com.dallascollege.monopoly
 
-// Add the following dependency to your Gradle file instead:
-// implementation "androidx.compose.ui:ui-tooling:1.x.x"
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -30,18 +28,25 @@ fun App() {
     var turnOrder by remember { mutableStateOf<List<String>>(emptyList()) }
     val currentTurn = remember { mutableStateOf(0) }
     var showStartingMoneyScreen by remember { mutableStateOf(false) }
+    var automatedPlayersEnabled by remember { mutableStateOf(false) }
 
     when {
         showMenu -> {
             MenuScreen { showMenu = false }
         }
         playerCount == null -> {
-            PlayerSelectionScreen { count ->
+            PlayerSelectionScreen { count, automatedEnabled ->
                 playerCount = count
+                automatedPlayersEnabled = automatedEnabled
                 players.clear()
-                players.addAll(List(count) {
-                    val token = Token.entries.getOrNull(it) ?: Token.BOOT
-                    Player(id = it + 1, name = "Player ${it + 1}", token = token)
+                players.addAll(List(count) { index ->
+                    val token = Token.entries.getOrNull(index) ?: Token.BOOT
+                    Player(
+                        id = index + 1,
+                        name = "Player ${index + 1}",
+                        token = token,
+                        isAI = if (automatedPlayersEnabled) (index != 0) else false
+                    )
                 })
             }
         }
@@ -78,8 +83,21 @@ fun App() {
                 turnOrder.indexOf(player.token.toString())
             }
 
+                // If AI is enabled, force human first
+            val finalPlayers = if (automatedPlayersEnabled) {
+                val humanPlayer = sortedPlayers.find { !it.isAI }
+                val aiPlayers = sortedPlayers.filter { it.isAI }
+
+                val finalList = mutableListOf<Player>()
+                humanPlayer?.let { finalList.add(it) }
+                finalList.addAll(aiPlayers)
+                finalList
+            } else {
+                sortedPlayers
+            }
+
             players.clear()
-            players.addAll(sortedPlayers)
+            players.addAll(finalPlayers)
 
             players.forEachIndexed { index, player ->
                 player.id = index + 1

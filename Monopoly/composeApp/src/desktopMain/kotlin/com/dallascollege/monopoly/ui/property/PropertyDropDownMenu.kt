@@ -18,25 +18,31 @@ import com.dallascollege.monopoly.model.Player
 import com.dallascollege.monopoly.model.Property
 
 @Composable
-fun PropertyDropDownMenu(player: Player, board: GameBoard, isSelectedPropertyEnable: Boolean, handlePropertyChange: (Property) -> Unit) {
+fun PropertyDropDownMenu(
+    player: Player,
+    board: GameBoard,
+    isSelectedPropertyEnable: Boolean,
+    handlePropertyChange: (Property) -> Unit
+) {
     val properties = player.getProperties(board)
     var expanded by remember { mutableStateOf(false) }
-    var selectedProperty by remember { mutableStateOf(properties?.getOrNull(0)) }
+    var selectedPropertyId by remember { mutableStateOf(properties?.getOrNull(0)?.id) }
 
     fun handleClick(property: Property) {
-        selectedProperty = property
+        selectedPropertyId = property.id
         expanded = false
-        handlePropertyChange.invoke(selectedProperty!!)
+        handlePropertyChange.invoke(property)
     }
 
     Box {
         Button(
             modifier = Modifier
-                .padding(5.dp, 5.dp, 5.dp, 5.dp),
+                .padding(5.dp),
             shape = RoundedCornerShape(2.dp),
             onClick = { expanded = true },
             enabled = isSelectedPropertyEnable
         ) {
+            val selectedProperty = board.getPropertyById(selectedPropertyId ?: -1)
             Text(
                 text = selectedProperty?.name ?: "",
                 style = LocalTextStyle.current.copy(
@@ -46,20 +52,23 @@ fun PropertyDropDownMenu(player: Player, board: GameBoard, isSelectedPropertyEna
             )
             Icon(Icons.Default.KeyboardArrowDown, contentDescription = "More")
         }
+
         val selectedColor = Color(0xFF90CAF9)
         val unselectedColor = Color(0xFFFFC1E3)
+
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            properties
-                .forEach({
-                    DropdownMenuItem(
-                        content = { Text(it.name) },
-                        modifier = Modifier.background(if (it == selectedProperty) selectedColor else unselectedColor),
-                        onClick = { handleClick(it) }
-                    )
-                })
+            properties?.forEach { property ->
+                DropdownMenuItem(
+                    content = { Text(property.name) },
+                    modifier = Modifier.background(
+                        if (property.id == selectedPropertyId) selectedColor else unselectedColor
+                    ),
+                    onClick = { handleClick(property) }
+                )
+            }
         }
     }
 }

@@ -12,8 +12,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun PlayerSelectionScreen(onPlayerSelected: (Int) -> Unit) {
+fun PlayerSelectionScreen(onPlayerSelected: (Int, Boolean) -> Unit) {
     var selectedPlayers by remember { mutableStateOf<Int?>(null) }
+    var automatedPlayersEnabled by remember { mutableStateOf(false) } // <-- added this
 
 
     val background: Painter = painterResource("images/MonopolyBG.png")
@@ -82,9 +83,19 @@ fun PlayerSelectionScreen(onPlayerSelected: (Int) -> Unit) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
+            // ai toggle button
+            Button(
+                onClick = { automatedPlayersEnabled = !automatedPlayersEnabled },
+                modifier = Modifier.padding(bottom = 16.dp)
+            ) {
+                Text(
+                    if (automatedPlayersEnabled) "Automated Opponents: ON" else "Automated Opponents: OFF",
+                    fontSize = 18.sp
+                )
+            }
 
             Button(
-                onClick = { selectedPlayers?.let { onPlayerSelected(it) } },
+                onClick = { selectedPlayers?.let { onPlayerSelected(it, automatedPlayersEnabled) } },
                 enabled = selectedPlayers != null
             ) {
                 Text("Next", fontSize = 20.sp)
@@ -92,3 +103,4 @@ fun PlayerSelectionScreen(onPlayerSelected: (Int) -> Unit) {
         }
     }
 }
+

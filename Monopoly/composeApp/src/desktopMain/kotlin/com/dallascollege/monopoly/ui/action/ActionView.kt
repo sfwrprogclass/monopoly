@@ -12,8 +12,7 @@ import com.dallascollege.monopoly.logic.GameEngine
 import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Property
 import com.dallascollege.monopoly.ui.property.PropertyDropDownMenu
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.launch // <-- added for coroutine launching
 
 @Composable
 fun ActionView(
@@ -25,13 +24,15 @@ fun ActionView(
     modifier: Modifier = Modifier
 ) {
     var selectedActionType by remember { mutableStateOf(ActionType.SKIP) }
-    var selectedProperty: Property? by remember { mutableStateOf(null) }
+    var selectedPropertyId: Int? by remember { mutableStateOf(null) } // <-- now tracking ID only
     var quantity by remember { mutableStateOf("0") }
     var amount by remember { mutableStateOf("0") }
     var isQuantityEnable by remember { mutableStateOf(false) }
     var isAmountEnable by remember { mutableStateOf(false) }
     var isSelectedPropertyEnabled by remember { mutableStateOf(false) }
     var isReadOnly = playerId != selectedPlayerId.value
+
+    val coroutineScope = rememberCoroutineScope()
 
     val player = board.players.find { it.id == playerId }
 
@@ -49,7 +50,7 @@ fun ActionView(
                 isAmountEnable = false
                 isSelectedPropertyEnabled = true
             }
-            ActionType.MORTGAGE_PROPERTY -> {
+            ActionType.MORTGAGE_PROPERTY, ActionType.UNMORTGAGE_PROPERTY -> { // <-- also enables for unmortgage
                 isQuantityEnable = false
                 isAmountEnable = false
                 isSelectedPropertyEnabled = true
@@ -63,10 +64,12 @@ fun ActionView(
     }
 
     fun handlePropertyChange(property: Property) {
-        selectedProperty = property
+        selectedPropertyId = property.id // <-- only saving ID now
     }
 
-    fun executeAction() {
+    suspend fun executeAction() {
+        println("Selected action: $selectedActionType, Selected property id: $selectedPropertyId")
+
         when (selectedActionType) {
             ActionType.UPGRADE_TO_HOTEL -> {}
             ActionType.BUY_HOUSE -> {}
@@ -76,13 +79,20 @@ fun ActionView(
             ActionType.PAY_BANK -> {}
             ActionType.GO_TO_JAIL -> {}
             ActionType.GET_OUT_OF_JAIL -> {}
-            ActionType.MORTGAGE_PROPERTY -> selectedProperty?.let {
-                GameEngine.mortgageProperty(board, playerId, it.id)
+            ActionType.MORTGAGE_PROPERTY -> selectedPropertyId?.let { propertyId ->
+                board.getPropertyById(propertyId)?.let { liveProperty ->
+                    GameEngine.mortgageProperty(board, playerId, liveProperty.id)
+                }
+            } //TESTING
+            ActionType.UNMORTGAGE_PROPERTY -> selectedPropertyId?.let { propertyId ->
+                board.getPropertyById(propertyId)?.let { liveProperty ->
+                    GameEngine.unmortgageProperty(board, playerId, liveProperty.id, message)
+                }
             }
             ActionType.PURCHASE_PROPERTY -> GameEngine.purchaseProperty(board, playerId, message)
             ActionType.SURRENDER -> {}
             ActionType.SKIP -> {}
-            ActionType.FINISH_TURN -> GameEngine.finishTurn(board, currentTurn)
+            ActionType.FINISH_TURN -> GameEngine.finishTurn(board, currentTurn, message)
         }
     }
 
@@ -152,7 +162,11 @@ fun ActionView(
             horizontalArrangement = Arrangement.Center
         ) {
             Button(
-                onClick = { executeAction() },
+                onClick = {
+                    coroutineScope.launch {
+                        executeAction()
+                    }
+                },
                 enabled = !isReadOnly && GameEngine.canPerformAction(board, selectedPlayerId, selectedActionType)
             ) {
                 Text("Execute action")
