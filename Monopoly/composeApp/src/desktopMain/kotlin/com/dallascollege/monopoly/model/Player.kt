@@ -91,9 +91,6 @@ class Player(
             field = value
         }
 
-
-    var consecutiveDoubles: Int = 0
-
     var games: MutableList<Game> = games
         get() = field
         set(value) {
