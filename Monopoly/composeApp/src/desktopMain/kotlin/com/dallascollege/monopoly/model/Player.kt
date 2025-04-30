@@ -14,7 +14,6 @@ class Player(
     inJail: Boolean = false,
     hasOutJailCard: Boolean = false,
     games: MutableList<Game> = mutableListOf<Game>(),
-    isCPU: Boolean = false,
     numCell: Int = 1,
     var isAI: Boolean = false // ai players
 ) {
@@ -98,11 +97,6 @@ class Player(
             field = value
         }
 
-    var isCPU: Boolean = isCPU
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var numCell: Int = numCell
         get() = field

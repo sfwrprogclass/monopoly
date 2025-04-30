@@ -94,13 +94,13 @@ class Cell(
         } else if (isCommunityChest) {
             return "Community Chest"
         } else if (isChance) {
-            return "Is Chance"
+            return "Chance"
         } else if (isIncomeTax) {
-            return "Is Income Tax"
+            return "Income Tax"
         } else if (isLuxuryTax) {
-            return "Is Luxury Tax"
+            return "Luxury Tax"
         } else if (isGoToJail) {
-            return "Is Go to Jail"
+            return "Go to Jail"
         } else {
             return "Unknown cell"
         }
