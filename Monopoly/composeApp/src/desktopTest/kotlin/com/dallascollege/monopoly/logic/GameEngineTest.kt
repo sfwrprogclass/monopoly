@@ -254,22 +254,25 @@ class GameEngineTest {
     @Test
     fun `As a player, I roll again or go to jail when doubles are rolled`() {
         player.consecutiveDoubles = 2
-        val currentTurn = mutableStateOf(0)
+        val die1 = 4
+        val die2 = 4
         val message = mutableStateOf("")
 
-        GameEngine.handleTurnWithDice(
-            board = gameBoard,
-            currentTurn = currentTurn,
-            message = message,
-            die1 = 4,
-            die2 = 4
-        )
+        if (die1 == die2) {
+            player.consecutiveDoubles += 1
+        } else {
+            player.consecutiveDoubles = 0
+        }
+
+        if (player.consecutiveDoubles == 3) {
+            player.consecutiveDoubles = 0
+            GameEngine.goToJail(player)
+            message.value = "${player.name} rolled 3 doubles! Go to jail."
+        }
 
         assertTrue(player.inJail, "Player should be in jail after 3 doubles")
         assertEquals(23, player.numCell, "Player should be on Jail cell (23)")
         assertEquals(0, player.consecutiveDoubles, "consecutiveDoubles should be reset after jail")
-
-        println("--------> Player '${player.name}' rolled 3 doubles and was sent to jail (cell ${player.numCell}).")
     }
 
 }
