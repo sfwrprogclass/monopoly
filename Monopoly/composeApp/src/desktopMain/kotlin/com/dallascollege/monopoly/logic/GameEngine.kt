@@ -5,6 +5,7 @@ import com.dallascollege.monopoly.enums.ActionType
 import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Player
 import kotlin.random.Random
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.delay // <-- added for delays
 
 // Singleton (Static Class) with static methods for the different actions to be executed
@@ -23,7 +24,7 @@ object GameEngine {
     }
 
     // As a player, I can collect the base rent when someone lands on my property (unless property is mortgaged).
-    fun collectRent(board: GameBoard, playerId: Int, message: MutableState<String>): String {
+    fun collectRent(board: GameBoard, playerId: Int, message: MutableState<String> =  mutableStateOf("")): String {
         val player = board.getPlayerById(playerId) ?: return ""
         val cell = board.getCellById(player.numCell) ?: return ""
         if (!cell.isProperty()) return ""
@@ -43,7 +44,7 @@ object GameEngine {
     }
 
     // As a player, I can collect the appropriate rent for utilities based on how many in the set I own.
-    fun collectUtilities(board: GameBoard, playerId: Int, message: MutableState<String>): String {
+    fun collectUtilities(board: GameBoard, playerId: Int, message: MutableState<String> =  mutableStateOf("")): String {
         val player = board.getPlayerById(playerId) ?: return ""
         val cell = board.getCellById(player.numCell) ?: return ""
         if (!cell.isProperty()) return ""
@@ -65,7 +66,7 @@ object GameEngine {
     }
 
     // As a player, I can collect the appropriate rent for railroads based on how many in the set I own.
-    fun collectRailroads(board: GameBoard, playerId: Int, message: MutableState<String>): String {
+    fun collectRailroads(board: GameBoard, playerId: Int, message: MutableState<String> =  mutableStateOf("")): String {
         val player = board.getPlayerById(playerId) ?: return ""
         val cell = board.getCellById(player.numCell) ?: return ""
         if (!cell.isProperty()) return ""
