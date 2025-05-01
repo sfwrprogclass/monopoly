@@ -10,7 +10,7 @@ import kotlinx.coroutines.delay // <-- added for delays
 // Singleton (Static Class) with static methods for the different actions to be executed
 object GameEngine {
 
-    fun movePlayer(board: GameBoard, playerId: Int, steps: Int, message: MutableState<String>? = null) {
+    fun movePlayer(board: GameBoard, playerId: Int, steps: Int) {
         val player = board.getPlayerById(playerId) ?: return
         val totalCells = board.cells.size
 
@@ -18,7 +18,7 @@ object GameEngine {
         player.numCell = ((player.numCell - 1 + steps) % totalCells) + 1
 
         if (player.numCell < oldCell) {
-            collectSalary(player, message)
+            collectSalary(player)
         }
     }
 
@@ -87,11 +87,9 @@ object GameEngine {
     }
 
     // As a player, I can take appropriate action when landing on a non-property space
-    private fun earnCentralMoney(board: GameBoard, player: Player, message: MutableState<String>) {
-        val amount = board.centralMoney
-        player.totalMoney += amount
+    private fun earnCentralMoney(board: GameBoard, player: Player) {
+        player.totalMoney += board.centralMoney
         board.centralMoney = 0
-        message.value = "${player.name} collected $${amount} from Free Parking!"
     }
 
     fun goToJail(player: Player) {
@@ -100,40 +98,25 @@ object GameEngine {
     }
 
     //TODO
-    private fun getChance(player: Player, message: MutableState<String>? = null) {
-        // Implementation will be added in the future
-        message?.let {
-            it.value = "${player.name} drew a Chance card"
-        }
+    private fun getChance(player: Player) {
+
     }
 
-    private fun collectSalary(player: Player, message: MutableState<String>? = null) {
+    private fun collectSalary(player: Player) {
         player.totalMoney += 200
-        message?.let {
-            it.value = "${player.name} collected $200 salary for passing GO!"
-        }
     }
 
     //TODO
-    private fun getCommunityChest(player: Player, message: MutableState<String>? = null) {
-        // Implementation will be added in the future
-        message?.let {
-            it.value = "${player.name} drew a Community Chest card"
-        }
+    private fun getCommunityChest(player: Player) {
+
     }
 
-    private fun payIncomeTax(player: Player, message: MutableState<String>? = null) {
+    private fun payIncomeTax(player: Player) {
         player.totalMoney -= 150
-        message?.let {
-            it.value = "${player.name} paid $150 income tax"
-        }
     }
 
-    private fun payLuxuryTax(player: Player, message: MutableState<String>? = null) {
+    private fun payLuxuryTax(player: Player) {
         player.totalMoney -= 200
-        message?.let {
-            it.value = "${player.name} paid $200 luxury tax"
-        }
     }
 
     fun landingAction(board: GameBoard, playerId: Int, message: MutableState<String>): String {
@@ -148,21 +131,21 @@ object GameEngine {
                 else -> collectRent(board, playerId, message)
             }
         } else if (cell.isParking) {
-            earnCentralMoney(board, player, message)
+            earnCentralMoney(board, player)
         } else if (cell.isGoToJail) {
             goToJail(player)
             message.value = "${player.name} was sent to jail!"
             return "jailed"
         } else if (cell.isChance) {
-            getChance(player, message)
+            getChance(player)
         } else if (cell.isCollectSalary) {
-            collectSalary(player, message)
+            collectSalary(player)
         } else if (cell.isCommunityChest) {
-            getCommunityChest(player, message)
+            getCommunityChest(player)
         } else if (cell.isIncomeTax) {
-            payIncomeTax(player, message)
+            payIncomeTax(player)
         } else if (cell.isLuxuryTax) {
-            payLuxuryTax(player, message)
+            payLuxuryTax(player)
         }
         // do nothing if isVisitingJail
         return ""
@@ -206,60 +189,44 @@ object GameEngine {
         return ""
     }
 
-    /**
-     * Mortgages a property owned by a player.
-     * The player receives half the property's price in cash.
-     * A property can only be mortgaged if:
-     * - It is owned by the player
-     * - It is not already mortgaged
-     * - It has no houses or hotels
-     */
-    fun mortgageProperty(board: GameBoard, playerId: Int, propertyId: Int, message: MutableState<String>? = null) {
+    // testing lines to figure out why there's a unmortgage bug
+    fun mortgageProperty(board: GameBoard, playerId: Int, propertyId: Int) {
         val player = board.getPlayerById(playerId) ?: return
         val property = board.getPropertyById(propertyId) ?: return
 
-        // Check if the property can be mortgaged
+        println("Attempting to mortgage property: ${property.name}")
+        println("Before mortgaging: property.isMortgaged = ${property.isMortgaged}")
+
         if (board.getPropertyOwner(property) != player) return
         if (property.isMortgaged) return
         if (property.numHouses > 0 || property.numHotels > 0) return
 
-        // Calculate mortgage value
-        val mortgageValue = property.price / 2
-
-        // Mortgage the property and give the player money
         property.isMortgaged = true
-        player.totalMoney += mortgageValue
+        player.totalMoney += property.price / 2
 
-        // Update message if provided
-        message?.let {
-            it.value = "${player.name} mortgaged ${property.name} for $$mortgageValue"
-        }
+        println("After mortgaging: property.isMortgaged = ${property.isMortgaged}")
     }
 
-    /**
-     * Unmortgages a property owned by a player.
-     * The player must pay the mortgage value plus 10% interest.
-     * A property can only be unmortgaged if:
-     * - It is owned by the player
-     * - It is currently mortgaged
-     * - The player has enough money to pay the unmortgage cost
-     */
+    // INCOMPLETE. TESTING
     fun unmortgageProperty(board: GameBoard, playerId: Int, propertyId: Int, message: MutableState<String>) {
         val player = board.getPlayerById(playerId) ?: return
         val property = board.getPropertyById(propertyId) ?: return
 
+        println("Checking unmortgage:")
+        println(" - property.isMortgaged = ${property.isMortgaged}")
+        println(" - property owner = ${board.getPropertyOwner(property)?.name}")
+        println(" - player = ${player.name}")
+
         if (property.isMortgaged && board.getPropertyOwner(property) == player) {
-            // Calculate unmortgage cost: mortgage value + 10% interest
-            val mortgageValue = property.price / 2
-            val unmortgageCost = mortgageValue + (mortgageValue / 10)
+            val unmortgageCost = (property.price / 2) + ((property.price / 2) / 10)
+            println(" - unmortgageCost = $unmortgageCost")
+            println(" - player.totalMoney = ${player.totalMoney}")
 
             if (player.totalMoney >= unmortgageCost) {
-                // Player has enough money to unmortgage
                 player.totalMoney -= unmortgageCost
                 property.isMortgaged = false
                 message.value = "${player.name} unmortgaged ${property.name} for $$unmortgageCost"
             } else {
-                // Player doesn't have enough money
                 message.value = "${player.name} does not have enough money to unmortgage ${property.name}"
             }
         }
@@ -291,7 +258,7 @@ object GameEngine {
         message.value = "${player.name} rolled a $diceRoll!"
         if (!isHuman) delay(2500L)
 
-        movePlayer(board, player.id, diceRoll, message)
+        movePlayer(board, player.id, diceRoll)
 
         val cell = board.getCellById(player.numCell)
         message.value = "${player.name} landed on ${cell?.getName(board)}."
