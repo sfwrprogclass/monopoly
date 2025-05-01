@@ -61,7 +61,7 @@ fun DiceRoller(gameBoard: GameBoard, currentTurn: MutableState<Int>, message: Mu
             return
         }
 
-        GameEngine.movePlayer(gameBoard, currentPlayerId, total)
+        GameEngine.movePlayer(gameBoard, currentPlayerId, total, message)
         GameEngine.landingAction(gameBoard, currentPlayerId, message)
 
         gameBoard.selectedPlayerId = currentPlayerId

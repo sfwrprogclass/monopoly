@@ -19,6 +19,7 @@ kotlin {
 
         val desktopMain by getting {
             dependencies {
+                implementation("androidx.collection:collection:1.2.0")
                 implementation(compose.desktop.currentOs)
                 implementation(libs.kotlinx.coroutines.swing)
                 implementation(compose.material)
@@ -30,8 +31,13 @@ kotlin {
 
         val desktopTest by getting {
             dependencies {
+                implementation("androidx.collection:collection:1.2.0")
                 implementation(kotlin("test"))
                 implementation("org.junit.jupiter:junit-jupiter:5.10.0")
+                implementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
+                implementation("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+                implementation("org.junit.platform:junit-platform-launcher:1.10.0")
+                implementation("org.junit.platform:junit-platform-commons:1.10.0")
             }
         }
     }

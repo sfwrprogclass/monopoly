@@ -81,9 +81,9 @@ fun ActionView(
             ActionType.GET_OUT_OF_JAIL -> {}
             ActionType.MORTGAGE_PROPERTY -> selectedPropertyId?.let { propertyId ->
                 board.getPropertyById(propertyId)?.let { liveProperty ->
-                    GameEngine.mortgageProperty(board, playerId, liveProperty.id)
+                    GameEngine.mortgageProperty(board, playerId, liveProperty.id, message)
                 }
-            } //TESTING
+            }
             ActionType.UNMORTGAGE_PROPERTY -> selectedPropertyId?.let { propertyId ->
                 board.getPropertyById(propertyId)?.let { liveProperty ->
                     GameEngine.unmortgageProperty(board, playerId, liveProperty.id, message)
@@ -151,9 +151,15 @@ fun ActionView(
         ) {
             Text("Select property")
             if (player != null) {
-                PropertyDropDownMenu(player, board, isSelectedPropertyEnabled && !isReadOnly) { property ->
-                    handlePropertyChange(property)
-                }
+                PropertyDropDownMenu(
+                    player = player, 
+                    board = board, 
+                    isSelectedPropertyEnable = isSelectedPropertyEnabled && !isReadOnly,
+                    actionType = selectedActionType,
+                    handlePropertyChange = { property ->
+                        handlePropertyChange(property)
+                    }
+                )
             }
         }
 

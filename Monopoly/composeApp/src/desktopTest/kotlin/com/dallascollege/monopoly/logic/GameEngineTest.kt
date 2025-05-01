@@ -64,7 +64,8 @@ class GameEngineTest {
     @Test
     fun `movePlayer should move player correctly`() {
         val initialPosition = player.numCell
-        GameEngine.movePlayer(gameBoard, player.id, 5)
+        val message = mutableStateOf("")
+        GameEngine.movePlayer(gameBoard, player.id, 5, message)
 
         assertEquals(initialPosition + 5, player.numCell)
     }
@@ -146,8 +147,8 @@ class GameEngineTest {
         player.numCell = 5
         owner.propertyIds = mutableListOf(1, 2)
         println("--------> Before: ${owner.name} has \$${owner.totalMoney}, ${player.name} has \$${player.totalMoney}")
-
-        GameEngine.collectUtilities(gameBoard, player.id)
+        val message = mutableStateOf("")
+        GameEngine.collectUtilities(gameBoard, player.id, message)
 
         println("--------> After: ${owner.name} has \$${owner.totalMoney}, ${player.name} has \$${player.totalMoney}")
         println("${owner.name} owns utilities with IDs: ${owner.propertyIds.joinToString(", ")}")
@@ -171,8 +172,8 @@ class GameEngineTest {
 
         player.numCell = 5
         owner.propertyIds = mutableListOf(1, 2)
-
-        GameEngine.collectRailroads(gameBoard, player.id)
+        val message = mutableStateOf("")
+        GameEngine.collectRailroads(gameBoard, player.id, message)
 
         assertEquals(1300, player.totalMoney)
         assertEquals(1700, owner.totalMoney)
@@ -276,5 +277,3 @@ class GameEngineTest {
     }
 
 }
-
-

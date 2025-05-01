@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.dallascollege.monopoly.enums.ActionType
 import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Player
 import com.dallascollege.monopoly.model.Property
@@ -22,9 +23,19 @@ fun PropertyDropDownMenu(
     player: Player,
     board: GameBoard,
     isSelectedPropertyEnable: Boolean,
+    actionType: ActionType = ActionType.SKIP,
     handlePropertyChange: (Property) -> Unit
 ) {
-    val properties = player.getProperties(board)
+    // Get all properties owned by the player
+    val allProperties = player.getProperties(board)
+
+    // Filter properties based on action type
+    val properties = when (actionType) {
+        ActionType.MORTGAGE_PROPERTY -> allProperties.filter { it.isMortgageable() }.toTypedArray()
+        ActionType.UNMORTGAGE_PROPERTY -> allProperties.filter { it.isMortgaged }.toTypedArray()
+        else -> allProperties
+    }
+
     var expanded by remember { mutableStateOf(false) }
     var selectedPropertyId by remember { mutableStateOf(properties?.getOrNull(0)?.id) }
 
