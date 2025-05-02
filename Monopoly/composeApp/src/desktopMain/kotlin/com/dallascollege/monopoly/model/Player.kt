@@ -126,4 +126,15 @@ class Player(
         val numberOfProperties = properties.count { it.color == color }
         return numberOfProperties == PROPERTY_COLOR_VALUES[color]
     }
+
+
+    fun upgrade_to_hotel(player: Player, board: GameBoard) {
+        val properties = player.getProperties(board)
+        for (property in properties) {
+            if (property.numHouses == 4) {
+                property.numHouses = 0
+                property.numHotels = 1
+            }
+        }
+    }
 }
