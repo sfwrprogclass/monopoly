@@ -29,8 +29,6 @@ fun ActionTypeDropDownMenu(gameBoard: GameBoard, selectedPlayerId: MutableState<
         handleActionTypeChange(selectedActionType)
     }
 
-
-
     Box {
         Button(
             modifier = Modifier

@@ -13,6 +13,7 @@ import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Property
 import com.dallascollege.monopoly.ui.property.PropertyDropDownMenu
 import kotlinx.coroutines.launch // <-- added for coroutine launching
+import java.lang.Integer.parseInt
 
 @Composable
 fun ActionView(
@@ -72,7 +73,7 @@ fun ActionView(
 
         when (selectedActionType) {
             ActionType.UPGRADE_TO_HOTEL -> {}
-            ActionType.BUY_HOUSE -> {}
+            ActionType.BUY_HOUSE -> GameEngine.buyHouse(board, playerId, selectedPropertyId, parseInt(amount), message)
             ActionType.DOWNGRADE_TO_HOUSES -> {}
             ActionType.SELL_HOUSE -> {}
             ActionType.PAY_RENT -> {}
