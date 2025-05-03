@@ -3,15 +3,16 @@ package com.dallascollege.monopoly.model
 import com.dallascollege.monopoly.enums.PropertyColor
 
 class GameBoard(
-    players: Array<Player>,
-    turnOrder: Array<Int> = emptyArray(),
-    currentTurn: Int = 0,
-    selectedPlayerId: Int = 1,
-    centralMoney: Int = 0,
-    speedDieMode: Boolean = false,
-    freeParkingRule: Boolean = false,
-    cells: Array<Cell> = emptyArray(),
-    properties: Array<Property> = emptyArray(),
+    var players: Array<Player>,
+    var turnOrder: Array<Int> = emptyArray(),
+    var currentTurn: Int = 0,
+    var selectedPlayerId: Int = 1,
+    var centralMoney: Int = 0,
+    var speedDieMode: Boolean = false,
+    var freeParkingRule: Boolean = false,
+    var cells: Array<Cell> = emptyArray(),
+    var properties: Array<Property> = emptyArray(),
+    var cards: Array<Card> = emptyArray(),
 ) {
 
     private fun createCells() {
@@ -590,9 +591,130 @@ class GameBoard(
         this.properties = propertyList.toTypedArray()
     }
 
+    private fun createCards() {
+        val cards = arrayOf<Card>()
+        val cardList = cards.toMutableList()
+
+        //Chance cards
+        cardList.add(
+            //advanced to go
+            Card(
+                isChance = true,
+                advancedToGo = true,
+                message = "Advance to Go – Advance directly to Go. Collect \$200!"
+            )
+        )
+        cardList.add(
+            Card(
+                isChance = true,
+                amount = 200,
+                message = "Bank error in your favor – Receive \$200 from the bank"
+            ),
+        )
+        cardList.add(
+            Card(
+                isChance = true,
+                goToJail = true,
+                message = "Go to Jail – Go directly to Jail. Do not pass Go. Do not collect \$200"
+            ),
+        )
+        cardList.add(
+            Card(
+                isChance = true,
+                isPayment = true,
+                amount = 150,
+                message = "Pay school fees – Pay \$150"
+            ),
+        )
+        cardList.add(
+            Card(
+                isChance = true,
+                amount = 150,
+                message = "Your building loan matures – Receive \$150"
+            ),
+        )
+        cardList.add(
+            Card(
+                isChance = true,
+                isPayment = true,
+                amount = 50,
+                message = "Speeding fine – Pay \$50"
+            ),
+        )
+        cardList.add(
+            Card(
+                isChance = true,
+                back3Cells = true,
+                message = "Go back 3 cells"
+            ),
+        )
+        cardList.add(
+            Card(
+                isChance = true,
+                getOutOfJail = true,
+                message = "Get Out of Jail Free! This card can be used to get out of Jail at any time without paying the fine or rolling for doubles"
+            ),
+        )
+
+        //Community chest cards
+        cardList.add(
+            Card(
+                isPayment = true,
+                amount = 50,
+                message = "Doctor’s fees – Pay \$50"
+            ),
+        )
+        cardList.add(
+            Card(
+                amount = 100,
+                message = "You inherit \$100 – Receive \$100"
+            ),
+        )
+        cardList.add(
+            Card(
+                amount = 100,
+                message = "Life insurance matures – Receive \$100"
+            ),
+        )
+        cardList.add(
+            Card(
+                isPayment = true,
+                amount = 100,
+                message = "Pay hospital fees – Pay \$100"
+            ),
+        )
+        cardList.add(
+            Card(
+                amount = 25,
+                message = "Receive for services – Collect \$25"
+            ),
+        )
+        cardList.add(
+            Card(
+                amount = 10,
+                message = "You won second prize in a beauty contest – Collect \$10"
+            ),
+        )
+        cardList.add(
+            Card(
+                amount = 50,
+                message = "From sale of stock you get \$50 – Receive \$50 from stock sale"
+            ),
+        )
+        cardList.add(
+            Card(
+                amount = 100,
+                message = "Holiday fund matures – Receive \$100"
+            ),
+        )
+
+        this.cards = cardList.toTypedArray()
+    }
+
     fun createModels() {
         createProperties()
         createCells()
+        createCards()
     }
 
     //NEW Methods to access objects by id
@@ -616,22 +738,12 @@ class GameBoard(
         return players.any { it.propertyIds.contains(propertyId) }
     }
 
-    var players: Array<Player> = players
+    fun getChanceCards(): Array<Card> {
+        return this.cards.filter{ it.isChance}.toTypedArray()
+    }
 
-    var turnOrder: Array<Int> = turnOrder
-
-    var currentTurn: Int = currentTurn
-
-    var selectedPlayerId: Int = selectedPlayerId
-
-    var centralMoney: Int = centralMoney
-
-    var speedDieMode: Boolean = speedDieMode
-
-    var freeParkingRule: Boolean = freeParkingRule
-
-    var cells: Array<Cell> = cells
-
-    var properties: Array<Property> = properties
+    fun getCommunityChestCards(): Array<Card> {
+        return this.cards.filter{ !it.isChance}.toTypedArray()
+    }
 }
 

@@ -96,9 +96,10 @@ object GameEngine {
     }
 
     // As a player, I can take appropriate action when landing on a non-property space
-    private fun earnCentralMoney(board: GameBoard, player: Player) {
+    private fun earnCentralMoney(board: GameBoard, player: Player, message: MutableState<String> =  mutableStateOf("")) {
         player.totalMoney += board.centralMoney
         board.centralMoney = 0
+        message.value = "You landed on Free Parking! Collect all the money from the center of the board"
     }
 
     fun goToJail(player: Player, message: MutableState<String> =  mutableStateOf("")): String {
@@ -108,26 +109,33 @@ object GameEngine {
         return "jailed"
     }
 
-    //TODO
-    private fun getChance(player: Player) {
+    private fun getChance(gameBoard: GameBoard, player: Player, message: MutableState<String> =  mutableStateOf("")) {
+        val cards = gameBoard.getChanceCards()
+        val chanceCard = cards.random()
 
+        chanceCard.performCardAction(player, message)
     }
 
-    private fun collectSalary(player: Player) {
+    private fun getCommunityChest(gameBoard: GameBoard, player: Player, message: MutableState<String> =  mutableStateOf("")) {
+        val cards = gameBoard.getCommunityChestCards()
+        val communityChestCard = cards.random()
+
+        communityChestCard.performCardAction(player, message)
+    }
+
+    private fun collectSalary(player: Player, message: MutableState<String> =  mutableStateOf("")) {
         player.totalMoney += 200
+        message.value = "You passed Go! Collect \$200 salary from the bank"
     }
 
-    //TODO
-    private fun getCommunityChest(player: Player) {
-
-    }
-
-    private fun payIncomeTax(player: Player) {
+    private fun payIncomeTax(player: Player, message: MutableState<String> =  mutableStateOf("")) {
         player.totalMoney -= 150
+        message.value = "You landed on Income Tax. Pay \$200 to the bank!"
     }
 
-    private fun payLuxuryTax(player: Player) {
+    private fun payLuxuryTax(player: Player, message: MutableState<String> =  mutableStateOf("")) {
         player.totalMoney -= 200
+        message.value = "You landed on Luxury Tax. Pay \$100 for your extravagant lifestyle!"
     }
 
     fun landingAction(board: GameBoard, playerId: Int, message: MutableState<String> = mutableStateOf("")): String {
@@ -142,19 +150,19 @@ object GameEngine {
                 else -> collectRent(board, playerId, message)
             }
         } else if (cell.isParking) {
-            earnCentralMoney(board, player)
+            earnCentralMoney(board, player, message)
         } else if (cell.isGoToJail) {
             return goToJail(player)
         } else if (cell.isChance) {
-            getChance(player)
+            getChance(board, player, message)
         } else if (cell.isCollectSalary) {
-            collectSalary(player)
+            collectSalary(player, message)
         } else if (cell.isCommunityChest) {
-            getCommunityChest(player)
+            getCommunityChest(board, player, message)
         } else if (cell.isIncomeTax) {
-            payIncomeTax(player)
+            payIncomeTax(player, message)
         } else if (cell.isLuxuryTax) {
-            payLuxuryTax(player)
+            payLuxuryTax(player, message)
         }
         // do nothing if isVisitingJail
         return ""
@@ -196,6 +204,14 @@ object GameEngine {
             return "purchased"
         }
         return ""
+    }
+
+    fun getOutOfJailUsingCard(board: GameBoard, playerId: Int, message: MutableState<String> = mutableStateOf("")): String {
+        val player = board.getPlayerById(playerId) ?: return ""
+        player.hasOutJailCard = false
+        player.inJail = false
+        message.value = "You are free!"
+        return "out of jail"
     }
 
     // MARVELLOUS
@@ -322,10 +338,18 @@ object GameEngine {
         return player.hasAllPropertiesByColor(gameBoard, property.color)
     }
 
+    private fun canGetOutOfJail(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
+        val player = gameBoard.getPlayerById(selectedPlayerId.value) ?: return false
+        val cell = gameBoard.getCellById(player.numCell) ?: return false
+
+        return cell.isVisitingJail && player.hasOutJailCard
+    }
+
     fun canPerformAction(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>, actionType: ActionType): Boolean {
         return when (actionType) {
             ActionType.PURCHASE_PROPERTY -> canPurchaseProperty(gameBoard, selectedPlayerId)
             ActionType.BUY_HOUSE -> canBuyHouse(gameBoard, selectedPlayerId)
+            ActionType.GET_OUT_OF_JAIL -> canGetOutOfJail(gameBoard, selectedPlayerId)
             else -> true
         }
     }

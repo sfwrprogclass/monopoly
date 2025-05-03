@@ -20,7 +20,7 @@ import com.dallascollege.monopoly.model.GameBoard
 @Composable
 fun ActionTypeDropDownMenu(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>, isReadOnly: Boolean, handleActionTypeChange: (ActionType) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedActionType by remember { mutableStateOf(ActionType.SKIP)}
+    var selectedActionType by remember { mutableStateOf(ActionType.FINISH_TURN)}
     val excludedActionTypes = listOf( ActionType.PAY_RENT, ActionType.PAY_BANK, ActionType.GO_TO_JAIL)
 
     fun handleClick(actionType: ActionType) {

@@ -24,7 +24,7 @@ fun ActionView(
     message: MutableState<String>,
     modifier: Modifier = Modifier
 ) {
-    var selectedActionType by remember { mutableStateOf(ActionType.SKIP) }
+    var selectedActionType by remember { mutableStateOf(ActionType.FINISH_TURN) }
     var selectedPropertyId: Int? by remember { mutableStateOf(null) } // <-- now tracking ID only
     var quantity by remember { mutableStateOf("0") }
     var amount by remember { mutableStateOf("0") }
@@ -78,7 +78,7 @@ fun ActionView(
             ActionType.SELL_HOUSE -> {}
             ActionType.PAY_RENT -> {}
             ActionType.PAY_BANK -> {}
-            ActionType.GO_TO_JAIL -> {}
+            ActionType.GO_TO_JAIL -> { GameEngine.getOutOfJailUsingCard(board, playerId, message)}
             ActionType.GET_OUT_OF_JAIL -> {}
             ActionType.MORTGAGE_PROPERTY -> selectedPropertyId?.let { propertyId ->
                 board.getPropertyById(propertyId)?.let { liveProperty ->
