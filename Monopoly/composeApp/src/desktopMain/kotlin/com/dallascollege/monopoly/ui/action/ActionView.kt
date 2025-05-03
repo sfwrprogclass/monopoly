@@ -73,7 +73,7 @@ fun ActionView(
 
         when (selectedActionType) {
             ActionType.UPGRADE_TO_HOTEL -> {}
-            ActionType.BUY_HOUSE -> GameEngine.buyHouse(board, playerId, selectedPropertyId, parseInt(amount), message)
+            ActionType.BUY_HOUSE -> GameEngine.buyHouse(board, playerId, selectedPropertyId, parseInt(quantity), message)
             ActionType.DOWNGRADE_TO_HOUSES -> {}
             ActionType.SELL_HOUSE -> {}
             ActionType.PAY_RENT -> {}

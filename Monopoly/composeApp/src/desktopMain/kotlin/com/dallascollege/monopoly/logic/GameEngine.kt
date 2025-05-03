@@ -203,7 +203,7 @@ object GameEngine {
         board: GameBoard,
         playerId: Int,
         propertyId: Int?,
-        amount: Int,
+        quantity: Int,
         message: MutableState<String> = mutableStateOf("")
     ): String {
 
@@ -216,7 +216,7 @@ object GameEngine {
 
         // calculate estimated price
         val housePrice = HOUSE_PRICE_PER_COLOR[landedProperty.color]
-        val estimatedPrice = (housePrice ?: 0) * amount
+        val estimatedPrice = (housePrice ?: 0) * quantity
 
         if (property.color != landedProperty.color) {
             message.value = "You can only build houses on properties that match the color you landed on!"
@@ -229,8 +229,8 @@ object GameEngine {
             val properties = player.getPropertiesByColor(board, landedProperty.color)
 
             // let's check amount to distribute houses equally
-            val housesPerProperty = amount / properties.size
-            var remainder = amount % properties.size
+            val housesPerProperty = quantity / properties.size
+            var remainder = quantity % properties.size
             // if houserPerProperty is greater than 0 we distribute the houses equally and then the remainder goes to
             // the selected property
             if (housesPerProperty > 0) {
