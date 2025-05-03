@@ -91,6 +91,9 @@ fun ActionView(
                 }
             }
             ActionType.PURCHASE_PROPERTY -> GameEngine.purchaseProperty(board, playerId, message)
+            ActionType.AUCTION_PROPERTY -> {
+                GameEngine.AuctionProperty(board, playerId, message)
+            }
             ActionType.SURRENDER -> {}
             ActionType.SKIP -> {}
             ActionType.FINISH_TURN -> GameEngine.finishTurn(board, currentTurn, message)

@@ -110,19 +110,16 @@ class Player(
 
     var consecutiveDoubles: Int = 0 // track doubles for jail
 
+    // New properties for jail rules
+    var jailTurnCount: Int = 0 // how many turns player has been in jail
+    var wantsToPayJailFee: Boolean = false // set to true if player chooses to pay $50
+    var attemptedToRollDoubles: Boolean = false // used to track if they attempted roll this turn
+
+    // simple bankruptcy flag
+    var isBankrupt: Boolean = false
+
     fun isEliminated(board: GameBoard): Boolean {
-        //        var mortgageAllPropertiesMoney = 0
-        //
-        //        propertyIds.forEach { id ->
-        //            val property = board.getPropertyById(id)
-        //            if (property != null && !property.isMortgage) {
-        //                mortgageAllPropertiesMoney += property.price / 2
-        //                //TODO: calculate the money user can get selling houses and hotels
-        //            }
-        //        }
-        //
-        //        return totalMoney + mortgageAllPropertiesMoney <= 0
-        return totalMoney <= 0
+        return isBankrupt
     }
 
     fun hasAllPropertiesByColor(board: GameBoard, color: PropertyColor): Boolean {
