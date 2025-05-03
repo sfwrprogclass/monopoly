@@ -31,6 +31,11 @@ class Player(
         return playerProperties.toTypedArray()
     }
 
+    fun getPropertiesByColor(board: GameBoard, color: PropertyColor): Array<Property> {
+        val playerProperties = getProperties(board).filter { it.color == color }
+        return playerProperties.toTypedArray()
+    }
+
     fun getUtilities(board: GameBoard): Array<Property> {
         return board.properties
             .filter { it.isUtility && propertyIds.contains(it.id) }

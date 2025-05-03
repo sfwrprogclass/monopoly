@@ -4,7 +4,10 @@ import androidx.compose.runtime.MutableState
 import com.dallascollege.monopoly.enums.ActionType
 import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Player
-import com.dallascollege.monopoly.model.Dice
+import kotlin.random.Random
+import androidx.compose.runtime.mutableStateOf
+import com.dallascollege.monopoly.utils.HOUSE_PRICE_PER_COLOR
+import kotlinx.coroutines.delay // <-- added for delays
 
 // Singleton (Static Class) with static methods for the different actions to be executed
 object GameEngine {
@@ -22,70 +25,87 @@ object GameEngine {
     }
 
     // As a player, I can collect the base rent when someone lands on my property (unless property is mortgaged).
-    fun collectRent(board: GameBoard, playerId: Int, message: MutableState<String>) {
-        val player = board.getPlayerById(playerId) ?: return
-        val cell = board.getCellById(player.numCell) ?: return
-        if (!cell.isProperty()) return
+    fun collectRent(board: GameBoard, playerId: Int, message: MutableState<String> =  mutableStateOf("")): String {
+        val player = board.getPlayerById(playerId) ?: return ""
+        val cell = board.getCellById(player.numCell) ?: return ""
+        if (!cell.isProperty()) return ""
 
-        val property = board.getPropertyById(cell.propertyId) ?: return
-        if (property.isMortgaged) return
-        val owner = board.getPropertyOwner(property) ?: return
-        if (owner == player) return
+        val property = board.getPropertyById(cell.propertyId) ?: return ""
+        if (property.isMortgaged) return ""
+        val owner = board.getPropertyOwner(property) ?: return ""
+        if (owner == player) return ""
 
-        val rent = if (owner.hasAllPropertiesByColor(board, property.color)) property.baseRent * 2 else property.baseRent
+        var rent = property.baseRent
+
+        if (owner.hasAllPropertiesByColor(board, property.color)) {
+            if (property.numHouses > 0)
+                rent *= 5
+            else
+                rent *= 2
+        }
 
         player.totalMoney -= rent
         owner.totalMoney += rent
 
-        message.value = "${player.name} paid rent of ${property.baseRent} to ${owner.name}"
+        message.value = "${player.name} paid rent of $$rent to ${owner.name}"
+        return "paid rent"
     }
 
     // As a player, I can collect the appropriate rent for utilities based on how many in the set I own.
-    fun collectUtilities(board: GameBoard, playerId: Int) {
-        val player = board.getPlayerById(playerId) ?: return
-        val cell = board.getCellById(player.numCell) ?: return
-        if (!cell.isProperty()) return
+    fun collectUtilities(board: GameBoard, playerId: Int, message: MutableState<String> =  mutableStateOf("")): String {
+        val player = board.getPlayerById(playerId) ?: return ""
+        val cell = board.getCellById(player.numCell) ?: return ""
+        if (!cell.isProperty()) return ""
 
-        val property = board.getPropertyById(cell.propertyId) ?: return
-        if (!property.isUtility) return
-        val owner = board.getPropertyOwner(property) ?: return
+        val property = board.getPropertyById(cell.propertyId) ?: return ""
+        if (!property.isUtility) return ""
+        val owner = board.getPropertyOwner(property) ?: return ""
 
-        if (owner == player) return
+        if (owner == player) return ""
 
         val numberOfUtilities = owner.getUtilities(board).size
-
         val rentToPay = property.baseRent * numberOfUtilities
+
         player.totalMoney -= rentToPay
         owner.totalMoney += rentToPay
+
+        message.value = "${player.name} paid $$rentToPay to ${owner.name} for utilities"
+        return "paid utility rent"
     }
 
     // As a player, I can collect the appropriate rent for railroads based on how many in the set I own.
-    fun collectRailroads(board: GameBoard, playerId: Int) {
-        val player = board.getPlayerById(playerId) ?: return
-        val cell = board.getCellById(player.numCell) ?: return
-        if (!cell.isProperty()) return
+    fun collectRailroads(board: GameBoard, playerId: Int, message: MutableState<String> =  mutableStateOf("")): String {
+        val player = board.getPlayerById(playerId) ?: return ""
+        val cell = board.getCellById(player.numCell) ?: return ""
+        if (!cell.isProperty()) return ""
 
-        val property = board.getPropertyById(cell.propertyId) ?: return
-        if (!property.isRailRoad) return
-        val owner = board.getPropertyOwner(property) ?: return
+        val property = board.getPropertyById(cell.propertyId) ?: return ""
+        if (!property.isRailRoad) return ""
+        val owner = board.getPropertyOwner(property) ?: return ""
 
-        if (owner == player) return
+        if (owner == player) return ""
 
-        val numberOfRailroads: Int = owner.getRailroads(board).size
+        val numberOfRailroads = owner.getRailroads(board).size
         val rentToPay = property.baseRent * numberOfRailroads
+
         player.totalMoney -= rentToPay
         owner.totalMoney += rentToPay
+
+        message.value = "${player.name} paid $$rentToPay to ${owner.name} for railroads"
+        return "paid railroad rent"
     }
 
-    //As a player, I can take appropriate action when landing on a non-property space
+    // As a player, I can take appropriate action when landing on a non-property space
     private fun earnCentralMoney(board: GameBoard, player: Player) {
         player.totalMoney += board.centralMoney
         board.centralMoney = 0
     }
 
-     fun goToJail(player: Player) {
+    fun goToJail(player: Player, message: MutableState<String> =  mutableStateOf("")): String {
         player.inJail = true
         player.numCell = 23
+        message.value = "${player.name} was sent to jail!"
+        return "jailed"
     }
 
     //TODO
@@ -110,26 +130,21 @@ object GameEngine {
         player.totalMoney -= 200
     }
 
-    fun landingAction(board: GameBoard, playerId: Int, message: MutableState<String>) {
-        val player = board.getPlayerById(playerId) ?: return
-        val cell = board.getCellById(player.numCell) ?: return
-        //if (cell.isProperty()) {
-            //collectRent(board, playerId, message)
+    fun landingAction(board: GameBoard, playerId: Int, message: MutableState<String> = mutableStateOf("")): String {
+        val player = board.getPlayerById(playerId) ?: return ""
+        val cell = board.getCellById(player.numCell) ?: return ""
+
         if (cell.isProperty()) {
-            val property = board.getPropertyByCell(cell) ?: return
-
-            // Check if the property has houses, and collect appropriate rent
-            val rent = if (property.houses > 0) {
-                player.collectRent(property) // Collect rent based on houses
-            } else {
-                collectBaseRent(property) // Collect base rent if no houses are present
+            val property = board.getPropertyById(cell.propertyId) ?: return ""
+            return when {
+                property.isUtility -> collectUtilities(board, playerId, message)
+                property.isRailRoad -> collectRailroads(board, playerId, message)
+                else -> collectRent(board, playerId, message)
             }
-
-            message.value = "${player.name} landed on ${property.name} and owes $$rent."
         } else if (cell.isParking) {
             earnCentralMoney(board, player)
         } else if (cell.isGoToJail) {
-            goToJail(player)
+            return goToJail(player)
         } else if (cell.isChance) {
             getChance(player)
         } else if (cell.isCollectSalary) {
@@ -141,45 +156,8 @@ object GameEngine {
         } else if (cell.isLuxuryTax) {
             payLuxuryTax(player)
         }
-        //do nothing if isVisitingJail
-    }
-    private fun collectBaseRent(property: Property): Int {
-        return property.rentBase
-    }
-    fun buildHouses(player: Player, colorSet: String, totalHouses: Int) {
-        if (!player.canBuildHouses(colorSet)) {
-            println("${player.name} does not own all properties in the $colorSet set.")
-            return
-        }
-
-        val properties = player.getPropertiesByColorSet(colorSet)
-        val baseHouses = totalHouses / properties.size
-        var extraHouses = totalHouses % properties.size
-
-        println("Building $totalHouses houses in $colorSet set.")
-
-        properties.forEach { it.houses += baseHouses }
-
-        while (extraHouses > 0) {
-            val chosenProperty = properties.maxByOrNull { it.houses }
-            chosenProperty?.houses = chosenProperty.houses + 1
-            extraHouses--
-        }
-    }
-
-    fun executeAction(player: Player, action: String, colorSet: String, totalHouses: Int) {
-        when (action) {
-            "build_houses" -> buildHouses(player, colorSet, totalHouses)
-            else -> println("Invalid action")
-        }
-    }
-
-    fun finishTurn(board: GameBoard, currentTurn: MutableState<Int>) {
-        do {
-            setNextTurn(board, currentTurn)
-            val currentPlayerId = board.turnOrder[currentTurn.value]
-            val player = board.getPlayerById(currentPlayerId)
-        } while (player?.isEliminated(board) == true)
+        // do nothing if isVisitingJail
+        return ""
     }
 
     private fun setNextTurn(board: GameBoard, currentTurn: MutableState<Int>) {
@@ -187,98 +165,198 @@ object GameEngine {
         board.currentTurn = currentTurn.value
     }
 
-    //to display notifications message always needs to be passed as a parameter of the function and then
+    suspend fun finishTurn(board: GameBoard, currentTurn: MutableState<Int>, message: MutableState<String>) {
+        do {
+            setNextTurn(board, currentTurn)
+            val currentPlayerId = board.turnOrder[currentTurn.value]
+            val player = board.getPlayerById(currentPlayerId)
+        } while (player?.isEliminated(board) == true)
+
+        val currentPlayerId = board.turnOrder[currentTurn.value]
+        val player = board.getPlayerById(currentPlayerId)
+
+        if (player?.isAI == true) {
+            performAITurn(board, player.id, message)
+            finishTurn(board, currentTurn, message) // recursively finish again until a human player
+        }
+    }
+
+    // to display notifications message always needs to be passed as a parameter of the function and then
     // the notification will be automatically prompted!
-    fun purchaseProperty(board: GameBoard, playerId: Int, message: MutableState<String>) {
-        val player = board.getPlayerById(playerId) ?: return
-        val cell = board.getCellById(player.numCell) ?: return
-        val property = board.getPropertyById(cell.propertyId) ?: return
-        val isPropertyOwned = board.isPropertyOwned(playerId)
+    fun purchaseProperty(board: GameBoard, playerId: Int, message: MutableState<String> = mutableStateOf("")): String {
+        val player = board.getPlayerById(playerId) ?: return ""
+        val cell = board.getCellById(player.numCell) ?: return ""
+        val property = board.getPropertyById(cell.propertyId) ?: return ""
+        val isPropertyOwned = board.isPropertyOwned(cell.propertyId)
 
         if (player.totalMoney >= property.price && !isPropertyOwned) {
             player.propertyIds.add(property.id)
             player.totalMoney -= property.price
             message.value = "${player.name} purchased ${property.name}"
+            return "purchased"
         }
+        return ""
     }
 
+    // MARVELLOUS
+    fun buyHouse(
+        board: GameBoard,
+        playerId: Int,
+        propertyId: Int?,
+        amount: Int,
+        message: MutableState<String> = mutableStateOf("")
+    ): String {
+
+        if (propertyId == null) return ""
+        val player = board.getPlayerById(playerId) ?: return ""
+        val cell = board.getCellById(player.numCell) ?: return ""
+        val landedProperty = board.getPropertyById(cell.propertyId) ?: return ""
+
+        val property = board.getPropertyById(propertyId) ?: return ""
+
+        // calculate estimated price
+        val housePrice = HOUSE_PRICE_PER_COLOR[landedProperty.color]
+        val estimatedPrice = (housePrice ?: 0) * amount
+
+        if (property.color != landedProperty.color) {
+            message.value = "You can only build houses on properties that match the color you landed on!"
+            return ""
+        } else if (player.totalMoney < estimatedPrice){
+            message.value = "You don't have enough money to build those houses!"
+            return ""
+        } else {
+            player.totalMoney -= estimatedPrice
+            val properties = player.getPropertiesByColor(board, landedProperty.color)
+
+            // let's check amount to distribute houses equally
+            val housesPerProperty = amount / properties.size
+            var remainder = amount % properties.size
+            // if houserPerProperty is greater than 0 we distribute the houses equally and then the remainder goes to
+            // the selected property
+            if (housesPerProperty > 0) {
+                properties.forEach {
+                    it.numHouses = housesPerProperty
+                    if (it.id == propertyId) {
+                        it.numHouses += remainder
+                    }
+                }
+            } else {
+                // if there is not enough houses per every property we distribute houses one by one starting by the
+                // selected property
+                val index = properties.indexOf(property)
+                for (i in index until properties.size) {
+                    if (remainder > 0) {
+                        properties[i].numHouses += 1
+                        remainder--
+                    } else {
+                        break
+                    }
+                }
+            }
+        }
+        return "bought houses"
+    }
+
+    // testing lines to figure out why there's a unmortgage bug
     fun mortgageProperty(board: GameBoard, playerId: Int, propertyId: Int) {
         val player = board.getPlayerById(playerId) ?: return
         val property = board.getPropertyById(propertyId) ?: return
+
+        println("Attempting to mortgage property: ${property.name}")
+        println("Before mortgaging: property.isMortgaged = ${property.isMortgaged}")
 
         if (board.getPropertyOwner(property) != player) return
         if (property.isMortgaged) return
         if (property.numHouses > 0 || property.numHotels > 0) return
 
-
         property.isMortgaged = true
         player.totalMoney += property.price / 2
+
+        println("After mortgaging: property.isMortgaged = ${property.isMortgaged}")
     }
 
-    fun handleTurnWithDice(
-        board: GameBoard,
-        currentTurn: MutableState<Int>,
-        message: MutableState<String>,
-        die1: Int? = null,
-        die2: Int? = null
-    ) {
-        val playerId = board.turnOrder[currentTurn.value]
+    // INCOMPLETE. TESTING
+    fun unmortgageProperty(board: GameBoard, playerId: Int, propertyId: Int, message: MutableState<String>) {
         val player = board.getPlayerById(playerId) ?: return
+        val property = board.getPropertyById(propertyId) ?: return
 
+        println("Checking unmortgage:")
+        println(" - property.isMortgaged = ${property.isMortgaged}")
+        println(" - property owner = ${board.getPropertyOwner(property)?.name}")
+        println(" - player = ${player.name}")
 
-        val dice = Dice()
-        val roll1 = die1 ?: dice.roll()
-        val roll2 = die2 ?: dice.roll()
-        val total = roll1 + roll2
+        if (property.isMortgaged && board.getPropertyOwner(property) == player) {
+            val unmortgageCost = (property.price / 2) + ((property.price / 2) / 10)
+            println(" - unmortgageCost = $unmortgageCost")
+            println(" - player.totalMoney = ${player.totalMoney}")
 
-        if (roll1 == roll2) {
-            player.consecutiveDoubles += 1
-        } else {
-            player.consecutiveDoubles = 0
-        }
-
-        if (player.consecutiveDoubles == 3) {
-            player.consecutiveDoubles = 0
-            goToJail(player)
-            finishTurn(board, currentTurn)
-            return
-        }
-
-        movePlayer(board, playerId, total)
-        landingAction(board, playerId, message)
-        board.selectedPlayerId = playerId
-
-        // Only finish turn if not doubles
-        if (roll1 != roll2) {
-            finishTurn(board, currentTurn)
+            if (player.totalMoney >= unmortgageCost) {
+                player.totalMoney -= unmortgageCost
+                property.isMortgaged = false
+                message.value = "${player.name} unmortgaged ${property.name} for $$unmortgageCost"
+            } else {
+                message.value = "${player.name} does not have enough money to unmortgage ${property.name}"
+            }
         }
     }
 
     //////////////////////////////////
 
-    fun canPurchaseProperty(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
+    private fun canPurchaseProperty(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
         val player = gameBoard.getPlayerById(selectedPlayerId.value) ?: return false
         val cell = gameBoard.getCellById(player.numCell) ?: return false
 
         return cell.isProperty() && !gameBoard.isPropertyOwned(cell.propertyId)
     }
 
+    //MARVELLOUS
+    private fun canBuyHouse(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
+        val player = gameBoard.getPlayerById(selectedPlayerId.value) ?: return false
+        val cell = gameBoard.getCellById(player.numCell) ?: return false
+
+        if (cell.isProperty() && !gameBoard.isPropertyOwned(cell.propertyId))
+            return false
+
+        val property = gameBoard.getPropertyById(cell.propertyId) ?: return false
+
+        return player.hasAllPropertiesByColor(gameBoard, property.color)
+    }
+
     fun canPerformAction(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>, actionType: ActionType): Boolean {
         return when (actionType) {
             ActionType.PURCHASE_PROPERTY -> canPurchaseProperty(gameBoard, selectedPlayerId)
-            // Add other ActionType cases here as needed
-            else -> return true
+            ActionType.BUY_HOUSE -> canBuyHouse(gameBoard, selectedPlayerId)
+            else -> true
         }
     }
-    fun adminViewPlayerInfo(board: GameBoard, playerId: Int): String {
-        val player = board.getPlayerById(playerId) ?: return "Player not found."
 
-        return """
-        Player Name: ${player.name}
-        Balance: ${player.balance}
-        Properties Owned: ${player.properties.map { it.name }}
-        Total Houses: ${player.properties.sumOf { it.houses }}
-    """.trimIndent()
+    //////////////////////////////////
+
+    // methods for AI player logic
+    suspend fun performAITurn(board: GameBoard, playerId: Int, message: MutableState<String>) {
+        val player = board.getPlayerById(playerId) ?: return
+        executeTurnStep(board, player, message, isHuman = false)
     }
 
+    suspend fun executeTurnStep(board: GameBoard, player: Player, message: MutableState<String>, isHuman: Boolean) {
+        val diceRoll = Random.nextInt(1, 7) + Random.nextInt(1, 7)
+        message.value = "${player.name} rolled a $diceRoll!"
+        if (!isHuman) delay(2500L)
+
+        movePlayer(board, player.id, diceRoll)
+
+        val cell = board.getCellById(player.numCell)
+        message.value = "${player.name} landed on ${cell?.getName(board)}."
+        if (!isHuman) delay(2500L)
+
+        var actionResult = landingAction(board, player.id, message)
+
+        if (actionResult.isEmpty()) {
+            actionResult = purchaseProperty(board, player.id, message)
+        }
+
+        if (actionResult.isNotEmpty() && !isHuman) {
+            delay(5000L)
+        }
+    }
 }
