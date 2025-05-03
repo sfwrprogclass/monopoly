@@ -73,6 +73,7 @@ fun ActionView(
         when (selectedActionType) {
             ActionType.UPGRADE_TO_HOTEL -> {}
             ActionType.BUY_HOUSE -> {}
+            ActionType.BUILD_HOUSE -> {}
             ActionType.DOWNGRADE_TO_HOUSES -> {}
             ActionType.SELL_HOUSE -> {}
             ActionType.PAY_RENT -> {}

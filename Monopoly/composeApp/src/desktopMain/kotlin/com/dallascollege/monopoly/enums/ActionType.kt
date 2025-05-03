@@ -14,7 +14,8 @@ enum class ActionType(val text: String) {
     SURRENDER("Surrender"),
     GET_OUT_OF_JAIL("Get out of jail"),
     SKIP("Skip"),
-    FINISH_TURN("Finish turn");
+    FINISH_TURN("Finish turn"),
+    BUILD_HOUSE(text = "Build house");
 
     override fun toString(): String {
         return text
