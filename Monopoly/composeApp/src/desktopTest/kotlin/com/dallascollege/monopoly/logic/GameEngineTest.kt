@@ -274,6 +274,69 @@ class GameEngineTest {
         assertEquals(23, player.numCell, "Player should be on Jail cell (23)")
         assertEquals(0, player.consecutiveDoubles, "consecutiveDoubles should be reset after jail")
     }
+    @Test
+    fun `player uses get out of jail free card`() {
+        player.inJail = true
+        player.hasOutJailCard = true
+        val message = mutableStateOf("")
+
+        val result = GameEngine.getOutOfJail(player, message)
+
+        assertTrue(result)
+        assertFalse(player.inJail)
+        assertFalse(player.hasOutJailCard)
+        assertEquals("Player1 used a Get Out of Jail Free card!", message.value)
+    }
+
+    @Test
+    fun `player pays $50 to get out of jail`() {
+        player.inJail = true
+        player.totalMoney = 150
+        player.hasOutJailCard = false
+        val message = mutableStateOf("")
+
+        val result = GameEngine.getOutOfJail(player, message)
+
+        assertTrue(result)
+        assertFalse(player.inJail)
+        assertEquals(100, player.totalMoney)
+        assertEquals("Player1 paid \$50 to get out of jail!", message.value)
+    }
+
+    @Test
+    fun `player fails to get out of jail due to no card and low money`() {
+        player.inJail = true
+        player.totalMoney = 20
+        player.hasOutJailCard = false
+        val message = mutableStateOf("")
+
+        val result = GameEngine.getOutOfJail(player, message)
+
+        assertFalse(result)
+        assertTrue(player.inJail)
+        assertEquals("Player1 cannot get out of jail yet!", message.value)
+    }
+    @Test
+    fun `player is eliminated when landing on income tax with insufficient funds`() {
+        val brokePlayer = Player(
+            id = 4,
+            name = "BrokePlayer",
+            token = Token.BOOT,
+            totalMoney = 100,
+            numCell = 4
+        )
+
+        val incomeTaxCell = Cell(numCell = 4, isIncomeTax = true)
+        gameBoard.players = arrayOf(brokePlayer)
+        gameBoard.cells = arrayOf(incomeTaxCell)
+
+        val message = mutableStateOf("")
+        GameEngine.landingAction(gameBoard, brokePlayer.id, message)
+
+        assertTrue(brokePlayer.isBankrupt)
+        assertEquals("${brokePlayer.name} was eliminated. All assets have been surrendered to the bank.", message.value)
+    }
+
 
 }
 

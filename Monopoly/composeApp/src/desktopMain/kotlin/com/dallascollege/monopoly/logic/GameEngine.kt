@@ -95,29 +95,32 @@ object GameEngine {
 
     fun goToJail(player: Player) {
         player.inJail = true
+        player.jailTurnCount = 0
         player.numCell = 23
     }
 
     //TODO
-    private fun getChance(player: Player) {
-
-    }
+    private fun getChance(player: Player) {}
 
     private fun collectSalary(player: Player) {
         player.totalMoney += 200
     }
 
     //TODO
-    private fun getCommunityChest(player: Player) {
+    private fun getCommunityChest(player: Player) {}
 
-    }
-
-    private fun payIncomeTax(player: Player) {
+    private fun payIncomeTax(player: Player, board: GameBoard, message: MutableState<String>) {
         player.totalMoney -= 150
+        if (player.totalMoney < 0) {
+            bankruptToBank(player, board, message)
+        }
     }
 
-    private fun payLuxuryTax(player: Player) {
+    private fun payLuxuryTax(player: Player, board: GameBoard, message: MutableState<String>) {
         player.totalMoney -= 200
+        if (player.totalMoney < 0) {
+            bankruptToBank(player, board, message)
+        }
     }
 
     fun landingAction(board: GameBoard, playerId: Int, message: MutableState<String>): String {
@@ -144,11 +147,10 @@ object GameEngine {
         } else if (cell.isCommunityChest) {
             getCommunityChest(player)
         } else if (cell.isIncomeTax) {
-            payIncomeTax(player)
+            payIncomeTax(player, board, message)
         } else if (cell.isLuxuryTax) {
-            payLuxuryTax(player)
+            payLuxuryTax(player, board, message)
         }
-        // do nothing if isVisitingJail
         return ""
     }
 
@@ -162,9 +164,9 @@ object GameEngine {
         val currentPlayerId = board.turnOrder[currentTurn.value]
         val player = board.getPlayerById(currentPlayerId)
 
-        if (player?.isAI == true) {
+        if (player?.isAI == true && !player.isEliminated(board)) {
             performAITurn(board, player.id, message)
-            finishTurn(board, currentTurn, message) // recursively finish again until a human player
+            finishTurn(board, currentTurn, message)
         }
     }
 
@@ -173,8 +175,10 @@ object GameEngine {
         board.currentTurn = currentTurn.value
     }
 
-    // to display notifications message always needs to be passed as a parameter of the function and then
-    // the notification will be automatically prompted!
+    fun AuctionProperty(board: GameBoard, playerId: Int, message: MutableState<String>) {
+        // not yet completed
+    }
+
     fun purchaseProperty(board: GameBoard, playerId: Int, message: MutableState<String>): String {
         val player = board.getPlayerById(playerId) ?: return ""
         val cell = board.getCellById(player.numCell) ?: return ""
@@ -190,7 +194,6 @@ object GameEngine {
         return ""
     }
 
-    // testing lines to figure out why there's a unmortgage bug
     fun mortgageProperty(board: GameBoard, playerId: Int, propertyId: Int) {
         val player = board.getPlayerById(playerId) ?: return
         val property = board.getPropertyById(propertyId) ?: return
@@ -208,7 +211,6 @@ object GameEngine {
         println("After mortgaging: property.isMortgaged = ${property.isMortgaged}")
     }
 
-    // INCOMPLETE. TESTING
     fun unmortgageProperty(board: GameBoard, playerId: Int, propertyId: Int, message: MutableState<String>) {
         val player = board.getPlayerById(playerId) ?: return
         val property = board.getPropertyById(propertyId) ?: return
@@ -233,8 +235,6 @@ object GameEngine {
         }
     }
 
-    //////////////////////////////////
-
     fun canPurchaseProperty(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
         val player = gameBoard.getPlayerById(selectedPlayerId.value) ?: return false
         val cell = gameBoard.getCellById(player.numCell) ?: return false
@@ -254,12 +254,49 @@ object GameEngine {
         executeTurnStep(board, player, message, isHuman = false)
     }
 
+    // handles human and AI logic for jail rolls
     suspend fun executeTurnStep(board: GameBoard, player: Player, message: MutableState<String>, isHuman: Boolean) {
-        val diceRoll = Random.nextInt(1, 7) + Random.nextInt(1, 7)
-        message.value = "${player.name} rolled a $diceRoll!"
-        if (!isHuman) delay(2500L)
+        if (player.isEliminated(board)) return
 
-        movePlayer(board, player.id, diceRoll)
+        if (player.inJail) {
+            if (player.hasOutJailCard) {
+                player.hasOutJailCard = false
+                player.inJail = false
+                message.value = "${player.name} used a Get Out of Jail Free card!"
+            } else if (player.wantsToPayJailFee && player.totalMoney >= 50) {
+                player.totalMoney -= 50
+                player.inJail = false
+                message.value = "${player.name} paid $50 to get out of jail!"
+            } else {
+                val die1 = Random.nextInt(1, 7)
+                val die2 = Random.nextInt(1, 7)
+                message.value = "${player.name} rolled a $die1 and a $die2."
+                if (!isHuman) delay(2500L)
+
+                if (die1 == die2) {
+                    player.inJail = false
+                    message.value = "${player.name} rolled doubles and escaped jail!"
+                    movePlayer(board, player.id, die1 + die2)
+                } else {
+                    player.jailTurnCount += 1
+                    if (player.jailTurnCount >= 3) {
+                        player.totalMoney -= 50
+                        player.inJail = false
+                        message.value = "${player.name} failed 3 rolls and paid $50 to leave jail."
+                        movePlayer(board, player.id, die1 + die2)
+                    } else {
+                        message.value = "${player.name} did not roll doubles and remains in jail (Turn ${player.jailTurnCount}/3)."
+                        return
+                    }
+                }
+            }
+        } else {
+            val diceRoll = Random.nextInt(1, 7) + Random.nextInt(1, 7)
+            message.value = "${player.name} rolled a $diceRoll!"
+            if (!isHuman) delay(2500L)
+
+            movePlayer(board, player.id, diceRoll)
+        }
 
         val cell = board.getCellById(player.numCell)
         message.value = "${player.name} landed on ${cell?.getName(board)}."
@@ -274,5 +311,32 @@ object GameEngine {
         if (actionResult.isNotEmpty() && !isHuman) {
             delay(5000L)
         }
+    }
+ // lets a player manually try to get out of jail early, before ending turn
+    fun getOutOfJail(player: Player, message: MutableState<String>): Boolean {
+        return when {
+            player.hasOutJailCard -> {
+                player.hasOutJailCard = false
+                player.inJail = false
+                message.value = "${player.name} used a Get Out of Jail Free card!"
+                true
+            }
+            player.totalMoney >= 50 -> {
+                player.totalMoney -= 50
+                player.inJail = false
+                message.value = "${player.name} paid \$50 to get out of jail!"
+                true
+            }
+            else -> {
+                message.value = "${player.name} cannot get out of jail yet!"
+                false
+            }
+        }
+    }
+
+    fun bankruptToBank(player: Player, board: GameBoard, message: MutableState<String>) {
+        player.propertyIds.clear()
+        player.isBankrupt = true
+        message.value = "${player.name} was eliminated. All assets have been surrendered to the bank."
     }
 }

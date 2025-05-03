@@ -3,6 +3,7 @@ package com.dallascollege.monopoly.enums
 enum class ActionType(val text: String) {
     PAY_RENT("Pay rent"),
     PURCHASE_PROPERTY("Purchase property"),
+    AUCTION_PROPERTY("Auction Property"),
     GO_TO_JAIL("Go to jail"),
     PAY_BANK("Pay bank"),
     BUY_HOUSE("Buy house"),
