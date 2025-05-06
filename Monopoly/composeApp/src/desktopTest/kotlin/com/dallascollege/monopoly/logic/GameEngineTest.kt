@@ -9,6 +9,7 @@ import com.dallascollege.monopoly.enums.PropertyColor
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import androidx.compose.runtime.mutableStateOf
+import com.dallascollege.monopoly.logic.GameEngine.handleBankruptcy
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -308,25 +309,46 @@ class GameEngineTest {
         assertTrue(player.inJail)
         assertEquals("Player1 cannot get out of jail yet!", message.value)
     }
-    @Test
-    fun `player is eliminated when landing on income tax with insufficient funds`() {
-        val brokePlayer = Player(
-            id = 4,
-            name = "BrokePlayer",
-            token = Token.BOOT,
-            totalMoney = 100,
-            numCell = 4
-        )
 
-        val incomeTaxCell = Cell(numCell = 4, isIncomeTax = true)
-        gameBoard.players = arrayOf(brokePlayer)
-        gameBoard.cells = arrayOf(incomeTaxCell)
+    // assets go to another player
+    @Test
+    fun `player is eliminated and assets go to another player when rent is too high`() {
+        val playerA = Player(id = 1, name = "PlayerA", token = Token.CAR, totalMoney = 100, numCell = 5)
+        val playerB = Player(id = 2, name = "PlayerB", token = Token.DOG, totalMoney = 1500)
+
+        val property = Property(id = 1, name = "Rich Property", baseRent = 500, price = 400, color = PropertyColor.BLUE)
+        val cell = Cell(numCell = 5, propertyId = 1)
+
+        playerB.propertyIds = mutableListOf(1)
+
+        gameBoard.players = arrayOf(playerA, playerB)
+        gameBoard.cells = arrayOf(cell)
+        gameBoard.properties = arrayOf(property)
 
         val message = mutableStateOf("")
-        GameEngine.landingAction(gameBoard, brokePlayer.id, message)
+        GameEngine.collectRent(gameBoard, playerA.id, message)
 
-        assertTrue(brokePlayer.isBankrupt)
-        assertEquals("${brokePlayer.name} was eliminated. All assets have been surrendered to the bank.", message.value)
+        assertTrue(playerA.isBankrupt)
+        assertEquals(1600, playerB.totalMoney) // received 100 from playerA
+        assertTrue(playerB.propertyIds.contains(1))
+        assertEquals("PlayerA was eliminated. All assets have been transferred to PlayerB.", message.value)
+    }
+
+ // assets go to the bank
+    @Test
+    fun `player is eliminated and assets are unowned when unable to pay tax`() {
+        val playerA = Player(id = 1, name = "PlayerA", token = Token.CAR, totalMoney = 100, numCell = 4)
+        val taxCell = Cell(numCell = 4, isIncomeTax = true)
+
+        gameBoard.players = arrayOf(playerA)
+        gameBoard.cells = arrayOf(taxCell)
+
+        val message = mutableStateOf("")
+        GameEngine.landingAction(gameBoard, playerA.id, message)
+
+        assertTrue(playerA.isBankrupt)
+        assertEquals(0, playerA.totalMoney)
+        assertEquals("PlayerA was eliminated. Their properties are now unowned.", message.value)
     }
 
 

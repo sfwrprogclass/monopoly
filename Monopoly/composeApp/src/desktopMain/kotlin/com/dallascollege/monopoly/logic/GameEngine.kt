@@ -44,8 +44,13 @@ object GameEngine {
                 rent *= 2
         }
 
+        if (player.totalMoney < rent) {
+            handleBankruptcy(player, board, message, recipient = owner)
+            return "bankrupt"
+        }
         player.totalMoney -= rent
         owner.totalMoney += rent
+
 
         message.value = "${player.name} paid rent of $$rent to ${owner.name}"
         return "paid rent"
@@ -66,8 +71,13 @@ object GameEngine {
         val numberOfUtilities = owner.getUtilities(board).size
         val rentToPay = property.baseRent * numberOfUtilities
 
+        if (player.totalMoney < rentToPay) {
+            handleBankruptcy(player, board, message, recipient = owner)
+            return "bankrupt"
+        }
         player.totalMoney -= rentToPay
         owner.totalMoney += rentToPay
+
 
         message.value = "${player.name} paid $$rentToPay to ${owner.name} for utilities"
         return "paid utility rent"
@@ -88,8 +98,13 @@ object GameEngine {
         val numberOfRailroads = owner.getRailroads(board).size
         val rentToPay = property.baseRent * numberOfRailroads
 
+        if (player.totalMoney < rentToPay) {
+            handleBankruptcy(player, board, message, recipient = owner)
+            return "bankrupt"
+        }
         player.totalMoney -= rentToPay
         owner.totalMoney += rentToPay
+
 
         message.value = "${player.name} paid $$rentToPay to ${owner.name} for railroads"
         return "paid railroad rent"
@@ -133,7 +148,7 @@ object GameEngine {
         player.totalMoney -= 150
         message.value = "You landed on Income Tax. Pay \$200 to the bank!"
         if (player.totalMoney < 0) {
-            bankruptToBank(player, board, message)
+            handleBankruptcy(player, board, message)
         }
     }
 
@@ -142,7 +157,7 @@ object GameEngine {
         message.value = "You landed on Luxury Tax. Pay \$100 for your extravagant lifestyle!"
 
         if (player.totalMoney < 0) {
-            bankruptToBank(player, board, message)
+            handleBankruptcy(player, board, message)
         }
     }
 
@@ -451,9 +466,25 @@ object GameEngine {
         }
     }
 
-    fun bankruptToBank(player: Player, board: GameBoard, message: MutableState<String>) {
-        player.propertyIds.clear()
-        player.isBankrupt = true
-        message.value = "${player.name} was eliminated. All assets have been surrendered to the bank."
+    fun handleBankruptcy(
+        bankruptPlayer: Player,
+        board: GameBoard,
+        message: MutableState<String>,
+        recipient: Player? = null
+    ) {
+        // transfer assets to player
+        if (recipient != null) {
+            recipient.totalMoney += bankruptPlayer.totalMoney
+            recipient.propertyIds.addAll(bankruptPlayer.propertyIds)
+            message.value = "${bankruptPlayer.name} was eliminated. All assets have been transferred to ${recipient.name}."
+        } else {
+            message.value = "${bankruptPlayer.name} was eliminated. Their properties are now unowned."
+            // assets go to the bank and other players can purchase again
+        }
+
+        bankruptPlayer.propertyIds.clear()
+        bankruptPlayer.totalMoney = 0
+        bankruptPlayer.isBankrupt = true
     }
+
 }
