@@ -13,6 +13,7 @@ import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Property
 import com.dallascollege.monopoly.ui.property.PropertyDropDownMenu
 import kotlinx.coroutines.launch // <-- added for coroutine launching
+import java.lang.Integer.parseInt
 
 @Composable
 fun ActionView(
@@ -23,7 +24,7 @@ fun ActionView(
     message: MutableState<String>,
     modifier: Modifier = Modifier
 ) {
-    var selectedActionType by remember { mutableStateOf(ActionType.SKIP) }
+    var selectedActionType by remember { mutableStateOf(ActionType.FINISH_TURN) }
     var selectedPropertyId: Int? by remember { mutableStateOf(null) } // <-- now tracking ID only
     var quantity by remember { mutableStateOf("0") }
     var amount by remember { mutableStateOf("0") }
@@ -72,12 +73,12 @@ fun ActionView(
 
         when (selectedActionType) {
             ActionType.UPGRADE_TO_HOTEL -> {}
-            ActionType.BUY_HOUSE -> {}
+            ActionType.BUY_HOUSE -> GameEngine.buyHouse(board, playerId, selectedPropertyId, parseInt(quantity), message)
             ActionType.DOWNGRADE_TO_HOUSES -> {}
             ActionType.SELL_HOUSE -> {}
             ActionType.PAY_RENT -> {}
             ActionType.PAY_BANK -> {}
-            ActionType.GO_TO_JAIL -> {}
+            ActionType.GO_TO_JAIL -> { GameEngine.getOutOfJailUsingCard(board, playerId, message)}
             ActionType.GET_OUT_OF_JAIL -> {}
             ActionType.MORTGAGE_PROPERTY -> selectedPropertyId?.let { propertyId ->
                 board.getPropertyById(propertyId)?.let { liveProperty ->
@@ -90,6 +91,9 @@ fun ActionView(
                 }
             }
             ActionType.PURCHASE_PROPERTY -> GameEngine.purchaseProperty(board, playerId, message)
+            ActionType.AUCTION_PROPERTY -> {
+                GameEngine.AuctionProperty(board, playerId, message)
+            }
             ActionType.SURRENDER -> {}
             ActionType.SKIP -> {}
             ActionType.FINISH_TURN -> GameEngine.finishTurn(board, currentTurn, message)

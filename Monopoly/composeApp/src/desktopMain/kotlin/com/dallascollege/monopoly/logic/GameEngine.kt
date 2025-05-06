@@ -6,6 +6,7 @@ import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Player
 import kotlin.random.Random
 import androidx.compose.runtime.mutableStateOf
+import com.dallascollege.monopoly.utils.HOUSE_PRICE_PER_COLOR
 import kotlinx.coroutines.delay // <-- added for delays
 
 // Singleton (Static Class) with static methods for the different actions to be executed
@@ -34,7 +35,14 @@ object GameEngine {
         val owner = board.getPropertyOwner(property) ?: return ""
         if (owner == player) return ""
 
-        val rent = if (owner.hasAllPropertiesByColor(board, property.color)) property.baseRent * 2 else property.baseRent
+        var rent = property.baseRent
+
+        if (owner.hasAllPropertiesByColor(board, property.color)) {
+            if (property.numHouses > 0)
+                rent *= 5
+            else
+                rent *= 2
+        }
 
         player.totalMoney -= rent
         owner.totalMoney += rent
@@ -88,39 +96,57 @@ object GameEngine {
     }
 
     // As a player, I can take appropriate action when landing on a non-property space
-    private fun earnCentralMoney(board: GameBoard, player: Player) {
+    private fun earnCentralMoney(board: GameBoard, player: Player, message: MutableState<String> =  mutableStateOf("")) {
         player.totalMoney += board.centralMoney
         board.centralMoney = 0
+        message.value = "You landed on Free Parking! Collect all the money from the center of the board"
     }
 
-    fun goToJail(player: Player) {
+    fun goToJail(player: Player, message: MutableState<String> =  mutableStateOf("")): String {
         player.inJail = true
+        player.jailTurnCount = 0
         player.numCell = 23
+        message.value = "${player.name} was sent to jail!"
+        return "jailed"
     }
 
-    //TODO
-    private fun getChance(player: Player) {
+    private fun getChance(gameBoard: GameBoard, player: Player, message: MutableState<String> =  mutableStateOf("")) {
+        val cards = gameBoard.getChanceCards()
+        val chanceCard = cards.random()
 
+        chanceCard.performCardAction(player, message)
     }
 
-    private fun collectSalary(player: Player) {
+    private fun getCommunityChest(gameBoard: GameBoard, player: Player, message: MutableState<String> =  mutableStateOf("")) {
+        val cards = gameBoard.getCommunityChestCards()
+        val communityChestCard = cards.random()
+
+        communityChestCard.performCardAction(player, message)
+    }
+
+    private fun collectSalary(player: Player, message: MutableState<String> =  mutableStateOf("")) {
         player.totalMoney += 200
+        message.value = "You passed Go! Collect \$200 salary from the bank"
     }
 
-    //TODO
-    private fun getCommunityChest(player: Player) {
-
-    }
-
-    private fun payIncomeTax(player: Player) {
+    private fun payIncomeTax(player: Player, board: GameBoard, message: MutableState<String> =  mutableStateOf("")) {
         player.totalMoney -= 150
+        message.value = "You landed on Income Tax. Pay \$200 to the bank!"
+        if (player.totalMoney < 0) {
+            bankruptToBank(player, board, message)
+        }
     }
 
-    private fun payLuxuryTax(player: Player) {
+    private fun payLuxuryTax(player: Player, board: GameBoard, message: MutableState<String>) {
         player.totalMoney -= 200
+        message.value = "You landed on Luxury Tax. Pay \$100 for your extravagant lifestyle!"
+
+        if (player.totalMoney < 0) {
+            bankruptToBank(player, board, message)
+        }
     }
 
-    fun landingAction(board: GameBoard, playerId: Int, message: MutableState<String>): String {
+    fun landingAction(board: GameBoard, playerId: Int, message: MutableState<String> = mutableStateOf("")): String {
         val player = board.getPlayerById(playerId) ?: return ""
         val cell = board.getCellById(player.numCell) ?: return ""
 
@@ -132,24 +158,26 @@ object GameEngine {
                 else -> collectRent(board, playerId, message)
             }
         } else if (cell.isParking) {
-            earnCentralMoney(board, player)
+            earnCentralMoney(board, player, message)
         } else if (cell.isGoToJail) {
-            goToJail(player)
-            message.value = "${player.name} was sent to jail!"
-            return "jailed"
+            return goToJail(player)
         } else if (cell.isChance) {
-            getChance(player)
+            getChance(board, player, message)
         } else if (cell.isCollectSalary) {
-            collectSalary(player)
+            collectSalary(player, message)
         } else if (cell.isCommunityChest) {
-            getCommunityChest(player)
+            getCommunityChest(board, player, message)
         } else if (cell.isIncomeTax) {
-            payIncomeTax(player)
+            payIncomeTax(player, board, message)
         } else if (cell.isLuxuryTax) {
-            payLuxuryTax(player)
+            payLuxuryTax(player, board, message)
         }
-        // do nothing if isVisitingJail
         return ""
+    }
+
+    private fun setNextTurn(board: GameBoard, currentTurn: MutableState<Int>) {
+        currentTurn.value = (currentTurn.value + 1) % board.turnOrder.size
+        board.currentTurn = currentTurn.value
     }
 
     suspend fun finishTurn(board: GameBoard, currentTurn: MutableState<Int>, message: MutableState<String>) {
@@ -162,20 +190,19 @@ object GameEngine {
         val currentPlayerId = board.turnOrder[currentTurn.value]
         val player = board.getPlayerById(currentPlayerId)
 
-        if (player?.isAI == true) {
+        if (player?.isAI == true && !player.isEliminated(board)) {
             performAITurn(board, player.id, message)
-            finishTurn(board, currentTurn, message) // recursively finish again until a human player
+            finishTurn(board, currentTurn, message)
         }
     }
 
-    private fun setNextTurn(board: GameBoard, currentTurn: MutableState<Int>) {
-        currentTurn.value = (currentTurn.value + 1) % board.turnOrder.size
-        board.currentTurn = currentTurn.value
+    fun AuctionProperty(board: GameBoard, playerId: Int, message: MutableState<String>) {
+        // not yet completed
     }
 
     // to display notifications message always needs to be passed as a parameter of the function and then
     // the notification will be automatically prompted!
-    fun purchaseProperty(board: GameBoard, playerId: Int, message: MutableState<String>): String {
+    fun purchaseProperty(board: GameBoard, playerId: Int, message: MutableState<String> =  mutableStateOf("")): String {
         val player = board.getPlayerById(playerId) ?: return ""
         val cell = board.getCellById(player.numCell) ?: return ""
         val property = board.getPropertyById(cell.propertyId) ?: return ""
@@ -188,6 +215,73 @@ object GameEngine {
             return "purchased"
         }
         return ""
+    }
+
+    fun getOutOfJailUsingCard(board: GameBoard, playerId: Int, message: MutableState<String> = mutableStateOf("")): String {
+        val player = board.getPlayerById(playerId) ?: return ""
+        player.hasOutJailCard = false
+        player.inJail = false
+        message.value = "You are free!"
+        return "out of jail"
+    }
+
+    // MARVELLOUS
+    fun buyHouse(
+        board: GameBoard,
+        playerId: Int,
+        propertyId: Int?,
+        quantity: Int,
+        message: MutableState<String> = mutableStateOf("")
+    ): String {
+
+        if (propertyId == null) return ""
+        val player = board.getPlayerById(playerId) ?: return ""
+        val cell = board.getCellById(player.numCell) ?: return ""
+        val landedProperty = board.getPropertyById(cell.propertyId) ?: return ""
+
+        val property = board.getPropertyById(propertyId) ?: return ""
+
+        // calculate estimated price
+        val housePrice = HOUSE_PRICE_PER_COLOR[landedProperty.color]
+        val estimatedPrice = (housePrice ?: 0) * quantity
+
+        if (property.color != landedProperty.color) {
+            message.value = "You can only build houses on properties that match the color you landed on!"
+            return ""
+        } else if (player.totalMoney < estimatedPrice){
+            message.value = "You don't have enough money to build those houses!"
+            return ""
+        } else {
+            player.totalMoney -= estimatedPrice
+            val properties = player.getPropertiesByColor(board, landedProperty.color)
+
+            // let's check amount to distribute houses equally
+            val housesPerProperty = quantity / properties.size
+            var remainder = quantity % properties.size
+            // if houserPerProperty is greater than 0 we distribute the houses equally and then the remainder goes to
+            // the selected property
+            if (housesPerProperty > 0) {
+                properties.forEach {
+                    it.numHouses = housesPerProperty
+                    if (it.id == propertyId) {
+                        it.numHouses += remainder
+                    }
+                }
+            } else {
+                // if there is not enough houses per every property we distribute houses one by one starting by the
+                // selected property
+                val index = properties.indexOf(property)
+                for (i in index until properties.size) {
+                    if (remainder > 0) {
+                        properties[i].numHouses += 1
+                        remainder--
+                    } else {
+                        break
+                    }
+                }
+            }
+        }
+        return "bought houses"
     }
 
     // testing lines to figure out why there's a unmortgage bug
@@ -208,7 +302,6 @@ object GameEngine {
         println("After mortgaging: property.isMortgaged = ${property.isMortgaged}")
     }
 
-    // INCOMPLETE. TESTING
     fun unmortgageProperty(board: GameBoard, playerId: Int, propertyId: Int, message: MutableState<String>) {
         val player = board.getPlayerById(playerId) ?: return
         val property = board.getPropertyById(propertyId) ?: return
@@ -233,33 +326,93 @@ object GameEngine {
         }
     }
 
-    //////////////////////////////////
-
-    fun canPurchaseProperty(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
+    private fun canPurchaseProperty(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
         val player = gameBoard.getPlayerById(selectedPlayerId.value) ?: return false
         val cell = gameBoard.getCellById(player.numCell) ?: return false
 
         return cell.isProperty() && !gameBoard.isPropertyOwned(cell.propertyId)
     }
 
+    //MARVELLOUS
+    private fun canBuyHouse(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
+        val player = gameBoard.getPlayerById(selectedPlayerId.value) ?: return false
+        val cell = gameBoard.getCellById(player.numCell) ?: return false
+
+        if (cell.isProperty() && !gameBoard.isPropertyOwned(cell.propertyId))
+            return false
+
+        val property = gameBoard.getPropertyById(cell.propertyId) ?: return false
+
+        return player.hasAllPropertiesByColor(gameBoard, property.color)
+    }
+
+    private fun canGetOutOfJail(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
+        val player = gameBoard.getPlayerById(selectedPlayerId.value) ?: return false
+        val cell = gameBoard.getCellById(player.numCell) ?: return false
+
+        return cell.isVisitingJail && player.hasOutJailCard
+    }
+
     fun canPerformAction(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>, actionType: ActionType): Boolean {
         return when (actionType) {
             ActionType.PURCHASE_PROPERTY -> canPurchaseProperty(gameBoard, selectedPlayerId)
+            ActionType.BUY_HOUSE -> canBuyHouse(gameBoard, selectedPlayerId)
+            ActionType.GET_OUT_OF_JAIL -> canGetOutOfJail(gameBoard, selectedPlayerId)
             else -> true
         }
     }
 
+    //////////////////////////////////
+
+    // methods for AI player logic
     suspend fun performAITurn(board: GameBoard, playerId: Int, message: MutableState<String>) {
         val player = board.getPlayerById(playerId) ?: return
         executeTurnStep(board, player, message, isHuman = false)
     }
 
+    // handles human and AI logic for jail rolls
     suspend fun executeTurnStep(board: GameBoard, player: Player, message: MutableState<String>, isHuman: Boolean) {
-        val diceRoll = Random.nextInt(1, 7) + Random.nextInt(1, 7)
-        message.value = "${player.name} rolled a $diceRoll!"
-        if (!isHuman) delay(2500L)
+        if (player.isEliminated(board)) return
 
-        movePlayer(board, player.id, diceRoll)
+        if (player.inJail) {
+            if (player.hasOutJailCard) {
+                player.hasOutJailCard = false
+                player.inJail = false
+                message.value = "${player.name} used a Get Out of Jail Free card!"
+            } else if (player.wantsToPayJailFee && player.totalMoney >= 50) {
+                player.totalMoney -= 50
+                player.inJail = false
+                message.value = "${player.name} paid $50 to get out of jail!"
+            } else {
+                val die1 = Random.nextInt(1, 7)
+                val die2 = Random.nextInt(1, 7)
+                message.value = "${player.name} rolled a $die1 and a $die2."
+                if (!isHuman) delay(2500L)
+
+                if (die1 == die2) {
+                    player.inJail = false
+                    message.value = "${player.name} rolled doubles and escaped jail!"
+                    movePlayer(board, player.id, die1 + die2)
+                } else {
+                    player.jailTurnCount += 1
+                    if (player.jailTurnCount >= 3) {
+                        player.totalMoney -= 50
+                        player.inJail = false
+                        message.value = "${player.name} failed 3 rolls and paid $50 to leave jail."
+                        movePlayer(board, player.id, die1 + die2)
+                    } else {
+                        message.value = "${player.name} did not roll doubles and remains in jail (Turn ${player.jailTurnCount}/3)."
+                        return
+                    }
+                }
+            }
+        } else {
+            val diceRoll = Random.nextInt(1, 7) + Random.nextInt(1, 7)
+            message.value = "${player.name} rolled a $diceRoll!"
+            if (!isHuman) delay(2500L)
+
+            movePlayer(board, player.id, diceRoll)
+        }
 
         val cell = board.getCellById(player.numCell)
         message.value = "${player.name} landed on ${cell?.getName(board)}."
@@ -274,5 +427,33 @@ object GameEngine {
         if (actionResult.isNotEmpty() && !isHuman) {
             delay(5000L)
         }
+    }
+
+    // lets a player manually try to get out of jail early, before ending turn
+    fun getOutOfJail(player: Player, message: MutableState<String>): Boolean {
+        return when {
+            player.hasOutJailCard -> {
+                player.hasOutJailCard = false
+                player.inJail = false
+                message.value = "${player.name} used a Get Out of Jail Free card!"
+                true
+            }
+            player.totalMoney >= 50 -> {
+                player.totalMoney -= 50
+                player.inJail = false
+                message.value = "${player.name} paid \$50 to get out of jail!"
+                true
+            }
+            else -> {
+                message.value = "${player.name} cannot get out of jail yet!"
+                false
+            }
+        }
+    }
+
+    fun bankruptToBank(player: Player, board: GameBoard, message: MutableState<String>) {
+        player.propertyIds.clear()
+        player.isBankrupt = true
+        message.value = "${player.name} was eliminated. All assets have been surrendered to the bank."
     }
 }
