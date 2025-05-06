@@ -311,18 +311,28 @@ object GameEngine {
         println(" - property owner = ${board.getPropertyOwner(property)?.name}")
         println(" - player = ${player.name}")
 
-        if (property.isMortgaged && board.getPropertyOwner(property) == player) {
-            val unmortgageCost = (property.price / 2) + ((property.price / 2) / 10)
-            println(" - unmortgageCost = $unmortgageCost")
-            println(" - player.totalMoney = ${player.totalMoney}")
+        val propertyOwner = board.getPropertyOwner(property)
 
-            if (player.totalMoney >= unmortgageCost) {
-                player.totalMoney -= unmortgageCost
-                property.isMortgaged = false
-                message.value = "${player.name} unmortgaged ${property.name} for $$unmortgageCost"
-            } else {
-                message.value = "${player.name} does not have enough money to unmortgage ${property.name}"
-            }
+        if (propertyOwner != player) {
+            message.value = "You don't own this property"
+            return
+        }
+
+        if (!property.isMortgaged) {
+            message.value = "${property.name} is not mortgaged"
+            return
+        }
+
+        val unmortgageCost = (property.price / 2) + ((property.price / 2) / 10)
+        println(" - unmortgageCost = $unmortgageCost")
+        println(" - player.totalMoney = ${player.totalMoney}")
+
+        if (player.totalMoney >= unmortgageCost) {
+            player.totalMoney -= unmortgageCost
+            property.isMortgaged = false
+            message.value = "${player.name} unmortgaged ${property.name} for $$unmortgageCost"
+        } else {
+            message.value = "${player.name} does not have enough money to unmortgage ${property.name}"
         }
     }
 
