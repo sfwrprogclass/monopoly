@@ -36,7 +36,7 @@ fun Layout(gameBoard: GameBoard, currentTurn: MutableState<Int>) {
             coroutineScope.launch {
                 scaffoldState.snackbarHostState.showSnackbar(msg)
             }
-            delay(2000)
+            delay(1000)
             message.value = ""
         }
     }
