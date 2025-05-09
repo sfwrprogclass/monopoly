@@ -256,6 +256,7 @@ class GameEngineTest {
         println("--------> Player '${player.name}' can not purchase '${property!!.name}' because he only has \$${player.totalMoney}.")
     }
 
+    //Maria backlog
     @Test
     fun `player can sell houses at half price and verify internal state`() {
         val engine = GameEngine
@@ -267,7 +268,7 @@ class GameEngineTest {
         if (blueProperties.size == 2) {
             player.propertyIds.addAll(blueProperties.map { it.id })
             blueProperties.forEach { it.ownerId = player.id }
-            blueProperties[0].numHouses = 2
+            blueProperties[0].numHouses = 3
             blueProperties[1].numHouses = 2
 
             val initialMoney = player.totalMoney
