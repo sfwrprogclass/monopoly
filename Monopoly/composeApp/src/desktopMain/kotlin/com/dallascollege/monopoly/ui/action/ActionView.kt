@@ -73,13 +73,14 @@ fun ActionView(
 
         when (selectedActionType) {
             ActionType.UPGRADE_TO_HOTEL -> {}
-            ActionType.BUY_HOUSE -> GameEngine.buyHouse(board, playerId, selectedPropertyId, parseInt(quantity), message)
-            ActionType.DOWNGRADE_TO_HOUSES -> {}
+            ActionType.BUY_HOUSE -> {
+                GameEngine.buyHouse(board, playerId, selectedPropertyId, parseInt(quantity), message)
+            }
+            ActionType.DOWNGRADE_TO_HOUSES -> {
+                GameEngine.downGradeToHouses(board, playerId, selectedPropertyId, parseInt(quantity), message)
+            }
             ActionType.SELL_HOUSE -> {}
-            ActionType.PAY_RENT -> {}
-            ActionType.PAY_BANK -> {}
-            ActionType.GO_TO_JAIL -> { GameEngine.getOutOfJailUsingCard(board, playerId, message)}
-            ActionType.GET_OUT_OF_JAIL -> {}
+            ActionType.GET_OUT_OF_JAIL -> { GameEngine.getOutOfJailUsingCard(board, playerId, message)}
             ActionType.MORTGAGE_PROPERTY -> selectedPropertyId?.let { propertyId ->
                 board.getPropertyById(propertyId)?.let { liveProperty ->
                     GameEngine.mortgageProperty(board, playerId, liveProperty.id)
@@ -92,11 +93,11 @@ fun ActionView(
             }
             ActionType.PURCHASE_PROPERTY -> GameEngine.purchaseProperty(board, playerId, message)
             ActionType.AUCTION_PROPERTY -> {
-                GameEngine.AuctionProperty(board, playerId, message)
+                GameEngine.auctionProperty(board, playerId, message)
             }
             ActionType.SURRENDER -> {}
-            ActionType.SKIP -> {}
             ActionType.FINISH_TURN -> GameEngine.finishTurn(board, currentTurn, message)
+            else -> {}
         }
     }
 

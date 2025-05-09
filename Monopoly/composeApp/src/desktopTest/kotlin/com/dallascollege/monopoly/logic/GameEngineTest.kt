@@ -202,7 +202,7 @@ class GameEngineTest {
 
         engine.landingAction(gameBoard, playerGoToJail.id)
         assertTrue(playerGoToJail.inJail)
-        assertEquals(23, playerGoToJail.numCell)
+        assertEquals(11, playerGoToJail.numCell)
         println("--------> The ${playerGoToJail.name} was sent to jail. In jail: ${playerGoToJail.inJail}, Position: ${playerGoToJail.numCell}")
     }
 
@@ -244,6 +244,7 @@ class GameEngineTest {
         println("--------> Player '${player.name}' can not purchase '${property!!.name}' because he only has \$${player.totalMoney}.")
     }
 
+
     // Maria backlog
     @Test
     fun `As a player, I roll again or go to jail when doubles are rolled`() {
@@ -263,9 +264,10 @@ class GameEngineTest {
         }
 
         assertTrue(player.inJail, "Player should be in jail after 3 doubles")
-        assertEquals(23, player.numCell, "Player should be on Jail cell (23)")
+        assertEquals(11, player.numCell, "Player should be on Jail cell (11)")
         assertEquals(0, player.consecutiveDoubles, "consecutiveDoubles should be reset after jail")
     }
+
     @Test
     fun `player uses get out of jail free card`() {
         player.inJail = true
@@ -308,6 +310,7 @@ class GameEngineTest {
         assertTrue(player.inJail)
         assertEquals("Player1 cannot get out of jail yet!", message.value)
     }
+
     @Test
     fun `player is eliminated when landing on income tax with insufficient funds`() {
         val brokePlayer = Player(
@@ -328,7 +331,6 @@ class GameEngineTest {
         assertTrue(brokePlayer.isBankrupt)
         assertEquals("${brokePlayer.name} was eliminated. All assets have been surrendered to the bank.", message.value)
     }
-
 
     // MARVELLOUS
     @Test
@@ -375,6 +377,36 @@ class GameEngineTest {
             // we force this to fail if property is not found
             assertTrue(false)
         }
+    }
+
+    // JENNY BACKLOG
+    @Test
+    fun `As a player, I can downgrade my hotels to 4 houses and recover half the cost`() {
+        player.numCell = 2
+
+        player.propertyIds = mutableListOf(1, 2)
+
+        val property1 = gameBoard.getPropertyById(1)
+        if (property1 != null)
+            property1.numHotels = 1
+
+        val property2 = gameBoard.getPropertyById(2)
+        if (property2 != null)
+            property2.numHouses = 4
+
+        GameEngine.downGradeToHouses(gameBoard, player.id, 1, 1)
+
+
+        if (property1 != null && property2 != null) {
+            assertEquals(0, property1.numHotels)
+            assertEquals(4, property1.numHouses)
+
+        } else {
+            // we force this to fail if properties are not found
+            assertTrue(false)
+        }
+        //we assume that player has $1500 and hotels for brown color cost $250 so we get $125 downgrading one hotel
+        assertEquals(1625, player.totalMoney)
     }
 }
 

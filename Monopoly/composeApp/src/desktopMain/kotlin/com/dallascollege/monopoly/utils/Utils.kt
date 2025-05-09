@@ -23,3 +23,14 @@ val HOUSE_PRICE_PER_COLOR: Map<PropertyColor, Int> = mapOf(
     PropertyColor.BROWN to 50,
     PropertyColor.RED to 150
 )
+
+val HOTEL_PRICE_PER_COLOR: Map<PropertyColor, Int> = mapOf(
+    PropertyColor.PINK to 500,
+    PropertyColor.ORANGE to 500,
+    PropertyColor.BLUE to 1000,
+    PropertyColor.LIGHT_BLUE to 250,
+    PropertyColor.GREEN to 1000,
+    PropertyColor.YELLOW to 750,
+    PropertyColor.BROWN to 250,
+    PropertyColor.RED to 750
+)

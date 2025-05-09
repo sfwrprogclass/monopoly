@@ -6,6 +6,7 @@ import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Player
 import kotlin.random.Random
 import androidx.compose.runtime.mutableStateOf
+import com.dallascollege.monopoly.utils.HOTEL_PRICE_PER_COLOR
 import com.dallascollege.monopoly.utils.HOUSE_PRICE_PER_COLOR
 import kotlinx.coroutines.delay // <-- added for delays
 
@@ -91,7 +92,7 @@ object GameEngine {
         player.totalMoney -= rentToPay
         owner.totalMoney += rentToPay
 
-        message.value = "${player.name} paid $$rentToPay to ${owner.name} for railroads   "
+        message.value = "${player.name} paid $$rentToPay to ${owner.name} for railroads"
         return "paid railroad rent"
     }
 
@@ -105,7 +106,7 @@ object GameEngine {
     fun goToJail(player: Player, message: MutableState<String> =  mutableStateOf("")): String {
         player.inJail = true
         player.jailTurnCount = 0
-        player.numCell = 23
+        player.numCell = 11
         message.value = "${player.name} was sent to jail!"
         return "jailed"
     }
@@ -196,7 +197,7 @@ object GameEngine {
         }
     }
 
-    fun AuctionProperty(board: GameBoard, playerId: Int, message: MutableState<String>) {
+    fun auctionProperty(board: GameBoard, playerId: Int, message: MutableState<String>) {
         // not yet completed
     }
 
@@ -242,7 +243,7 @@ object GameEngine {
         val property = board.getPropertyById(propertyId) ?: return ""
 
         // calculate estimated price
-        val housePrice = HOUSE_PRICE_PER_COLOR[landedProperty.color]
+        val housePrice = HOUSE_PRICE_PER_COLOR[property.color]
         val estimatedPrice = (housePrice ?: 0) * quantity
 
         if (property.color != landedProperty.color) {
@@ -282,6 +283,43 @@ object GameEngine {
             }
         }
         return "bought houses"
+    }
+
+    fun downGradeToHouses(
+        board: GameBoard,
+        playerId: Int,
+        propertyId: Int?,
+        quantity: Int,
+        message: MutableState<String> = mutableStateOf("")
+    ): String
+    {
+        if (propertyId == null) return ""
+        val player = board.getPlayerById(playerId) ?: return ""
+        val cell = board.getCellById(player.numCell) ?: return ""
+        val landedProperty = board.getPropertyById(cell.propertyId) ?: return ""
+
+        val property = board.getPropertyById(propertyId) ?: return ""
+
+        if (landedProperty.color != property.color){
+            message.value = "You can only downgrade a property that matches the color of the one you landed on"
+            return ""
+        }
+
+        if (property.numHotels < quantity){
+            message.value = "You have ${property.numHotels} hotels. " +
+                    "You can only downgrade up to the number of hotels currently on the property"
+            return ""
+        }
+
+        // calculate estimated price
+        val hotelPrice = HOTEL_PRICE_PER_COLOR[property.color]
+        val estimatedMoney = (hotelPrice ?: 0) * quantity / 2
+
+        property.numHotels -= quantity
+        property.numHouses += quantity * 4
+        player.totalMoney += estimatedMoney
+
+        return "downgrade hotels"
     }
 
     // testing lines to figure out why there's a unmortgage bug
@@ -346,6 +384,18 @@ object GameEngine {
         return player.hasAllPropertiesByColor(gameBoard, property.color)
     }
 
+    private fun canDowngradeTo4Houses(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
+        val player = gameBoard.getPlayerById(selectedPlayerId.value) ?: return false
+        val cell = gameBoard.getCellById(player.numCell) ?: return false
+
+        if (cell.isProperty() && !gameBoard.isPropertyOwned(cell.propertyId))
+            return false
+
+        val property = gameBoard.getPropertyById(cell.propertyId) ?: return false
+
+        return property.numHotels > 0 && !property.isMortgaged
+    }
+
     private fun canGetOutOfJail(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
         val player = gameBoard.getPlayerById(selectedPlayerId.value) ?: return false
         val cell = gameBoard.getCellById(player.numCell) ?: return false
@@ -358,6 +408,7 @@ object GameEngine {
             ActionType.PURCHASE_PROPERTY -> canPurchaseProperty(gameBoard, selectedPlayerId)
             ActionType.BUY_HOUSE -> canBuyHouse(gameBoard, selectedPlayerId)
             ActionType.GET_OUT_OF_JAIL -> canGetOutOfJail(gameBoard, selectedPlayerId)
+            ActionType.DOWNGRADE_TO_HOUSES -> canDowngradeTo4Houses(gameBoard, selectedPlayerId)
             else -> true
         }
     }

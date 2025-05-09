@@ -24,7 +24,7 @@ class Card(
 
         if (goToJail) {
             player.inJail
-            player.numCell = 23
+            player.numCell = 11
             return
         }
 

@@ -7,6 +7,4 @@ class Action(
    val description: String = "",
    val actionType: ActionType,
    var propertyId: Int = -1,
-   var money: Int = 0,
-   var quantity: Int = 0
 )

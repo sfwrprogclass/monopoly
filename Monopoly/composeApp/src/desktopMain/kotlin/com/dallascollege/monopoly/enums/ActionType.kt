@@ -14,7 +14,6 @@ enum class ActionType(val text: String) {
     UNMORTGAGE_PROPERTY("Unmortgage property"),
     SURRENDER("Surrender"),
     GET_OUT_OF_JAIL("Get out of jail"),
-    SKIP("Skip"),
     FINISH_TURN("Finish turn");
 
     override fun toString(): String {
