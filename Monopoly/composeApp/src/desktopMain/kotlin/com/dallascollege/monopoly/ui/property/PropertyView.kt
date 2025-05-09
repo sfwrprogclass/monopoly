@@ -20,8 +20,8 @@ fun PropertyView(property: Property) {
             Text(text = "💰 Price: \$${property.price}")
             Text(text = "📊 Base rent: \$${property.baseRent}")
             Text(text = "🎨 Color: ${property.color.name}")
-            Text(text = "Number of houses: ${property.numHouses}")
-            Text(text = "Number of hotels: ${property.numHotels}")
+            Text(text = "🏘️ Number of houses: ${property.numHouses}")
+            Text(text = "🏩 Number of hotels: ${property.numHotels}")
         }
     }
 }

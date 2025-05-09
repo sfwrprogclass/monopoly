@@ -70,7 +70,7 @@ object GameEngine {
         owner.totalMoney += rentToPay
 
         message.value = "${player.name} paid $$rentToPay to ${owner.name} for utilities"
-        return "paid utility rent"
+        return "paid utility rent 💸"
     }
 
     // As a player, I can collect the appropriate rent for railroads based on how many in the set I own.
@@ -91,7 +91,7 @@ object GameEngine {
         player.totalMoney -= rentToPay
         owner.totalMoney += rentToPay
 
-        message.value = "${player.name} paid $$rentToPay to ${owner.name} for railroads"
+        message.value = "${player.name} paid $$rentToPay to ${owner.name} for railroads   "
         return "paid railroad rent"
     }
 

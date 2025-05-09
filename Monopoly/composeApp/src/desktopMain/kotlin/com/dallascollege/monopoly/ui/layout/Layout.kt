@@ -1,7 +1,9 @@
 package com.dallascollege.monopoly.ui.layout
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -44,10 +46,24 @@ fun Layout(gameBoard: GameBoard, currentTurn: MutableState<Int>) {
         scaffoldState = scaffoldState,
         snackbarHost = {
             SnackbarHost(it) { data ->
-                Snackbar(
-                    snackbarData = data,
-                    modifier = Modifier.padding(8.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 150.dp), // separarlo del borde inferior
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Snackbar(
+                        snackbarData = data,
+                        modifier = Modifier
+                            .fillMaxWidth(0.4f) // o .fillMaxWidth(0.4f) si prefieres relativo
+                            .align(Alignment.CenterStart)
+                            .offset(x = 160.dp) // lo empuja a la derecha
+                            .background(Color(0xFF00FF00), shape = RoundedCornerShape(20.dp)) // ROSADO FOSFORESCENTE
+                            .padding(horizontal = 0.5.dp, vertical = 0.5.dp),
+                        contentColor = Color.White,
+                        elevation = 1.dp
+                    )
+                }
             }
         }
     ) {

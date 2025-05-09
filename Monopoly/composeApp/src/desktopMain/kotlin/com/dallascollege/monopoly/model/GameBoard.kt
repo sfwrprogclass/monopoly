@@ -601,21 +601,21 @@ class GameBoard(
             Card(
                 isChance = true,
                 advancedToGo = true,
-                message = "Advance to Go – Advance directly to Go. Collect \$200!"
+                message = "Advance to Go – Advance directly to Go. Collect \$200! 🤑"
             )
         )
         cardList.add(
             Card(
                 isChance = true,
                 amount = 200,
-                message = "Bank error in your favor – Receive \$200 from the bank"
+                message = "Bank error in your favor – Receive \$200 from the bank 💵"
             ),
         )
         cardList.add(
             Card(
                 isChance = true,
                 goToJail = true,
-                message = "Go to Jail – Go directly to Jail. Do not pass Go. Do not collect \$200"
+                message = "Go to Jail 🚨 – Go directly to Jail. Do not pass Go. Do not collect \$200"
             ),
         )
         cardList.add(
@@ -623,14 +623,14 @@ class GameBoard(
                 isChance = true,
                 isPayment = true,
                 amount = 150,
-                message = "Pay school fees – Pay \$150"
+                message = "Pay school fees 🏫 – Pay \$150"
             ),
         )
         cardList.add(
             Card(
                 isChance = true,
                 amount = 150,
-                message = "Your building loan matures – Receive \$150"
+                message = "Your building loan matures – Receive \$150 💵"
             ),
         )
         cardList.add(
@@ -645,14 +645,14 @@ class GameBoard(
             Card(
                 isChance = true,
                 back3Cells = true,
-                message = "Go back 3 cells"
+                message = "Go back 3 cells ➡️➡️➡️"
             ),
         )
         cardList.add(
             Card(
                 isChance = true,
                 getOutOfJail = true,
-                message = "Get Out of Jail Free! This card can be used to get out of Jail at any time without paying the fine or rolling for doubles"
+                message = "Get Out of Jail Free!  This card can be used to get out of Jail at any time without paying the fine or rolling for doubles"
             ),
         )
 
@@ -661,50 +661,50 @@ class GameBoard(
             Card(
                 isPayment = true,
                 amount = 50,
-                message = "Doctor’s fees – Pay \$50"
+                message = "Doctor’s fees 👨🏻‍⚕️ – Pay \$50"
             ),
         )
         cardList.add(
             Card(
                 amount = 100,
-                message = "You inherit \$100 – Receive \$100"
+                message = "You inherit \$100 – Receive \$100 💵"
             ),
         )
         cardList.add(
             Card(
                 amount = 100,
-                message = "Life insurance matures – Receive \$100"
+                message = "Life insurance matures – Receive \$100 💵"
             ),
         )
         cardList.add(
             Card(
                 isPayment = true,
                 amount = 100,
-                message = "Pay hospital fees – Pay \$100"
+                message = "Pay hospital fees 🏥 – Pay \$100 💸"
             ),
         )
         cardList.add(
             Card(
                 amount = 25,
-                message = "Receive for services – Collect \$25"
+                message = "Receive for services – Collect \$25 💵"
             ),
         )
         cardList.add(
             Card(
                 amount = 10,
-                message = "You won second prize in a beauty contest – Collect \$10"
+                message = "You won second prize in a beauty contest – Collect \$10 💵"
             ),
         )
         cardList.add(
             Card(
                 amount = 50,
-                message = "From sale of stock you get \$50 – Receive \$50 from stock sale"
+                message = "From sale of stock you get \$50 – Receive \$50 from stock sale 💵"
             ),
         )
         cardList.add(
             Card(
                 amount = 100,
-                message = "Holiday fund matures – Receive \$100"
+                message = "Holiday fund matures – Receive \$100 💵"
             ),
         )
 
