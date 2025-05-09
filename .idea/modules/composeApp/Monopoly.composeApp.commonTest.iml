@@ -2,7 +2,7 @@
 <module external.linked.project.id=":composeApp:commonTest" external.linked.project.path="$MODULE_DIR$/../../../Monopoly/composeApp" external.root.project.path="$MODULE_DIR$/../../../Monopoly" external.system.id="GRADLE" external.system.module.group="Monopoly" external.system.module.type="sourceSet" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet external-system-id="GRADLE" type="kotlin-language" name="Kotlin">
-      <configuration version="5" platform="JVM 17" allPlatforms="JVM [17]" useProjectSettings="false" isTestModule="true" externalProjectId=":composeApp" isHmppProject="true">
+      <configuration version="5" platform="JVM 22" allPlatforms="JVM [22]" useProjectSettings="false" isTestModule="true" externalProjectId=":composeApp" isHmppProject="true">
         <additionalVisibleModuleNames>
           <friend>:composeApp:desktopMain</friend>
           <friend>:composeApp:commonMain</friend>
@@ -17,7 +17,7 @@
             <flagArg name="multiPlatform" arg="true" />
           </flagArguments>
           <stringArguments>
-            <stringArg name="jvmTarget" arg="17" />
+            <stringArg name="jvmTarget" arg="22" />
             <stringArg name="apiVersion" arg="2.1" />
             <stringArg name="languageVersion" arg="2.1" />
           </stringArguments>

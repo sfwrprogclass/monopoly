@@ -285,21 +285,65 @@ object GameEngine {
     }
 
     // testing lines to figure out why there's a unmortgage bug
-    fun mortgageProperty(board: GameBoard, playerId: Int, propertyId: Int) {
+    fun mortgageProperty(board: GameBoard, playerId: Int, propertyId: Int, message: MutableState<String>) {
         val player = board.getPlayerById(playerId) ?: return
         val property = board.getPropertyById(propertyId) ?: return
 
         println("Attempting to mortgage property: ${property.name}")
         println("Before mortgaging: property.isMortgaged = ${property.isMortgaged}")
+        println(" - player.id = ${player.id}")
+        println(" - property.id = ${property.id}")
+        println(" - player.totalMoney before addition = ${player.totalMoney}")
 
-        if (board.getPropertyOwner(property) != player) return
-        if (property.isMortgaged) return
-        if (property.numHouses > 0 || property.numHotels > 0) return
+        if (board.getPropertyOwner(property) != player) {
+            message.value = "You don't own this property"
+            return
+        }
+        if (property.isMortgaged) {
+            message.value = "${property.name} is already mortgaged"
+            return
+        }
+        if (property.numHouses > 0 || property.numHotels > 0) {
+            message.value = "You must sell all houses and hotels before mortgaging ${property.name}"
+            return
+        }
 
+        // Calculate mortgage value
+        val mortgageValue = property.price / 2
+        println(" - mortgageValue = $mortgageValue")
+
+        // Store the player's money before addition for verification
+        val moneyBeforeAddition = player.totalMoney
+
+        // Explicitly add the mortgage value to the player's money
+        val newMoney = player.totalMoney + mortgageValue
+        player.totalMoney = newMoney
+
+        // Verify the addition
+        val moneyAfterAddition = player.totalMoney
+        val actualAddition = moneyAfterAddition - moneyBeforeAddition
+
+        println(" - player.totalMoney after addition = ${player.totalMoney}")
+        println(" - actual addition = $actualAddition (should be $mortgageValue)")
+        println(" - newMoney = $newMoney")
+
+        // Double-check that the money was actually added
+        if (player.totalMoney != newMoney) {
+            println(" - WARNING: player.totalMoney (${player.totalMoney}) does not match newMoney ($newMoney)!")
+            // Force the addition again
+            player.totalMoney = newMoney
+            println(" - Forced player.totalMoney to $newMoney")
+        }
+
+        // Mortgage the property
         property.isMortgaged = true
-        player.totalMoney += property.price / 2
 
-        println("After mortgaging: property.isMortgaged = ${property.isMortgaged}")
+        // Set success message
+        message.value = "${player.name} mortgaged ${property.name} for $$mortgageValue"
+
+        // Final verification
+        println(" - Final player.totalMoney = ${player.totalMoney}")
+        println(" - Final property.isMortgaged = ${property.isMortgaged}")
     }
 
     fun unmortgageProperty(board: GameBoard, playerId: Int, propertyId: Int, message: MutableState<String>) {
@@ -310,6 +354,8 @@ object GameEngine {
         println(" - property.isMortgaged = ${property.isMortgaged}")
         println(" - property owner = ${board.getPropertyOwner(property)?.name}")
         println(" - player = ${player.name}")
+        println(" - player.id = ${player.id}")
+        println(" - property.id = ${property.id}")
 
         val propertyOwner = board.getPropertyOwner(property)
 
@@ -323,14 +369,48 @@ object GameEngine {
             return
         }
 
-        val unmortgageCost = (property.price / 2) + ((property.price / 2) / 10)
+        // Calculate unmortgage cost: mortgage value (half the property price) plus 10% interest
+        val mortgageValue = property.price / 2
+        val interest = mortgageValue / 10
+        val unmortgageCost = mortgageValue + interest
+
+        println(" - mortgageValue = $mortgageValue")
+        println(" - interest = $interest")
         println(" - unmortgageCost = $unmortgageCost")
-        println(" - player.totalMoney = ${player.totalMoney}")
+        println(" - player.totalMoney before deduction = ${player.totalMoney}")
 
         if (player.totalMoney >= unmortgageCost) {
-            player.totalMoney -= unmortgageCost
+            // Store the player's money before deduction for verification
+            val moneyBeforeDeduction = player.totalMoney
+
+            // Explicitly deduct the unmortgage cost from the player's money
+            val newMoney = player.totalMoney - unmortgageCost
+            player.totalMoney = newMoney
+
+            // Verify the deduction
+            val moneyAfterDeduction = player.totalMoney
+            val actualDeduction = moneyBeforeDeduction - moneyAfterDeduction
+
+            println(" - player.totalMoney after deduction = ${player.totalMoney}")
+            println(" - actual deduction = $actualDeduction (should be $unmortgageCost)")
+            println(" - newMoney = $newMoney")
+
+            // Double-check that the money was actually deducted
+            if (player.totalMoney != newMoney) {
+                println(" - WARNING: player.totalMoney (${player.totalMoney}) does not match newMoney ($newMoney)!")
+                // Force the deduction again
+                player.totalMoney = newMoney
+                println(" - Forced player.totalMoney to $newMoney")
+            }
+
+            // Unmortgage the property
             property.isMortgaged = false
+
             message.value = "${player.name} unmortgaged ${property.name} for $$unmortgageCost"
+
+            // Final verification
+            println(" - Final player.totalMoney = ${player.totalMoney}")
+            println(" - Final property.isMortgaged = ${property.isMortgaged}")
         } else {
             message.value = "${player.name} does not have enough money to unmortgage ${property.name}"
         }
@@ -363,11 +443,40 @@ object GameEngine {
         return cell.isVisitingJail && player.hasOutJailCard
     }
 
+    private fun canMortgageProperty(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
+        val player = gameBoard.getPlayerById(selectedPlayerId.value) ?: return false
+
+        // Check if player owns any properties that can be mortgaged
+        return player.propertyIds.any { propertyId ->
+            val property = gameBoard.getPropertyById(propertyId) ?: return@any false
+            property.isMortgageable() && gameBoard.getPropertyOwner(property) == player
+        }
+    }
+
+    private fun canUnmortgageProperty(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
+        val player = gameBoard.getPlayerById(selectedPlayerId.value) ?: return false
+
+        // Check if player owns any mortgaged properties and has enough money to unmortgage at least one
+        return player.propertyIds.any { propertyId ->
+            val property = gameBoard.getPropertyById(propertyId) ?: return@any false
+            if (!property.isMortgaged || gameBoard.getPropertyOwner(property) != player) return@any false
+
+            // Calculate unmortgage cost
+            val mortgageValue = property.price / 2
+            val interest = mortgageValue / 10
+            val unmortgageCost = mortgageValue + interest
+
+            player.totalMoney >= unmortgageCost
+        }
+    }
+
     fun canPerformAction(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>, actionType: ActionType): Boolean {
         return when (actionType) {
             ActionType.PURCHASE_PROPERTY -> canPurchaseProperty(gameBoard, selectedPlayerId)
             ActionType.BUY_HOUSE -> canBuyHouse(gameBoard, selectedPlayerId)
             ActionType.GET_OUT_OF_JAIL -> canGetOutOfJail(gameBoard, selectedPlayerId)
+            ActionType.MORTGAGE_PROPERTY -> canMortgageProperty(gameBoard, selectedPlayerId)
+            ActionType.UNMORTGAGE_PROPERTY -> canUnmortgageProperty(gameBoard, selectedPlayerId)
             else -> true
         }
     }

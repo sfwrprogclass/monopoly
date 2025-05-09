@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.sp
 import com.dallascollege.monopoly.enums.ActionType
 import com.dallascollege.monopoly.logic.GameEngine
 import com.dallascollege.monopoly.model.GameBoard
+import com.dallascollege.monopoly.model.Player
 import com.dallascollege.monopoly.model.Property
 import com.dallascollege.monopoly.ui.property.PropertyDropDownMenu
 import kotlinx.coroutines.launch // <-- added for coroutine launching
@@ -82,7 +83,7 @@ fun ActionView(
             ActionType.GET_OUT_OF_JAIL -> {}
             ActionType.MORTGAGE_PROPERTY -> selectedPropertyId?.let { propertyId ->
                 board.getPropertyById(propertyId)?.let { liveProperty ->
-                    GameEngine.mortgageProperty(board, playerId, liveProperty.id)
+                    GameEngine.mortgageProperty(board, playerId, liveProperty.id, message)
                 }
             } //TESTING
             ActionType.UNMORTGAGE_PROPERTY -> selectedPropertyId?.let { propertyId ->
@@ -155,7 +156,40 @@ fun ActionView(
         ) {
             Text("Select property")
             if (player != null) {
-                PropertyDropDownMenu(player, board, isSelectedPropertyEnabled && !isReadOnly) { property ->
+                // Filter properties based on action type
+                val filteredPlayer = when (selectedActionType) {
+                    ActionType.UNMORTGAGE_PROPERTY -> {
+                        // Create a new player with only mortgaged properties
+                        val mortgagedPropertyIds = player.propertyIds.filter { propertyId ->
+                            val property = board.getPropertyById(propertyId)
+                            property?.isMortgaged == true
+                        }
+                        Player(
+                            id = player.id,
+                            name = player.name,
+                            token = player.token,
+                            propertyIds = mortgagedPropertyIds.toMutableList(),
+                            totalMoney = player.totalMoney
+                        )
+                    }
+                    ActionType.MORTGAGE_PROPERTY -> {
+                        // Create a new player with only mortgageable properties
+                        val mortgageablePropertyIds = player.propertyIds.filter { propertyId ->
+                            val property = board.getPropertyById(propertyId)
+                            property?.isMortgageable() == true
+                        }
+                        Player(
+                            id = player.id,
+                            name = player.name,
+                            token = player.token,
+                            propertyIds = mortgageablePropertyIds.toMutableList(),
+                            totalMoney = player.totalMoney
+                        )
+                    }
+                    else -> player
+                }
+
+                PropertyDropDownMenu(filteredPlayer, board, isSelectedPropertyEnabled && !isReadOnly) { property ->
                     handlePropertyChange(property)
                 }
             }

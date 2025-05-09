@@ -26,7 +26,7 @@ fun PropertyDropDownMenu(
 ) {
     val properties = player.getProperties(board)
     var expanded by remember { mutableStateOf(false) }
-    var selectedPropertyId by remember { mutableStateOf(properties?.getOrNull(0)?.id) }
+    var selectedPropertyId by remember { mutableStateOf(properties.firstOrNull()?.id) }
 
     fun handleClick(property: Property) {
         selectedPropertyId = property.id
@@ -60,7 +60,7 @@ fun PropertyDropDownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            properties?.forEach { property ->
+            properties.forEach { property ->
                 DropdownMenuItem(
                     content = { Text(property.name) },
                     modifier = Modifier.background(

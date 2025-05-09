@@ -23,6 +23,9 @@ fun ActionTypeDropDownMenu(gameBoard: GameBoard, selectedPlayerId: MutableState<
     var selectedActionType by remember { mutableStateOf(ActionType.FINISH_TURN)}
     val excludedActionTypes = listOf( ActionType.PAY_RENT, ActionType.PAY_BANK, ActionType.GO_TO_JAIL)
 
+    // Force recomposition when expanded changes
+    var recomposeKey by remember { mutableStateOf(0) }
+
     fun handleClick(actionType: ActionType) {
         selectedActionType = actionType
         expanded = false
@@ -34,7 +37,11 @@ fun ActionTypeDropDownMenu(gameBoard: GameBoard, selectedPlayerId: MutableState<
             modifier = Modifier
                 .padding(5.dp, 5.dp, 5.dp, 5.dp),
             shape = RoundedCornerShape(2.dp),
-            onClick = { expanded = true },
+            onClick = { 
+                // Increment recomposeKey to force recomposition
+                recomposeKey++
+                expanded = true 
+            },
             enabled = !isReadOnly
         ) {
             Text(
@@ -52,16 +59,19 @@ fun ActionTypeDropDownMenu(gameBoard: GameBoard, selectedPlayerId: MutableState<
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            ActionType.entries
-                .filter {it !in excludedActionTypes}
-                .forEach({
-                    DropdownMenuItem(
-                        enabled = GameEngine.canPerformAction(gameBoard, selectedPlayerId, it), //
-                        content = { Text(it.text) },
-                        modifier = Modifier.background(if (it == selectedActionType) selectedColor else unselectedColor),
-                        onClick = { handleClick(it) }
-                    )
-                })
+            // Use recomposeKey to force recomposition
+            key(recomposeKey) {
+                ActionType.entries
+                    .filter {it !in excludedActionTypes}
+                    .forEach({
+                        DropdownMenuItem(
+                            enabled = GameEngine.canPerformAction(gameBoard, selectedPlayerId, it), //
+                            content = { Text(it.text) },
+                            modifier = Modifier.background(if (it == selectedActionType) selectedColor else unselectedColor),
+                            onClick = { handleClick(it) }
+                        )
+                    })
+            }
         }
     }
 }
