@@ -500,20 +500,14 @@ object GameEngine {
         val propertiesSorted = colorProperties.sortedByDescending { it.numHouses }
         println("propertiesSorted (initial houses): ${propertiesSorted.joinToString { "${it.name} (${it.numHouses})" }}")
 
+        // Revised sellableHouses calculation
         var sellableHouses = 0
-        var tempState = propertiesSorted.map { it.numHouses }.toMutableList()
-
-        while (true) {
-            val maxIndex = tempState.indexOf(tempState.maxOrNull() ?: 0)
-            val min = tempState.minOrNull() ?: 0
-            val max = tempState[maxIndex]
-
-            if (max - min <= 0) break
-            tempState[maxIndex] -= 1
-            sellableHouses += 1
-            if (sellableHouses == numHousesToSell) break
-        }
-        println("sellableHouses: $sellableHouses")
+        val initialHouseCounts = propertiesSorted.map { it.numHouses }
+        val numProperties = initialHouseCounts.size
+        val targetAverage = (initialHouseCounts.sum() - numHousesToSell).toFloat() / numProperties
+        val floorTarget = targetAverage.toInt()
+        sellableHouses = initialHouseCounts.count { it > floorTarget }
+        println("sellableHouses (revised): $sellableHouses")
 
         if (sellableHouses < numHousesToSell) {
             message.value = "${player.name} cannot sell $numHousesToSell house(s) while keeping even distribution."
