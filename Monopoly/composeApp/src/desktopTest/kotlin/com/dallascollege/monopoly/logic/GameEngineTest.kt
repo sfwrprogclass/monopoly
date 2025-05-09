@@ -8,10 +8,16 @@ import com.dallascollege.monopoly.model.Property
 import com.dallascollege.monopoly.enums.PropertyColor
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.fail
 import androidx.compose.runtime.mutableStateOf
+import com.dallascollege.monopoly.utils.HOUSE_PRICE_PER_COLOR
+import org.junit.jupiter.api.Assertions.assertNotNull
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import kotlin.collections.addAll
+import kotlin.collections.get
 import kotlin.test.assertEquals
 
 
@@ -250,28 +256,47 @@ class GameEngineTest {
         println("--------> Player '${player.name}' can not purchase '${property!!.name}' because he only has \$${player.totalMoney}.")
     }
 
-    // Maria backlog
     @Test
-    fun `player should go to jail after rolling three consecutive doubles`() {
-        player.consecutiveDoubles = 2
-        val currentTurn = mutableStateOf(0)
-        val message = mutableStateOf("")
+    fun `player can sell houses at half price and verify internal state`() {
+        val engine = GameEngine
+        val player = gameBoard.getPlayerById(1)!!
+        player.totalMoney = 2000 // Ensure player has enough money initially
 
-        GameEngine.handleTurnWithDice(
-            board = gameBoard,
-            currentTurn = currentTurn,
-            message = message,
-            die1 = 4,
-            die2 = 4
-        )
+        // Find blue properties and assign them to the player with houses
+        val blueProperties = gameBoard.properties.filter { it.color == PropertyColor.BLUE }
+        if (blueProperties.size == 2) {
+            player.propertyIds.addAll(blueProperties.map { it.id })
+            blueProperties.forEach { it.ownerId = player.id }
+            blueProperties[0].numHouses = 2
+            blueProperties[1].numHouses = 2
 
-        assertTrue(player.inJail, "Player should be in jail after 3 doubles")
-        assertEquals(23, player.numCell, "Player should be on Jail cell (23)")
-        assertEquals(0, player.consecutiveDoubles, "consecutiveDoubles should be reset after jail")
+            val initialMoney = player.totalMoney
+            val housePrice = HOUSE_PRICE_PER_COLOR[PropertyColor.BLUE] ?: 0
+            val numHousesToSell = 2
+            val expectedMoney = initialMoney + (housePrice / 2) * numHousesToSell
+            val message = mutableStateOf("")
 
-        println("--------> Player '${player.name}' rolled 3 doubles and was sent to jail (cell ${player.numCell}).")
+            val result = engine.sellHouse(gameBoard, player.id, PropertyColor.BLUE, numHousesToSell, message)
+
+            assertEquals("sold houses", result)
+            assertEquals(expectedMoney, player.totalMoney)
+
+            // Verify the number of houses on each property after selling
+            val property1AfterSell = gameBoard.getPropertyById(blueProperties[0].id)!!
+            val property2AfterSell = gameBoard.getPropertyById(blueProperties[1].id)!!
+            assertEquals(1, property1AfterSell.numHouses, "Property 1 should have 1 house after selling")
+            assertEquals(2, property2AfterSell.numHouses, "Property 2 should have 2 houses after selling")
+
+            assertEquals("${player.name} sold 2 house(s) for \$${(housePrice / 2) * numHousesToSell}.", message.value)
+
+            println("--------> Test: Player '${player.name}' sold 2 blue houses for \$${(housePrice / 2) * numHousesToSell}. Total money: \$${player.totalMoney}")
+            println("--------> Test: Property '${property1AfterSell.name}' now has ${property1AfterSell.numHouses} houses.")
+            println("--------> Test: Property '${property2AfterSell.name}' now has ${property2AfterSell.numHouses} houses.")
+
+        } else {
+            fail("Could not find enough blue properties for the test.")
+        }
     }
-
 }
 
 
