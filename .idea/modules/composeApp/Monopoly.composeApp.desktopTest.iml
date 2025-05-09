@@ -68,6 +68,7 @@
     <content url="file://$MODULE_DIR$/../../../Monopoly/composeApp/build/generated/compose/resourceGenerator/assembledResources/desktopTest">
       <sourceFolder url="file://$MODULE_DIR$/../../../Monopoly/composeApp/build/generated/compose/resourceGenerator/assembledResources/desktopTest" type="java-test-resource" />
     </content>
+    <content url="file://$MODULE_DIR$/../../../Monopoly/composeApp/build/generated/compose/resourceGenerator/assembledResources/desktopTest" />
     <content url="file://$MODULE_DIR$/../../../Monopoly/composeApp/src/desktopTest">
       <sourceFolder url="file://$MODULE_DIR$/../../../Monopoly/composeApp/src/desktopTest/kotlin" isTestSource="true" />
     </content>
