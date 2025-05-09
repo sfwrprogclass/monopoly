@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.dallascollege.monopoly.ui.dashboard
 
 import androidx.compose.foundation.Image

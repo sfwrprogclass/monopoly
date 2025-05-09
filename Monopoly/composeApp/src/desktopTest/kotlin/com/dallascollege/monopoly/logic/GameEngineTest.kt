@@ -376,5 +376,42 @@ class GameEngineTest {
             assertTrue(false)
         }
     }
-}
 
+    @Test
+    fun `player can unmortgage property when they have enough money`() {
+        // Setup
+        val property = Property(id = 1, name = "Test Property", baseRent = 50, price = 100, color = PropertyColor.BLUE, isMortgaged = true)
+        player.propertyIds = mutableListOf(1)
+        player.totalMoney = 1500
+        gameBoard.properties = arrayOf(property)
+
+        val message = mutableStateOf("")
+
+        // Execute
+        GameEngine.unmortgageProperty(gameBoard, player.id, property.id, message)
+
+        // Verify
+        assertFalse(property.isMortgaged, "Property should be unmortgaged")
+        assertEquals(1445, player.totalMoney, "Player should pay unmortgage cost (50 + 5 = 55)")
+        assertEquals("Player1 unmortgaged Test Property for $55", message.value)
+    }
+
+    @Test
+    fun `player cannot unmortgage property when they don't have enough money`() {
+        // Setup
+        val property = Property(id = 1, name = "Test Property", baseRent = 50, price = 100, color = PropertyColor.BLUE, isMortgaged = true)
+        player.propertyIds = mutableListOf(1)
+        player.totalMoney = 40 // Not enough to pay the unmortgage cost of 55
+        gameBoard.properties = arrayOf(property)
+
+        val message = mutableStateOf("")
+
+        // Execute
+        GameEngine.unmortgageProperty(gameBoard, player.id, property.id, message)
+
+        // Verify
+        assertTrue(property.isMortgaged, "Property should remain mortgaged")
+        assertEquals(40, player.totalMoney, "Player's money should not change")
+        assertEquals("Player1 does not have enough money to unmortgage Test Property", message.value)
+    }
+}
