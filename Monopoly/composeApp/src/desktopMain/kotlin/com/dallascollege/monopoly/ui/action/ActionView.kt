@@ -11,6 +11,7 @@ import com.dallascollege.monopoly.enums.ActionType
 import com.dallascollege.monopoly.logic.GameEngine
 import com.dallascollege.monopoly.model.GameBoard
 import com.dallascollege.monopoly.model.Property
+import com.dallascollege.monopoly.enums.PropertyColor
 import com.dallascollege.monopoly.ui.property.PropertyDropDownMenu
 import kotlinx.coroutines.launch // <-- added for coroutine launching
 import java.lang.Integer.parseInt
@@ -79,7 +80,14 @@ fun ActionView(
             ActionType.DOWNGRADE_TO_HOUSES -> {
                 GameEngine.downGradeToHouses(board, playerId, selectedPropertyId, parseInt(quantity), message)
             }
-            ActionType.SELL_HOUSE -> {}
+            ActionType.SELL_HOUSE -> {// Need to get the Property object to access its color
+                selectedPropertyId?.let { propertyId ->
+                    board.getPropertyById(propertyId)?.let { property ->
+                        GameEngine.sellHouse(board, playerId, property.color, parseInt(quantity), message)
+
+                    }
+                }
+            }
             ActionType.GET_OUT_OF_JAIL -> { GameEngine.getOutOfJailUsingCard(board, playerId, message)}
             ActionType.MORTGAGE_PROPERTY -> selectedPropertyId?.let { propertyId ->
                 board.getPropertyById(propertyId)?.let { liveProperty ->

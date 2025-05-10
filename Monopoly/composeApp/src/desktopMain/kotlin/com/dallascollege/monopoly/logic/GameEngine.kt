@@ -8,6 +8,7 @@ import kotlin.random.Random
 import androidx.compose.runtime.mutableStateOf
 import com.dallascollege.monopoly.utils.HOTEL_PRICE_PER_COLOR
 import com.dallascollege.monopoly.utils.HOUSE_PRICE_PER_COLOR
+import com.dallascollege.monopoly.enums.PropertyColor
 import kotlinx.coroutines.delay // <-- added for delays
 
 // Singleton (Static Class) with static methods for the different actions to be executed
@@ -507,4 +508,87 @@ object GameEngine {
         player.isBankrupt = true
         message.value = "${player.name} was eliminated. All assets have been surrendered to the bank."
     }
+
+    // player can sell houses at half price
+    fun sellHouse(
+        board: GameBoard,
+        playerId: Int,
+        propertyColor: PropertyColor,
+        numHousesToSell: Int,
+        message: MutableState<String> = mutableStateOf("")
+    ): String {
+        println("sellHouse called for playerId: $playerId, color: $propertyColor, numHousesToSell: $numHousesToSell")
+
+        val player = board.getPlayerById(playerId)
+        println("Player found: $player")
+        player ?: return ""
+        println("Player is not null")
+
+        if (numHousesToSell <= 0) {
+            message.value = "You must sell at least one house."
+            println("Exiting: numHousesToSell <= 0")
+            return ""
+        }
+        println("numHousesToSell > 0")
+
+        val colorProperties = player.getPropertiesByColor(board, propertyColor)
+        println("colorProperties: ${colorProperties.joinToString { it.name }}")
+
+        if (colorProperties.isEmpty() || !player.hasAllPropertiesByColor(board, propertyColor)) {
+            message.value = "${player.name} does not own the full ${propertyColor} set."
+            println("Exiting: Not full color set")
+            return ""
+        }
+        println("Owns full color set")
+
+        if (colorProperties.any { it.isMortgaged }) {
+            message.value = "You cannot sell houses while any property in the set is mortgaged."
+            println("Exiting: Property is mortgaged")
+            return ""
+        }
+        println("No properties are mortgaged")
+
+        val propertiesSorted = colorProperties.sortedByDescending { it.numHouses }
+        println("propertiesSorted (initial houses): ${propertiesSorted.joinToString { "${it.name} (${it.numHouses})" }}")
+
+        // Revised sellableHouses calculation
+        var sellableHouses = 0
+        val initialHouseCounts = propertiesSorted.map { it.numHouses }
+        val numProperties = initialHouseCounts.size
+        val targetAverage = (initialHouseCounts.sum() - numHousesToSell).toFloat() / numProperties
+        val floorTarget = targetAverage.toInt()
+        sellableHouses = initialHouseCounts.count { it > floorTarget }
+        println("sellableHouses (revised): $sellableHouses")
+
+        if (sellableHouses < numHousesToSell) {
+            message.value = "${player.name} cannot sell $numHousesToSell house(s) while keeping even distribution."
+            println("Exiting: Cannot sell due to even distribution")
+            return ""
+        }
+        println("Can sell while maintaining even distribution")
+
+        var housesLeftToSell = numHousesToSell
+        while (housesLeftToSell > 0) {
+            val maxHouses = propertiesSorted.maxOf { it.numHouses }
+            val candidates = propertiesSorted.filter { it.numHouses == maxHouses }
+
+            for (property in candidates) {
+                if (housesLeftToSell == 0) break
+                property.numHouses -= 1
+                housesLeftToSell -= 1
+            }
+        }
+        println("Houses sold and counts updated: ${propertiesSorted.joinToString { "${it.name} (${it.numHouses})" }}")
+
+        val housePrice = HOUSE_PRICE_PER_COLOR[propertyColor] ?: 0
+        val totalEarned = (housePrice / 2) * numHousesToSell
+        player.totalMoney += totalEarned
+        message.value = "${player.name} sold $numHousesToSell house(s) for \$$totalEarned."
+        println("Money updated for player: ${player.name}, new total: ${player.totalMoney}")
+
+        println("Returning: sold houses")
+        return "sold houses"
+    }
+
+
 }

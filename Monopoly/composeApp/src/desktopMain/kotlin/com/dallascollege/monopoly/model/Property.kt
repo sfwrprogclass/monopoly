@@ -13,7 +13,8 @@ class Property(
     var isRailRoad: Boolean = false,
     var numHouses: Int = 0,
     var numHotels: Int = 0,
-    var isMortgaged: Boolean = false
+    var isMortgaged: Boolean = false,
+    var ownerId: Int? = null
 ) {
 
     fun isMortgageable(): Boolean {
