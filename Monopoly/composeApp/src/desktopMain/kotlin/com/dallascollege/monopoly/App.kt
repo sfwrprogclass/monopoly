@@ -29,10 +29,16 @@ fun App() {
     val currentTurn = remember { mutableStateOf(0) }
     var showStartingMoneyScreen by remember { mutableStateOf(false) }
     var automatedPlayersEnabled by remember { mutableStateOf(false) }
+    var freeParkingRuleMode by remember { mutableStateOf(false) }
 
     when {
         showMenu -> {
-            MenuScreen { showMenu = false }
+            MenuScreen(
+                onPlayClicked = {
+                    freeParkingRule ->
+                    freeParkingRuleMode = freeParkingRule
+                    showMenu = false
+                })
         }
         playerCount == null -> {
             PlayerSelectionScreen { count, automatedEnabled ->
@@ -104,7 +110,11 @@ fun App() {
                 player.name = "Player ${index + 1}"
             }
 
-            val gameBoard = GameBoard(players.toTypedArray())
+            val gameBoard = GameBoard(
+                players = players.toTypedArray(),
+                freeParkingRule = freeParkingRuleMode
+            )
+
             gameBoard.createModels()
             gameBoard.turnOrder = players.map { it.id }.toTypedArray()
             gameBoard.currentTurn = currentTurn.value

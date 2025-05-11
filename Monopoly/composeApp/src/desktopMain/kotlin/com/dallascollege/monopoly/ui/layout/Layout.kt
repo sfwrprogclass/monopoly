@@ -49,16 +49,16 @@ fun Layout(gameBoard: GameBoard, currentTurn: MutableState<Int>) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 150.dp), // separarlo del borde inferior
+                        .padding(bottom = 150.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
                     Snackbar(
                         snackbarData = data,
                         modifier = Modifier
-                            .fillMaxWidth(0.4f) // o .fillMaxWidth(0.4f) si prefieres relativo
+                            .fillMaxWidth(0.4f)
                             .align(Alignment.CenterStart)
-                            .offset(x = 160.dp) // lo empuja a la derecha
-                            .background(Color(0xFF00FF00), shape = RoundedCornerShape(20.dp)) // ROSADO FOSFORESCENTE
+                            .offset(x = 160.dp)
+                            .background(Color(0xFF00FF00), shape = RoundedCornerShape(20.dp))
                             .padding(horizontal = 0.5.dp, vertical = 0.5.dp),
                         contentColor = Color.White,
                         elevation = 1.dp

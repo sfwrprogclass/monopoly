@@ -443,5 +443,30 @@ class GameEngineTest {
         assertEquals(1525, player.totalMoney)
     }
 
+    // JENNY
+    @Test
+    fun `As a player, I can opt to play with the Free Parking house rule and landing in parking player earns money`() {
+        gameBoard.freeParkingRule = true
+        gameBoard.centralMoney += 200
+
+        player.numCell = 21 // Free parking cell
+        GameEngine.landingAction(gameBoard, player.id)
+
+        //we assume that player has $1500
+        assertEquals(1700, player.totalMoney)
+    }
+
+    @Test
+    fun `As a player, I can opt to play with the Free Parking house rule and landing in income tax money goes to center`() {
+        gameBoard.freeParkingRule = true
+        gameBoard.centralMoney = 0
+
+        player.numCell = 5 // Income tax cell
+        GameEngine.landingAction(gameBoard, player.id)
+
+        //we assume that player has $1500
+        assertEquals(1350, player.totalMoney)
+        assertEquals(150, gameBoard.centralMoney)
+    }
 }
 

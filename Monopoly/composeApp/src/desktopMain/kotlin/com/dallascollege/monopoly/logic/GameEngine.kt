@@ -8,7 +8,6 @@ import kotlin.random.Random
 import androidx.compose.runtime.mutableStateOf
 import com.dallascollege.monopoly.utils.HOTEL_PRICE_PER_COLOR
 import com.dallascollege.monopoly.utils.HOUSE_PRICE_PER_COLOR
-import com.dallascollege.monopoly.enums.PropertyColor
 import kotlinx.coroutines.delay // <-- added for delays
 
 // Singleton (Static Class) with static methods for the different actions to be executed
@@ -116,14 +115,14 @@ object GameEngine {
         val cards = gameBoard.getChanceCards()
         val chanceCard = cards.random()
 
-        chanceCard.performCardAction(player, message)
+        chanceCard.performCardAction(player, gameBoard, message)
     }
 
     private fun getCommunityChest(gameBoard: GameBoard, player: Player, message: MutableState<String> =  mutableStateOf("")) {
         val cards = gameBoard.getCommunityChestCards()
         val communityChestCard = cards.random()
 
-        communityChestCard.performCardAction(player, message)
+        communityChestCard.performCardAction(player, gameBoard, message)
     }
 
     private fun collectSalary(player: Player, message: MutableState<String> =  mutableStateOf("")) {
@@ -137,6 +136,11 @@ object GameEngine {
         if (player.totalMoney < 0) {
             bankruptToBank(player, board, message)
         }
+
+        //ONLY IF FREE PARKING RULE IS SET
+        if (board.freeParkingRule) {
+            board.centralMoney += 150
+        }
     }
 
     private fun payLuxuryTax(player: Player, board: GameBoard, message: MutableState<String>) {
@@ -145,6 +149,11 @@ object GameEngine {
 
         if (player.totalMoney < 0) {
             bankruptToBank(player, board, message)
+        }
+
+        //ONLY IF FREE PARKING RULE IS SET
+        if (board.freeParkingRule) {
+            board.centralMoney += 200
         }
     }
 
@@ -159,7 +168,8 @@ object GameEngine {
                 property.isRailRoad -> collectRailroads(board, playerId, message)
                 else -> collectRent(board, playerId, message)
             }
-        } else if (cell.isParking) {
+        } else if (cell.isParking && board.freeParkingRule) {
+            //ONLY IF FREE PARKING RULE IS SET
             earnCentralMoney(board, player, message)
         } else if (cell.isGoToJail) {
             return goToJail(player)
@@ -534,7 +544,4 @@ object GameEngine {
         player.isBankrupt = true
         message.value = "${player.name} was eliminated. All assets have been surrendered to the bank."
     }
-
-    // player can sell houses at half price
-
 }

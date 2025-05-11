@@ -13,12 +13,15 @@ class Card(
     val message: String
 ) {
 
-    fun performCardAction(player: Player, message: MutableState<String>) {
+    fun performCardAction(player: Player, board: GameBoard, message: MutableState<String>) {
 
         message.value = this.message
 
         if (isPayment) {
             player.totalMoney -= amount
+            //ONLY IF FREE PARKING RULE IS SET
+            if (board.freeParkingRule)
+                board.centralMoney += amount
             return
         }
 

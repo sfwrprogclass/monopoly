@@ -9,7 +9,7 @@ class GameBoard(
     var selectedPlayerId: Int = 1,
     var centralMoney: Int = 0,
     val speedDieMode: Boolean = false,
-    val freeParkingRule: Boolean = false,
+    var freeParkingRule: Boolean = false,
     var cells: Array<Cell> = emptyArray(),
     var properties: Array<Property> = emptyArray(),
     var cards: Array<Card> = emptyArray(),
