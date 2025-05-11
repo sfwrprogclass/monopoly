@@ -238,8 +238,6 @@ object GameEngine {
 
         if (propertyId == null) return ""
         val player = board.getPlayerById(playerId) ?: return ""
-        val cell = board.getCellById(player.numCell) ?: return ""
-        val landedProperty = board.getPropertyById(cell.propertyId) ?: return ""
 
         val property = board.getPropertyById(propertyId) ?: return ""
 
@@ -247,20 +245,17 @@ object GameEngine {
         val housePrice = HOUSE_PRICE_PER_COLOR[property.color]
         val estimatedPrice = (housePrice ?: 0) * quantity
 
-        if (property.color != landedProperty.color) {
-            message.value = "You can only build houses on properties that match the color you landed on!"
-            return ""
-        } else if (player.totalMoney < estimatedPrice){
+        if (player.totalMoney < estimatedPrice){
             message.value = "You don't have enough money to build those houses!"
             return ""
         } else {
             player.totalMoney -= estimatedPrice
-            val properties = player.getPropertiesByColor(board, landedProperty.color)
+            val properties = player.getPropertiesByColor(board, property.color)
 
             // let's check amount to distribute houses equally
             val housesPerProperty = quantity / properties.size
             var remainder = quantity % properties.size
-            // if houserPerProperty is greater than 0 we distribute the houses equally and then the remainder goes to
+            // if housePerProperty is greater than 0 we distribute the houses equally and then the remainder goes to
             // the selected property
             if (housesPerProperty > 0) {
                 properties.forEach {
@@ -296,15 +291,8 @@ object GameEngine {
     {
         if (propertyId == null) return ""
         val player = board.getPlayerById(playerId) ?: return ""
-        val cell = board.getCellById(player.numCell) ?: return ""
-        val landedProperty = board.getPropertyById(cell.propertyId) ?: return ""
 
         val property = board.getPropertyById(propertyId) ?: return ""
-
-        if (landedProperty.color != property.color){
-            message.value = "You can only downgrade a property that matches the color of the one you landed on"
-            return ""
-        }
 
         if (property.numHotels < quantity){
             message.value = "You have ${property.numHotels} hotels. " +
@@ -365,6 +353,37 @@ object GameEngine {
         }
     }
 
+    //MARIA
+    fun sellHouse(
+        board: GameBoard,
+        playerId: Int,
+        propertyId: Int?,
+        quantity: Int,
+        message: MutableState<String> = mutableStateOf("")
+    ): String {
+        if (propertyId == null) return ""
+        val player = board.getPlayerById(playerId) ?: return ""
+
+        val property = board.getPropertyById(propertyId) ?: return ""
+
+        if (property.numHouses < quantity){
+            message.value = "You have ${property.numHouses} hotels. " +
+                    "You can only sell up to the number of houses currently on the property"
+            return ""
+        }
+
+        // calculate estimated price
+        val housePrice = HOUSE_PRICE_PER_COLOR[property.color]
+        val estimatedMoney = (housePrice ?: 0) * quantity / 2
+
+        property.numHouses -= quantity
+        player.totalMoney += estimatedMoney
+
+        return "sell houses"
+    }
+
+    ////// CAN METHODS TO CONTROL WHEN THE OPTIONS ARE ENABLED IN THE ACTION TYPE DROPDOWN
+
     private fun canPurchaseProperty(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
         val player = gameBoard.getPlayerById(selectedPlayerId.value) ?: return false
         val cell = gameBoard.getCellById(player.numCell) ?: return false
@@ -373,28 +392,29 @@ object GameEngine {
     }
 
     //MARVELLOUS
-    private fun canBuyHouse(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
+    private fun canBuyHouse(
+        gameBoard: GameBoard,
+        selectedPlayerId: MutableState<Int>,
+        selectedPropertyId: Int
+    ): Boolean {
         val player = gameBoard.getPlayerById(selectedPlayerId.value) ?: return false
-        val cell = gameBoard.getCellById(player.numCell) ?: return false
 
-        if (cell.isProperty() && !gameBoard.isPropertyOwned(cell.propertyId))
-            return false
-
-        val property = gameBoard.getPropertyById(cell.propertyId) ?: return false
+        val property = gameBoard.getPropertyById(selectedPropertyId) ?: return false
 
         return player.hasAllPropertiesByColor(gameBoard, property.color)
     }
 
-    private fun canDowngradeTo4Houses(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
-        val player = gameBoard.getPlayerById(selectedPlayerId.value) ?: return false
-        val cell = gameBoard.getCellById(player.numCell) ?: return false
-
-        if (cell.isProperty() && !gameBoard.isPropertyOwned(cell.propertyId))
-            return false
-
-        val property = gameBoard.getPropertyById(cell.propertyId) ?: return false
+    private fun canDowngradeTo4Houses(gameBoard: GameBoard, selectedPropertyId: Int): Boolean {
+        val property = gameBoard.getPropertyById(selectedPropertyId) ?: return false
 
         return property.numHotels > 0 && !property.isMortgaged
+    }
+
+    //MARIA
+    private fun canSellHouse(gameBoard: GameBoard, selectedPropertyId: Int): Boolean {
+        val property = gameBoard.getPropertyById(selectedPropertyId) ?: return false
+
+        return property.numHouses > 0
     }
 
     private fun canGetOutOfJail(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>): Boolean {
@@ -404,12 +424,18 @@ object GameEngine {
         return cell.isVisitingJail && player.hasOutJailCard
     }
 
-    fun canPerformAction(gameBoard: GameBoard, selectedPlayerId: MutableState<Int>, actionType: ActionType): Boolean {
+    fun canPerformAction(
+        gameBoard: GameBoard,
+        selectedPlayerId: MutableState<Int>,
+        actionType: ActionType,
+        selectedPropertyId: Int = -1,
+    ): Boolean {
         return when (actionType) {
             ActionType.PURCHASE_PROPERTY -> canPurchaseProperty(gameBoard, selectedPlayerId)
-            ActionType.BUY_HOUSE -> canBuyHouse(gameBoard, selectedPlayerId)
+            ActionType.BUY_HOUSE -> canBuyHouse(gameBoard, selectedPlayerId, selectedPropertyId)
             ActionType.GET_OUT_OF_JAIL -> canGetOutOfJail(gameBoard, selectedPlayerId)
-            ActionType.DOWNGRADE_TO_HOUSES -> canDowngradeTo4Houses(gameBoard, selectedPlayerId)
+            ActionType.DOWNGRADE_TO_HOUSES -> canDowngradeTo4Houses(gameBoard, selectedPropertyId)
+            ActionType.SELL_HOUSE -> canSellHouse(gameBoard, selectedPropertyId)
             else -> true
         }
     }
@@ -510,85 +536,5 @@ object GameEngine {
     }
 
     // player can sell houses at half price
-    fun sellHouse(
-        board: GameBoard,
-        playerId: Int,
-        propertyColor: PropertyColor,
-        numHousesToSell: Int,
-        message: MutableState<String> = mutableStateOf("")
-    ): String {
-        println("sellHouse called for playerId: $playerId, color: $propertyColor, numHousesToSell: $numHousesToSell")
-
-        val player = board.getPlayerById(playerId)
-        println("Player found: $player")
-        player ?: return ""
-        println("Player is not null")
-
-        if (numHousesToSell <= 0) {
-            message.value = "You must sell at least one house."
-            println("Exiting: numHousesToSell <= 0")
-            return ""
-        }
-        println("numHousesToSell > 0")
-
-        val colorProperties = player.getPropertiesByColor(board, propertyColor)
-        println("colorProperties: ${colorProperties.joinToString { it.name }}")
-
-        if (colorProperties.isEmpty() || !player.hasAllPropertiesByColor(board, propertyColor)) {
-            message.value = "${player.name} does not own the full ${propertyColor} set."
-            println("Exiting: Not full color set")
-            return ""
-        }
-        println("Owns full color set")
-
-        if (colorProperties.any { it.isMortgaged }) {
-            message.value = "You cannot sell houses while any property in the set is mortgaged."
-            println("Exiting: Property is mortgaged")
-            return ""
-        }
-        println("No properties are mortgaged")
-
-        val propertiesSorted = colorProperties.sortedByDescending { it.numHouses }
-        println("propertiesSorted (initial houses): ${propertiesSorted.joinToString { "${it.name} (${it.numHouses})" }}")
-
-        // Revised sellableHouses calculation
-        var sellableHouses = 0
-        val initialHouseCounts = propertiesSorted.map { it.numHouses }
-        val numProperties = initialHouseCounts.size
-        val targetAverage = (initialHouseCounts.sum() - numHousesToSell).toFloat() / numProperties
-        val floorTarget = targetAverage.toInt()
-        sellableHouses = initialHouseCounts.count { it > floorTarget }
-        println("sellableHouses (revised): $sellableHouses")
-
-        if (sellableHouses < numHousesToSell) {
-            message.value = "${player.name} cannot sell $numHousesToSell house(s) while keeping even distribution."
-            println("Exiting: Cannot sell due to even distribution")
-            return ""
-        }
-        println("Can sell while maintaining even distribution")
-
-        var housesLeftToSell = numHousesToSell
-        while (housesLeftToSell > 0) {
-            val maxHouses = propertiesSorted.maxOf { it.numHouses }
-            val candidates = propertiesSorted.filter { it.numHouses == maxHouses }
-
-            for (property in candidates) {
-                if (housesLeftToSell == 0) break
-                property.numHouses -= 1
-                housesLeftToSell -= 1
-            }
-        }
-        println("Houses sold and counts updated: ${propertiesSorted.joinToString { "${it.name} (${it.numHouses})" }}")
-
-        val housePrice = HOUSE_PRICE_PER_COLOR[propertyColor] ?: 0
-        val totalEarned = (housePrice / 2) * numHousesToSell
-        player.totalMoney += totalEarned
-        message.value = "${player.name} sold $numHousesToSell house(s) for \$$totalEarned."
-        println("Money updated for player: ${player.name}, new total: ${player.totalMoney}")
-
-        println("Returning: sold houses")
-        return "sold houses"
-    }
-
 
 }

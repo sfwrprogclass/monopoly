@@ -80,13 +80,8 @@ fun ActionView(
             ActionType.DOWNGRADE_TO_HOUSES -> {
                 GameEngine.downGradeToHouses(board, playerId, selectedPropertyId, parseInt(quantity), message)
             }
-            ActionType.SELL_HOUSE -> {// Need to get the Property object to access its color
-                selectedPropertyId?.let { propertyId ->
-                    board.getPropertyById(propertyId)?.let { property ->
-                        GameEngine.sellHouse(board, playerId, property.color, parseInt(quantity), message)
-
-                    }
-                }
+            ActionType.SELL_HOUSE -> {
+                GameEngine.sellHouse(board, playerId, selectedPropertyId, parseInt(quantity), message)
             }
             ActionType.GET_OUT_OF_JAIL -> { GameEngine.getOutOfJailUsingCard(board, playerId, message)}
             ActionType.MORTGAGE_PROPERTY -> selectedPropertyId?.let { propertyId ->

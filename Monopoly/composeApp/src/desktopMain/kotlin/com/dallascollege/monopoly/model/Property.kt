@@ -14,7 +14,6 @@ class Property(
     var numHouses: Int = 0,
     var numHotels: Int = 0,
     var isMortgaged: Boolean = false,
-    var ownerId: Int? = null
 ) {
 
     fun isMortgageable(): Boolean {

@@ -414,45 +414,32 @@ class GameEngineTest {
 
     //Maria backlog
     @Test
-    fun `player can sell houses at half price and verify internal state`() {
-        val engine = GameEngine
-        val player = gameBoard.getPlayerById(1)!!
-        player.totalMoney = 2000 // Ensure player has enough money initially
+    fun `As a player, I can sell back houses at half value`() {
+        player.numCell = 2
 
-        // Find blue properties and assign them to the player with houses
-        val blueProperties = gameBoard.properties.filter { it.color == PropertyColor.BLUE }
-        if (blueProperties.size == 2) {
-            player.propertyIds.addAll(blueProperties.map { it.id })
-            blueProperties.forEach { it.ownerId = player.id }
-            blueProperties[0].numHouses = 3
-            blueProperties[1].numHouses = 2
+        player.propertyIds = mutableListOf(1, 2)
 
-            val initialMoney = player.totalMoney
-            val housePrice = HOUSE_PRICE_PER_COLOR[PropertyColor.BLUE] ?: 0
-            val numHousesToSell = 2
-            val expectedMoney = initialMoney + (housePrice / 2) * numHousesToSell
-            val message = mutableStateOf("")
+        val property1 = gameBoard.getPropertyById(1)
+        if (property1 != null)
+            property1.numHouses = 1
 
-            val result = engine.sellHouse(gameBoard, player.id, PropertyColor.BLUE, numHousesToSell, message)
+        val property2 = gameBoard.getPropertyById(2)
+        if (property2 != null)
+            property2.numHouses = 1
 
-            assertEquals("sold houses", result)
-            assertEquals(expectedMoney, player.totalMoney)
+        GameEngine.sellHouse(gameBoard, player.id, 1, 1)
 
-            // Verify the number of houses on each property after selling
-            val property1AfterSell = gameBoard.getPropertyById(blueProperties[0].id)!!
-            val property2AfterSell = gameBoard.getPropertyById(blueProperties[1].id)!!
-            assertEquals(1, property1AfterSell.numHouses, "Property 1 should have 1 house after selling")
-            assertEquals(2, property2AfterSell.numHouses, "Property 2 should have 2 houses after selling")
 
-            assertEquals("${player.name} sold 2 house(s) for \$${(housePrice / 2) * numHousesToSell}.", message.value)
-
-            println("--------> Test: Player '${player.name}' sold 2 blue houses for \$${(housePrice / 2) * numHousesToSell}. Total money: \$${player.totalMoney}")
-            println("--------> Test: Property '${property1AfterSell.name}' now has ${property1AfterSell.numHouses} houses.")
-            println("--------> Test: Property '${property2AfterSell.name}' now has ${property2AfterSell.numHouses} houses.")
+        if (property1 != null && property2 != null) {
+            assertEquals(0, property1.numHouses)
+            assertEquals(1, property2.numHouses)
 
         } else {
-            fail("Could not find enough blue properties for the test.")
+            // we force this to fail if properties are not found
+            assertTrue(false)
         }
+        //we assume that player has $1500 and houses for brown color cost $50 so we get $25 downgrading one house
+        assertEquals(1525, player.totalMoney)
     }
 
 }
