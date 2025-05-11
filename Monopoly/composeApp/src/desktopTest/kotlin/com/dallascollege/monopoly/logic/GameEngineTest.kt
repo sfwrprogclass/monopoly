@@ -434,6 +434,7 @@ class GameEngineTest {
             assertEquals(0, property1.numHouses)
             assertEquals(1, property2.numHouses)
 
+            println("--------> Test: Property '${property1.name}' now has ${property1.numHouses} houses.")
         } else {
             // we force this to fail if properties are not found
             assertTrue(false)
